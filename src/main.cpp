@@ -10,8 +10,8 @@ using namespace std;
 int main() {
     srand(time(NULL));
     SetConsoleOutputCP(CP_UTF8);
-    int tamanho = tamArq("data/nomes.txt");
-    string* nomeJogadores = leituraArq("data/nomes.txt", tamanho);
+    int tamanho = tamArq("../data/nomes.txt");
+    string* nomeJogadores = leituraArq("../data/nomes.txt", tamanho);
     int numeroCamisaGR[3] = { 1, 13, 30 };
     int numeroCamisaDEF[10] = { 2, 3, 4, 5, 12, 15, 22, 24, 25, 26 };
     int numeroCamisaMED[10] = { 6, 8, 10, 14, 16, 17, 20, 21, 23, 28 };
