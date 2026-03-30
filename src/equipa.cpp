@@ -78,40 +78,7 @@ Jogador** ordenarPlantelQualidadeJogador(Jogador** plantel, int numGR, int numDE
 
     return plantel;
 }
-/*
 
-void imprimirPlantel(Jogador** plantel, int numJogadoresPlantel) {
-    cout << "\n*********** Plantel Disponível: ***********\n";
-
-    cout << "Nome                      | Nº  | Posição | Idade | ProbLesão | ProbCastigo | Qualidade | Dias-Treino\n";
-    cout << "----------------------------------------------------------------------------------------------------\n";
-
-    if (numJogadoresPlantel > 0) {
-        string posicionActual = plantel[0]->posicao;
-
-        for (int i = 0; i < numJogadoresPlantel; i++) {
-            if (plantel[i]->posicao != posicionActual) {
-                cout << endl;
-                posicionActual = plantel[i]->posicao;
-            }
-
-            string strLesao = to_string(plantel[i]->probLes) + "%";
-            string strCastigo = to_string(plantel[i]->probSus) + "%";
-
-            cout << left
-                << setw(26) << plantel[i]->nome << "| "
-                << setw(4)  << plantel[i]->numero << "| "
-                << setw(8)  << plantel[i]->posicao << "| "
-                << setw(6)  << plantel[i]->idade << "| "
-                << setw(10) << strLesao << "| "
-                << setw(12) << strCastigo << "| "
-                << setw(10) << plantel[i]->qualidade << "| "
-                << plantel[i]->diasTreino << endl;
-        }
-    }
-    cout << "----------------------------------------------------------------------------------------------------\n";
-}
-*/
 
 
 void imprimirPlantel(Jogador** plantel, int numGR, int numDEF, int numMED, int numAVA) {

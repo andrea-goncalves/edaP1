@@ -15,7 +15,7 @@ int tamArq(const string& path) {
 
     if (!arquivo.is_open()) {
         cout << "Nao e possivel abrir o ficheiro "<< path<< endl;
-        return -1; //podemos colocar exit, mas isso fecharia o programa
+        return -1;
     }
     while (getline(arquivo,linha)) {
         contador++;
@@ -51,11 +51,11 @@ string eliminarAcentos(const string& str) {
     string acentos[] = {"á","é","í","ó","ú","à","è","ì","ò","ù",
                         "â","ê","î","ô","û","ã","õ","ñ","ü","ç",
                         "Á","É","Í","Ó","Ú","À","È","Ì","Ò","Ù",
-                        "Â","Ê","Î","Ô","Û","Ã","Õ","Ñ","Ü","Ç"};
+                        "Â","Ê","Î","Ô","Û","Ã","Õ","Ñ","Ü","Ç","ø","Ø"};
     string sinAcento[] = {"a","e","i","o","u","a","e","i","o","u",
                           "a","e","i","o","u","a","o","n","u","c",
                           "A","E","I","O","U","A","E","I","O","U",
-                          "A","E","I","O","U","A","O","N","U","C"};
+                          "A","E","I","O","U","A","O","N","U","C","o","O"};
     int tam = 40;
     for (int i = 0; i < tam; i++) {
         size_t pos;
