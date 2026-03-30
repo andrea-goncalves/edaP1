@@ -5,6 +5,7 @@
 #include "../include/ficheiros.h"
 #include "../include/equipa.h"
 #include "../include/equipasAdversarias.h"
+#include "../include/utils.h"
 using namespace std;
 
 int main() {
@@ -22,8 +23,10 @@ int main() {
     equipasAdversarias* adversariosFase2 = new equipasAdversarias[numEquipas];
 
     int jornada = 1;
-    int puntos = 0;
-    int golosEDA = 0, golosAdversario = 0;
+    int pontos = 0;
+    int golosEDAFC = 0;
+    int golosAdversario = 0;
+
 
 
     int numeroCamisaGR[3] = { 1, 13, 30 };
@@ -56,30 +59,26 @@ int main() {
         adversariosFase2[i] = escolher(adversarios, numJogosPorFase);
         adversariosFase2[17 + i] = adversariosFase2[i];
 
-        //cout << "Jogo " << i + 1 << " contra: " << eliminarAcentos(adversarioJornada.nome)<< endl;
     }
-    /**Fase 2 (17 jogos, com as mesmas equipas e mesma ordem)
-    for (int i = 0; i < 17; i++) {
-        cout << "Jogo " << i+18 << " contra: " << eliminarAcentos(adversariosFase2[i].nome) << endl;
-    }**/
-
-
-
 
     do {
 
         cout << "\n******************************\n";
-        cout << "* EDA FC - " << jornada << "a Jornada - " << puntos << " pontos. *\n";
+        cout << "* EDA FC - " << jornada << "a Jornada - " << pontos << " pontos. *\n";
         cout << "******************************\n";
 
         imprimirPlantel(plantel, numGR, numDEF, numMED, numAVA);
 
         if (jornada > 1) {
+
             cout << "Resultado Anterior\n";
-            cout << "Resultado: EDA FC:" << golosEDA << " - " << eliminarAcentos(adversariosFase2[jornada-2].nome) << ":" << golosAdversario << "\n";
+            cout << "Resultado: EDA FC:" << golosEDAFC << " - " << eliminarAcentos(adversariosFase2[jornada-2].nome) << ":" << golosAdversario << "\n";
         }
 
+        golosEDAFC = numAleatorio(0,8);
+        golosAdversario = numAleatorio(0,8);
         string input;
+
         do {
             cout << "\n[s] Proxima Jornada\n";
             cout << "[o] Opcoes\n";
@@ -93,6 +92,7 @@ int main() {
         } while (input != "s");
 
         jornada++;
+        pontos+= golosEDAFC;
 
     } while (jornada <= 34);
 
