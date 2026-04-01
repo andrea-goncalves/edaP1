@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 4.1)
 project(edaP1)
 
+include_directories(include)
+
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(edaP1 src/main.cpp
@@ -11,4 +13,6 @@ add_executable(edaP1 src/main.cpp
         src/ficheiros.cpp
         include/ficheiros.h
         src/utils.cpp
-        include/utils.h)
+        include/utils.h
+        src/transferencias.cpp
+        include/transferencias.h)
