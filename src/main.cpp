@@ -38,6 +38,11 @@ int main() {
     int numMED = numeroMED();
     int numAVA = numeroAVA();
 
+    Tatica taticaAtual;
+    Tatica taticaUsada;
+    Jogador* titulares = nullptr;
+    Jogador* suplentes = nullptr;
+
     int numJogadorPlantel = numGR + numDEF + numMED + numAVA;
     cout << numJogadorPlantel << endl;
     cout << "Numero de GR: " << numGR << endl;
@@ -50,8 +55,7 @@ int main() {
     Jogador* med = criarMED(nomeJogadores, tamanho, numMED, numeroCamisaMED);
     Jogador* ava = criarAVA(nomeJogadores, tamanho, numAVA, numeroCamisaAVA);
     Jogador** plantel = gerarPlantel(gr, def, med, ava, numGR, numDEF, numMED, numAVA);
-
-    ordenarPlantelQualidadeJogador(plantel, numGR, numDEF, numMED, numAVA);
+    ordenarPlantelNumeroJogador( plantel,numGR,numDEF,numMED,numAVA);
 
 
 
@@ -67,16 +71,17 @@ int main() {
         cout << "* EDA FC - " << jornada << "a Jornada - " << pontos << " pontos. *\n";
         cout << "******************************\n";
 
-        imprimirPlantel(plantel, numGR, numDEF, numMED, numAVA);
 
         if (jornada > 1) {
 
             cout << "Resultado Anterior\n";
             cout << "Resultado: EDA FC:" << golosEDAFC << " - " << eliminarAcentos(adversariosFase2[jornada-2].nome) << ":" << golosAdversario << "\n";
+            imprimirTitulares(titulares, taticaUsada);
+            imprimirSuplentes(suplentes);
+
         }
 
-        golosEDAFC = numAleatorio(0,8);
-        golosAdversario = numAleatorio(0,8);
+        imprimirPlantel(plantel, numGR, numDEF, numMED, numAVA);
         string input;
 
         do {
@@ -86,13 +91,31 @@ int main() {
             getline(cin, input);
 
             if (input == "o") {
-                cout << "\nGestao da Equipas\n";
+                taticaAtual = pedirTatica();
             }
 
         } while (input != "s");
 
-        jornada++;
+        int disponiveis[4] = { numGR, numDEF, numMED, numAVA };
+        Jogador** copiaPlantel = copiarPlantel(plantel, disponiveis);
+        ordenarPlantelQualidadeJogador(copiaPlantel, numGR, numDEF, numMED, numAVA);
+
+        if (titulares != nullptr) delete[] titulares;
+        if (suplentes != nullptr) delete[] suplentes;
+
+        taticaUsada = taticaAtual;
+        titulares = escolherTitulares(copiaPlantel, disponiveis, taticaUsada);
+        suplentes = escolherSuplentes(copiaPlantel, disponiveis, taticaUsada);
+
+        golosEDAFC = numAleatorio(0,8);
+        golosAdversario = numAleatorio(0,8);
+
+        for (int i = 0; i < 4; i++) delete[] copiaPlantel[i];
+        delete[] copiaPlantel;
+
+
         pontos+= golosEDAFC;
+        jornada++;
 
     } while (jornada <= 34);
 
@@ -106,6 +129,9 @@ int main() {
     delete[] adversarios;
     delete[] adversariosFase2;
     delete[] adversariosNomes;
+    delete[] titulares;
+    delete[] suplentes;
+
 
     return 0;
 }
