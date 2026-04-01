@@ -16,6 +16,7 @@ struct Jogador {
     int probSus;
     int diasTreino;
     int semanas_ate_retorno;
+    bool disponivel = true; //para funcionar a lista de transferencia
 };
 
 std::string nomeAleatorio(std::string* nomeJogadores, int tamanho);
@@ -29,6 +30,7 @@ Jogador* criarGR(std::string* nomeJogadores, int tamanho, int numGR, int* numero
 Jogador* criarDEF(std::string* nomeJogadores, int tamanho, int numDEF, int* numeroCamisaDEF);
 Jogador* criarMED(std::string* nomeJogadores, int tamanho, int numMED, int* numeroCamisaMED);
 Jogador* criarAVA(std::string* nomeJogadores, int tamanho, int numAVA, int* numeroCamisaAVA);
+Jogador* criarAleatorio (std::string* nomeJogadores, int tamanho);
 
 
 #endif //EDAP1_JOGADOR_H
