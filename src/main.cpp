@@ -91,7 +91,7 @@ int main() {
             getline(cin, input);
 
             if (input == "o") {
-                taticaAtual = pedirTatica();
+                taticaAtual = pedirTatica(taticaAtual);
             }
 
         } while (input != "s");
@@ -113,8 +113,11 @@ int main() {
         for (int i = 0; i < 4; i++) delete[] copiaPlantel[i];
         delete[] copiaPlantel;
 
-
-        pontos+= golosEDAFC;
+        if (golosEDAFC>golosAdversario) {
+            pontos += 3;
+        } else if (golosEDAFC == golosAdversario) {
+            pontos += 1;
+        }
         jornada++;
 
     } while (jornada <= 34);

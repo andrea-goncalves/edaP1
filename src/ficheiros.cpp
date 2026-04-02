@@ -33,21 +33,21 @@ string* leituraArq(const string& path, int& tamanho) {
     string* vArquivos = new string[tamanho];
     ifstream arquivo(path);
     if (arquivo.is_open()) {
-        int i=0; //o while neste caso é melhor que o for
+        int i=0;
         while (getline(arquivo,vArquivos[i]) && i < tamanho) {
             i++;
         }
         arquivo.close();
     } else {
         delete[] vArquivos;
-        return nullptr; //é preciso que devolva algo se não dá erro
+        return nullptr;
     }
     return vArquivos;
 }
 
 string eliminarAcentos(const string& str) {
     string result = str;
-    // pares de reemplazo: acentuado -> sin acento
+
     string acentos[] = {"á","é","í","ó","ú","à","è","ì","ò","ù",
                         "â","ê","î","ô","û","ã","õ","ñ","ü","ç",
                         "Á","É","Í","Ó","Ú","À","È","Ì","Ò","Ù",

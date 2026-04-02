@@ -126,8 +126,8 @@ bool validarTatica(Tatica tatica) {
     return true;
 }
 
-Tatica pedirTatica() {
-    Tatica tatica;
+Tatica pedirTatica(Tatica taticaAtual) {
+    Tatica tatica= taticaAtual;
 
     cout << "\nTatica atual: 1-" << tatica.titulares[1] << "-"
          << tatica.titulares[2] << "-" << tatica.titulares[3] << "\n";
@@ -149,8 +149,6 @@ Tatica pedirTatica() {
 
 
     for (int i = 0; i < 4; i++) {
-        tatica.suplentes[i] = tatica.titulares[i] / 2;
-        if (tatica.suplentes[i] < 1) tatica.suplentes[i] = 1;  // mínimo 1
         tatica.convocados[i] = tatica.titulares[i] + tatica.suplentes[i];
     }
 
@@ -182,7 +180,7 @@ Jogador* escolherTitulares(Jogador** copiaPlantel, int* disponiveis, Tatica& tat
             if (disponiveis[i] < tatica.titulares[i]) {
                 cout << "\n[AVISO CRITICO] Nao existem jogadores suficientes na posicao "
                      << i << " Altere a tatica\n";
-                tatica = pedirTatica();
+                tatica = pedirTatica(tatica);
                 valido = false;
                 break;
             }
@@ -302,7 +300,7 @@ void imprimirSuplentes(Jogador* suplentes) {
     cout << "----------------------------------------------------------------------------------------------------\n";
 
     for (int i = 0; i < 6; i++) {
-        // Espacio visual entre posiciones diferentes
+
         if (i > 0 && suplentes[i].posicao != suplentes[i-1].posicao) {
             cout << endl;
         }

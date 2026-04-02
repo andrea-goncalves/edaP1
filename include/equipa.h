@@ -24,7 +24,7 @@ void imprimirPlantel(Jogador** plantel, int numGR, int numDEF, int numMED, int n
 Jogador** ordenarPlantelNumeroJogador(Jogador** plantel, int numGR, int numDEF, int numMED, int numAVA);
 Jogador** ordenarPlantelQualidadeJogador(Jogador** plantel, int numGR, int numDEF, int numMED, int numAVA);
 bool validarTatica(Tatica tatica);
-Tatica pedirTatica();
+Tatica pedirTatica(Tatica taticaAtual);
 Jogador** copiarPlantel(Jogador** plantel, int* disponiveis);
 Jogador* escolherTitulares(Jogador** copiaPlantel, int* disponiveis, Tatica& tatica);
 void imprimirTitulares(Jogador* titulares, Tatica tatica);
