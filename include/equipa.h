@@ -14,10 +14,12 @@ struct Equipa {
    Jogador** plantel;
    Jogador* titulares;
    Jogador* suplentes;
-   Jogador* lesionados;
-   Jogador* suspensos;
+   Jogador* lesionados[30];
+   Jogador* suspensos[30];
    Tatica tatica;
    int numJogadores[4];
+   int numLesionados = 0;
+   int numSuspensos = 0;
    int pontos;
 };
 
@@ -34,5 +36,11 @@ Jogador* escolherTitulares(Jogador** copiaPlantel, int* disponiveis, Tatica& tat
 void imprimirTitulares(Jogador* titulares, Tatica tatica);
 Jogador* escolherSuplentes(Jogador** copiaPlantel, int* disponiveis, Tatica tatica);
 void imprimirSuplentes(Jogador* suplentes);
+void calcularLesionados(Equipa& equipa);
+void calcularSuspensos(Equipa& equipa);
+void recuperarSuspensos(Equipa& equipa);
+void recuperarLesionados(Equipa& equipa);
+void imprimirLesionados(Equipa& equipa);
+void imprimirSuspensos(Equipa& equipa);
 
 #endif //EDAP1_EQUIPA_H

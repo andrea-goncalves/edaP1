@@ -6,6 +6,7 @@
 #include "../include/equipa.h"
 #include "../include/jogador.h"
 #include "../include/ficheiros.h"
+#include "../include/utils.h"
 using namespace std;
 
 Jogador** gerarPlantel(Jogador* gr, Jogador* def, Jogador* med, Jogador* ava, int numGR, int numDEF, int numMED, int numAVA) {
@@ -311,4 +312,93 @@ void imprimirSuplentes(Jogador* suplentes) {
             << suplentes[i].diasTreino << endl;
     }
     cout << "----------------------------------------------------------------------------------------------------\n";
+}
+
+void calcularDanos(Equipa& equipa, Jogador** arrayDestino, int& numDestino, bool isLesao) {
+    for (int pos = 0; pos < 4; pos++) {
+        int i = 0;
+        while (i < equipa.numJogadores[pos]) {
+            int probabilidade = numAleatorio(1, 100);
+            int probLimite = isLesao ? equipa.plantel[pos][i].probLes : equipa.plantel[pos][i].probSus;
+            if (probabilidade <= probLimite) {
+                if (numDestino < 30) {
+                    arrayDestino[numDestino] = new Jogador(equipa.plantel[pos][i]);
+                    arrayDestino[numDestino]->semanas_ate_retorno = isLesao?numAleatorio(1, 6):numAleatorio(1, 3);
+                    numDestino++;
+                }
+                for (int k = i; k < equipa.numJogadores[pos] - 1; k++)
+                    equipa.plantel[pos][k] = equipa.plantel[pos][k + 1];
+                equipa.numJogadores[pos]--;
+            } else {
+                i++;
+            }
+        }
+    }
+}
+
+
+void calcularLesionados(Equipa& equipa) {
+    calcularDanos(equipa, equipa.lesionados, equipa.numLesionados, true);
+}
+
+void calcularSuspensos(Equipa& equipa) {
+    calcularDanos(equipa, equipa.suspensos, equipa.numSuspensos, false);
+}
+
+
+
+void recuperar(Equipa& equipa, Jogador** arrayFora, int& numFora) {
+    int i = 0;
+    while (i < numFora) {
+        arrayFora[i]->semanas_ate_retorno--;
+        if (arrayFora[i]->semanas_ate_retorno <= 0) {
+            int pos = getPos(arrayFora[i]->posicao);
+            equipa.plantel[pos][equipa.numJogadores[pos]] = *(arrayFora[i]);
+            equipa.numJogadores[pos]++;
+            delete arrayFora[i];
+            for (int k = i; k < numFora - 1; k++)
+                arrayFora[k] = arrayFora[k + 1];
+            numFora--;
+        } else
+            i++;
+    }
+}
+
+void recuperarSuspensos(Equipa& equipa) {
+    recuperar(equipa, equipa.suspensos, equipa.numSuspensos);
+}
+
+void recuperarLesionados(Equipa& equipa) {
+    recuperar(equipa, equipa.lesionados, equipa.numLesionados);
+}
+
+void imprimirListaFora(Jogador** arrayFora, int numFora, const string& titulo) {
+    cout << "\n*********** " << titulo << " (" << numFora << "): ***********\n";
+
+    if (numFora == 0) {
+        cout << "Nenhum jogador nesta lista de momento.\n";
+        cout << "--------------------------------------------------------------------------------\n";
+        return;
+    }
+    cout << "Nome                      | N   | Posicao | Idade | Qualidade | Semanas a falhar\n";
+    cout << "--------------------------------------------------------------------------------\n";
+
+    for (int i = 0; i < numFora; i++) {
+        cout << left
+            << setw(26) << eliminarAcentos(arrayFora[i]->nome) << "| "
+            << setw(4)  << arrayFora[i]->numero << "| "
+            << setw(8)  << eliminarAcentos(arrayFora[i]->posicao) << "| "
+            << setw(6)  << arrayFora[i]->idade << "| "
+            << setw(10) << arrayFora[i]->qualidade << "| "
+            << arrayFora[i]->semanas_ate_retorno << endl;
+    }
+    cout << "--------------------------------------------------------------------------------\n";
+}
+
+void imprimirLesionados(Equipa& equipa) {
+    imprimirListaFora(equipa.lesionados, equipa.numLesionados, "Jogadores Lesionados");
+}
+
+void imprimirSuspensos(Equipa& equipa) {
+    imprimirListaFora(equipa.suspensos, equipa.numSuspensos, "Jogadores Suspensos");
 }
