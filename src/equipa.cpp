@@ -25,6 +25,7 @@ Jogador** gerarPlantel(Jogador* gr, Jogador* def, Jogador* med, Jogador* ava, in
         plantel[1][i] = def[i];
     }
 
+
     for (int i = 0; i < numMED; i++) {
         plantel[2][i] = med[i];
     }
@@ -36,78 +37,69 @@ Jogador** gerarPlantel(Jogador* gr, Jogador* def, Jogador* med, Jogador* ava, in
     return plantel;
 }
 
-Jogador** ordenarPlantelNumeroJogador(Jogador** plantel, int numGR, int numDEF, int numMED, int numAVA) {
+Jogador** ordenarPlantelNumeroJogador(Equipa& equipa) {
 
-    int quantidades[4] = { numGR, numDEF, numMED, numAVA };
-
+    int quantidades[4] =  { equipa.numJogadores[0], equipa.numJogadores[1], equipa.numJogadores[2], equipa.numJogadores[3] };
     for (int i = 0; i < 4; i++) {
         int n = quantidades[i];
 
         for (int j = 0; j < n - 1; j++) {
             for (int k = 0; k < n - j - 1; k++) {
 
-                if (plantel[i][k].numero > plantel[i][k + 1].numero) {
-                    swap(plantel[i][k], plantel[i][k + 1]);
+                if (equipa.plantel[i][k].numero > equipa.plantel[i][k + 1].numero) {
+                    swap(equipa.plantel[i][k], equipa.plantel[i][k + 1]);
                 }
 
             }
         }
     }
-    return plantel;
+    return equipa.plantel;
 }
 
-Jogador** ordenarPlantelQualidadeJogador(Jogador** plantel, int numGR, int numDEF, int numMED, int numAVA) {
-
-    int quantidades[4] = { numGR, numDEF, numMED, numAVA };
-
+void ordenarPlantelQualidadeJogador(Jogador** plantel, int* disponiveis) {
     for (int i = 0; i < 4; i++) {
-        int n = quantidades[i];
-
+        int n = disponiveis[i];
         for (int j = 0; j < n - 1; j++) {
             for (int k = 0; k < n - j - 1; k++) {
-
                 if (plantel[i][k].qualidade < plantel[i][k + 1].qualidade) {
                     swap(plantel[i][k], plantel[i][k + 1]);
                 }
-
             }
         }
     }
-
-    return plantel;
 }
 
 
 
-void imprimirPlantel(Jogador** plantel, int numGR, int numDEF, int numMED, int numAVA) {
+void imprimirPlantel(Equipa& equipa) {
     cout << "\n*********** Plantel Disponivel: ***********\n";
 
     cout << "Nome                      | N   | Posicao | Idade | ProbLesao | ProbCastigo | Qualidade | Dias-Treino\n";
     cout << "----------------------------------------------------------------------------------------------------\n";
 
-    int quantidades[4] = { numGR, numDEF, numMED, numAVA };
+    int quantidades[4] = { equipa.numJogadores[0], equipa.numJogadores[1], equipa.numJogadores[2], equipa.numJogadores[3] };
     for (int i = 0; i < 4; i++) {
         if (quantidades[i] > 0) {
-            string posicaoAtual = plantel[i][0].posicao;
+            string posicaoAtual =equipa.plantel[i][0].posicao;
 
             for (int j = 0; j < quantidades[i]; j++) {
-                if (plantel[i][j].posicao != posicaoAtual) {
+                if (equipa.plantel[i][j].posicao != posicaoAtual) {
                     cout << endl;
-                    posicaoAtual = plantel[i][j].posicao;
+                    posicaoAtual = equipa.plantel[i][j].posicao;
                 }
 
-                string strLesao = to_string(plantel[i][j].probLes) + "%";
-                string strCastigo = to_string(plantel[i][j].probSus) + "%";
+                string strLesao = to_string(equipa.plantel[i][j].probLes) + "%";
+                string strCastigo = to_string(equipa.plantel[i][j].probSus) + "%";
 
                 cout << left
-                    << setw(26) << eliminarAcentos(plantel[i][j].nome) << "| "
-                    << setw(4)  << plantel[i][j].numero << "| "
-                    << setw(8)  << eliminarAcentos(plantel[i][j].posicao) << "| "
-                    << setw(6)  << plantel[i][j].idade << "| "
+                    << setw(26) << eliminarAcentos(equipa.plantel[i][j].nome) << "| "
+                    << setw(4)  << equipa.plantel[i][j].numero << "| "
+                    << setw(8)  << eliminarAcentos(equipa.plantel[i][j].posicao) << "| "
+                    << setw(6)  << equipa.plantel[i][j].idade << "| "
                     << setw(10) << strLesao << "| "
                     << setw(12) << strCastigo << "| "
-                    << setw(10) << plantel[i][j].qualidade << "| "
-                    << plantel[i][j].diasTreino << endl;
+                    << setw(10) << equipa.plantel[i][j].qualidade << "| "
+                    << equipa.plantel[i][j].diasTreino << endl;
             }
         }
     }
@@ -160,13 +152,13 @@ Tatica pedirTatica(Tatica taticaAtual) {
     return tatica;
 }
 
-Jogador** copiarPlantel(Jogador** plantel, int* disponiveis) {
+Jogador** copiarPlantel(Equipa& equipa, int* disponiveis) {
 
     Jogador** copia = new Jogador*[4];
     for (int i = 0; i < 4; i++) {
         copia[i] = new Jogador[disponiveis[i]];
         for (int j = 0; j < disponiveis[i]; j++) {
-            copia[i][j] = plantel[i][j];
+            copia[i][j] = equipa.plantel[i][j];
         }
     }
     return copia;
