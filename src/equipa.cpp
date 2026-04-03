@@ -314,7 +314,7 @@ void imprimirSuplentes(Jogador* suplentes) {
     cout << "----------------------------------------------------------------------------------------------------\n";
 }
 
-void calcularDanos(Equipa& equipa, Jogador** arrayDestino, int& numDestino, bool lesao) {
+void calcularDanos(Equipa& equipa, Jogador** arrayDestino, int& numDestino, const bool lesao) {
     for (int i = 0; i < 11; i++) {
         int pos = getPos(equipa.titulares[i].posicao);
         int indexNoPlantel = -1;
@@ -326,7 +326,9 @@ void calcularDanos(Equipa& equipa, Jogador** arrayDestino, int& numDestino, bool
         }
         if (indexNoPlantel == -1)
             continue;
-        if (numAleatorio(1, 100) <= lesao ? equipa.titulares[i].probLes : equipa.titulares[i].probSus) {
+        int probabilidade = numAleatorio(1, 100);
+        int probLimite = lesao ? equipa.titulares[i].probLes : equipa.titulares[i].probSus;
+        if (probabilidade <= probLimite) {
             if (numDestino < 30) {
                 arrayDestino[numDestino] = new Jogador(equipa.titulares[i]);
                 arrayDestino[numDestino]->semanas_ate_retorno = lesao ? numAleatorio(1, 6) : numAleatorio(1, 3);
@@ -334,6 +336,15 @@ void calcularDanos(Equipa& equipa, Jogador** arrayDestino, int& numDestino, bool
                 for (int k = indexNoPlantel; k < equipa.numJogadores[pos] - 1; k++)
                     equipa.plantel[pos][k] = equipa.plantel[pos][k + 1];
                 equipa.numJogadores[pos]--;
+                if (lesao) {
+                    for (int s = 0; s < 6; s++) {
+                        if (equipa.suplentes[s].numero != -1 && equipa.suplentes[s].posicao == equipa.titulares[i].posicao) {
+                            equipa.titulares[i] = equipa.suplentes[s];
+                            equipa.suplentes[s].numero = -1;
+                            break;
+                        }
+                    }
+                }
             }
         }
     }
