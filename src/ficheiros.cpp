@@ -56,7 +56,7 @@ string eliminarAcentos(const string& str) {
                           "a","e","i","o","u","a","o","n","u","c",
                           "A","E","I","O","U","A","E","I","O","U",
                           "A","E","I","O","U","A","O","N","U","C","o","O", "o"};
-    int tam = 40;
+    int tam = 43;
     for (int i = 0; i < tam; i++) {
         size_t pos;
         while ((pos = result.find(acentos[i])) != string::npos) {
