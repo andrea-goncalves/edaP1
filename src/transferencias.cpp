@@ -53,22 +53,17 @@ void imprimirListaTransferencias(Jogador** listaTransferencia, int jornadaAtual)
 
     for (int i = 0; i < 34; i++) {
 
-        if (listaTransferencia[i] != nullptr) {
-            for (int j = 0; j < 2; j++) {
-                cout << left
-                     << "J" << setw(6) << (i + 1) << "| "
-                << setw(26) << eliminarAcentos(listaTransferencia[i][j].nome) << "| "
-                << setw(4)  << listaTransferencia[i][j].numero << "| "
-                << setw(8)  << eliminarAcentos(listaTransferencia[i][j].posicao) << "| "
-                << listaTransferencia[i][j].qualidade <<"| "
-                << listaTransferencia[i][j].probLes <<"| "
-                << listaTransferencia[i][j].probSus <<"| "
-                <<endl;
-            }
-            cout << "------------------------------------------------------------------\n";
+        for (int j = 0; j < 2; j++) {
+            cout << left
+            << "J" << setw(6) << (i + 1) << "| "
+            << setw(26) << eliminarAcentos(listaTransferencia[i][j].nome) << "| "
+            << setw(4)  << listaTransferencia[i][j].numero << "| "
+            << setw(8)  << eliminarAcentos(listaTransferencia[i][j].posicao) << "| "
+            << listaTransferencia[i][j].qualidade <<"| "
+            << listaTransferencia[i][j].probLes <<"| "
+            << listaTransferencia[i][j].probSus <<"| "
+            <<endl;
         }
+        cout << "------------------------------------------------------------------\n";
     }
 }
-
-
-//criar função para substituir jogadores
