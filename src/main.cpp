@@ -6,6 +6,7 @@
 #include "../include/equipa.h"
 #include "../include/equipasAdversarias.h"
 #include "../include/utils.h"
+#include "../include/transferencia.h"
 using namespace std;
 
 int main() {
@@ -150,3 +151,20 @@ int main() {
 
     return 0;
 }
+
+// int main() {
+//     srand(time(NULL));
+//     int tamanho = tamArq("../data/nomes.txt");
+//     string* nomeJogadores = leituraArq("../data/nomes.txt", tamanho);
+//
+//     Jogador** mercado = nullptr;
+//     //For para passar as jornadas
+//     for (int jor = 0; jor < 34; jor++) {
+//         Jogador* novosSorteados = criarAleatorio(nomeJogadores, tamanho);
+//         mercado = gerarTransferencia(novosSorteados);
+//     }
+//     if (mercado != nullptr) {
+//         imprimirListaTransferencias(mercado, 34);
+//     }
+//     return 0;
+// }
