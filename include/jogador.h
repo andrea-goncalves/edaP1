@@ -27,6 +27,7 @@ Jogador* criarGR(std::string* nomeJogadores, int tamanho, int numGR, int* numero
 Jogador* criarDEF(std::string* nomeJogadores, int tamanho, int numDEF, int* numeroCamisaDEF);
 Jogador* criarMED(std::string* nomeJogadores, int tamanho, int numMED, int* numeroCamisaMED);
 Jogador* criarAVA(std::string* nomeJogadores, int tamanho, int numAVA, int* numeroCamisaAVA);
+Jogador* criarAleatorio (std::string* nomeJogadores, int tamanho);
 
 
 #endif //EDAP1_JOGADOR_H
