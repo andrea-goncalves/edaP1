@@ -132,3 +132,15 @@ Jogador* criarAVA(string* nomeJogadores, int tamanho, int numAVA, int* numeroCam
     return ava;
 }
 
+Jogador* criarAleatorio (string* nomeJogadores, int tamanho) {
+    Jogador* aleatorio = new Jogador[tamanho];
+    string posicoes[] = {"GOL", "DEF", "MED", "AVA"};
+
+    for (int i = 0; i < tamanho; i++) {
+        int indiceAleatorio = numAleatorio(0, 3);
+        string posSorteada = posicoes[indiceAleatorio];
+        Jogador jogador = gerarUmJogadorPlantel(nomeJogadores, tamanho, posSorteada, 0);
+        aleatorio[i] = jogador;
+    }
+    return aleatorio;
+}
