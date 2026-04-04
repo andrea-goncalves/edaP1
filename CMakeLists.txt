@@ -13,4 +13,6 @@ add_executable(edaP1 src/main.cpp
         src/utils.cpp
         include/utils.h
         src/equipasAdversarias.cpp
-        include/equipasAdversarias.h)
+        include/equipasAdversarias.h
+        src/transferencia.cpp
+        include/transferencia.h)
