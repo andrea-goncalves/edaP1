@@ -6,6 +6,8 @@
 #include "../include/equipa.h"
 #include "../include/equipasAdversarias.h"
 #include "../include/utils.h"
+#include "../include/lesionarSuspender.h"
+
 using namespace std;
 
 int main() {
@@ -53,17 +55,16 @@ int main() {
     edaFC.titulares = nullptr;
     edaFC.suplentes = nullptr;
     edaFC.pontos = 0;
-    edaFC.numSubstituicoes = 0;
     edaFC.numLesionados = 0;
     edaFC.numSuspensos = 0;
-    Tatica taticaAtual;
-    Tatica taticaUsada;
-
-
     for (int i = 0; i < 30; i++) {
         edaFC.lesionados[i] = nullptr;
         edaFC.suspensos[i] = nullptr;
     }
+    Tatica taticaAtual;
+    Tatica taticaUsada;
+
+
 
     cout << numJogadorPlantel << endl;
     cout << "Numero de GR: " << numGR << endl;
@@ -75,6 +76,7 @@ int main() {
     ordenarPlantelNumeroJogador(edaFC);
 
 
+
     for (int i=0; i<17; i++ ) {
         adversariosFase2[i] = escolher(adversarios, numJogosPorFase);
         adversariosFase2[17 + i] = adversariosFase2[i];
@@ -82,6 +84,8 @@ int main() {
     }
 
     do {
+        recuperarLesionados(edaFC);
+        recuperarSuspensos(edaFC);
 
         cout << "\n******************************\n";
         cout << "* EDA FC - " << jornada << "a Jornada - " << edaFC.pontos << " pontos. *\n";
@@ -93,13 +97,21 @@ int main() {
             cout << "Resultado: EDA FC:" << golosEDAFC << " - " << eliminarAcentos(adversariosFase2[jornada-2].nome) << ":" << golosAdversario << "\n";
             imprimirTitulares(edaFC.titulares, taticaUsada);
             imprimirSuplentes(edaFC.suplentes);
-            imprimirLesionados(edaFC);
-            imprimirSuspensos(edaFC);
-            imprimirSubstituicoes(edaFC.sairam, edaFC.entraram, edaFC.numSubstituicoes);
-            substituicoes(edaFC);
-            edaFC.numSubstituicoes = 0;
+            imprimirJogadoresSuspensos1(edaFC.suspensos, edaFC.numSuspensos);
+            imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
+            if (edaFC.numSubstituicoes > 0) {
+                cout << "\nSubstituicoes:\n";
+                for (int i = 0; i < edaFC.numSubstituicoes; i++) {
+                    cout << eliminarAcentos(edaFC.sairam[i]) << " -> "
+                         << eliminarAcentos(edaFC.entraram[i]) << "\n";
+                }
+            }
         }
         imprimirPlantel(edaFC);
+        if (jornada > 1) {
+            imprimirJogadoresSuspensos2(edaFC.suspensos, edaFC.numSuspensos);
+            imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
+        }
         string input;
 
         do {
@@ -121,18 +133,31 @@ int main() {
         if (edaFC.titulares != nullptr) delete[] edaFC.titulares;
         if (edaFC.suplentes != nullptr) delete[] edaFC.suplentes;
 
+        int lesionadosAntes = edaFC.numLesionados;
+        int suspensosAntes = edaFC.numSuspensos;
+
         taticaUsada = taticaAtual;
         edaFC.titulares = escolherTitulares(copiaPlantel, disponiveis, taticaUsada);
         edaFC.suplentes = escolherSuplentes(copiaPlantel, disponiveis, taticaUsada);
+        edaFC.numSubstituicoes = 0;
+        lesionar(edaFC.titulares, 11);
+        ListaLesionados(edaFC.titulares, 11, edaFC);
+        suspender(edaFC.titulares, 11);
+        ListaSuspensos(edaFC.titulares, 11, edaFC);
+        substituicoes(edaFC.titulares, edaFC.suplentes, 11, 6, edaFC);
 
-        golosEDAFC = numAleatorio(0,8);
-        golosAdversario = numAleatorio(0,8);
+        int lesionadosJornada = edaFC.numLesionados - lesionadosAntes;
+        int suspensosJornada = edaFC.numSuspensos - suspensosAntes;
 
-        calcularLesionados(edaFC);
-        calcularSuspensos(edaFC);
-        recuperarLesionados(edaFC);
-        recuperarSuspensos(edaFC);
 
+        if (verificarDerrota(lesionadosJornada, suspensosJornada, edaFC.numSubstituicoes)) {
+            cout << "\n[DERROTA] EDA FC nao tem jogadores suficientes!\n";
+            golosEDAFC = 0;
+            golosAdversario = numAleatorio(1, 5);
+        } else {
+            golosEDAFC = numAleatorio(0, 8);
+            golosAdversario = numAleatorio(0, 8);
+        }
 
         for (int i = 0; i < 4; i++) delete[] copiaPlantel[i];
         delete[] copiaPlantel;

@@ -13,7 +13,8 @@ struct Jogador {
     int probLes;
     int probSus;
     int diasTreino;
-    int semanas_ate_retorno;
+    int semanas_ate_retorno_lesao;
+    int semanas_ate_retorno_castigo;
 };
 
 std::string nomeAleatorio(std::string* nomeJogadores, int tamanho);
