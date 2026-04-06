@@ -17,15 +17,17 @@ int main() {
     int numJogosPorFase= 17;
     int numEquipas=tamArq("../data/equipas.txt") ;
     string*adversariosNomes= leituraArq("../data/equipas.txt", numEquipas);
-    //
-    Jogador* listaTransferencia = nullptr;
-    int totalTransferencias = 0;
-    //
+
     equipasAdversarias* adversarios = new equipasAdversarias[numEquipas];
     for (int i = 0; i < numEquipas; i++) {
         adversarios[i].nome = adversariosNomes[i];
     }
     equipasAdversarias* adversariosFase2 = new equipasAdversarias[numEquipas];
+
+    //
+    Jogador* listaTransferencia = nullptr;
+    int totalTransferencias = 0;
+    //
 
     int jornada = 1;
     int golosEDAFC = 0;
@@ -42,10 +44,10 @@ int main() {
     int numMED = numeroMED();
     int numAVA = numeroAVA();
     int numJogadorPlantel = numGR + numDEF + numMED + numAVA;
-    Jogador* gr = criarGR(nomeJogadores, tamanho, numGR, numeroCamisaGR);
-    Jogador* def = criarDEF(nomeJogadores, tamanho, numDEF, numeroCamisaDEF);
-    Jogador* med = criarMED(nomeJogadores, tamanho, numMED, numeroCamisaMED);
-    Jogador* ava = criarAVA(nomeJogadores, tamanho, numAVA, numeroCamisaAVA);
+    Jogador* gr  = criarJogadores(nomeJogadores, tamanho, numGR,  "GR",  CAMISAS_GR,  3);
+    Jogador* def = criarJogadores(nomeJogadores, tamanho, numDEF, "DEF", CAMISAS_DEF, 10);
+    Jogador* med = criarJogadores(nomeJogadores, tamanho, numMED, "MED", CAMISAS_MED, 10);
+    Jogador* ava = criarJogadores(nomeJogadores, tamanho, numAVA, "AVA", CAMISAS_AVA, 7);
 
     Equipa edaFC;
     edaFC.nome="EDA FC";
@@ -84,9 +86,7 @@ int main() {
     }
 
     do {
-        Jogador* novosCandidatos = criarAleatorio(nomeJogadores, tamanho);
-        listaTransferencia = gerarTransferencia(novosCandidatos, 2, listaTransferencia, totalTransferencias);
-        delete[] novosCandidatos;
+
 
         cout << "\n******************************\n";
         cout << "* EDA FC - " << jornada << "a Jornada - " << edaFC.pontos << " pontos. *\n";
@@ -99,10 +99,11 @@ int main() {
             cout << "Resultado: EDA FC:" << golosEDAFC << " - " << eliminarAcentos(adversariosFase2[jornada-2].nome) << ":" << golosAdversario << "\n";
             imprimirTitulares(edaFC.titulares, taticaUsada);
             imprimirSuplentes(edaFC.suplentes);
+            imprimirMercado(listaTransferencia, totalTransferencias);
 
         }
         imprimirPlantel(edaFC);
-        imprimirMercado(listaTransferencia, totalTransferencias);
+
         string input;
 
         do {
@@ -117,7 +118,7 @@ int main() {
             }
             else if (input == "t") {
                 contratarJogador(edaFC, listaTransferencia, totalTransferencias);
-
+                ordenarPlantelNumeroJogador(edaFC);
                 imprimirPlantel(edaFC);
                 imprimirMercado(listaTransferencia, totalTransferencias);
             }
@@ -134,6 +135,9 @@ int main() {
         taticaUsada = taticaAtual;
         edaFC.titulares = escolherTitulares(copiaPlantel, disponiveis, taticaUsada);
         edaFC.suplentes = escolherSuplentes(copiaPlantel, disponiveis, taticaUsada);
+        Jogador* novosCandidatos = criarAleatorio(nomeJogadores, tamanho, 2);
+        listaTransferencia = gerarTransferencia(novosCandidatos, 2, listaTransferencia, totalTransferencias);
+        delete[] novosCandidatos;
 
         golosEDAFC = numAleatorio(0,8);
         golosAdversario = numAleatorio(0,8);
@@ -149,6 +153,7 @@ int main() {
         jornada++;
 
     } while (jornada <= 34);
+
 
     delete[] edaFC.plantel;
     delete[] edaFC.titulares;

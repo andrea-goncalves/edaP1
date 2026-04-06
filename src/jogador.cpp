@@ -17,7 +17,7 @@ Jogador gerarUmJogadorPlantel(string* nomeJogadores, int tamanho, string posicao
     novo.nome = nomeAleatorio(nomeJogadores,tamanho);
     novo.idade = numAleatorio(18, 40);
     novo.qualidade = numAleatorio(0, 100);
-    novo.numero = numeroCamisa;//após estar criado o plantel, devemos verificar numeros repetidos
+    novo.numero = numeroCamisa;
     novo.probSus = numAleatorio(0, 20);
     novo.probLes = numAleatorio(0, 15);
     novo.posicao = posicao;
@@ -48,99 +48,31 @@ bool compararNumJogador(Jogador* array, int numComparar, int tamanho) {
     }
     return false;
 }
+Jogador* criarJogadores(string* nomeJogadores, int tamanho, int numJogadores, const string& posicao, const int* camisas, int numCamisas) {
+    Jogador* jogadores = new Jogador[numJogadores];
 
-Jogador* criarGR(string* nomeJogadores, int tamanho, int numGR, int* numeroCamisaGR) {
-    Jogador* gr = new Jogador[numGR];
-    string posicao = "GR";
-
-    for (int i = 0; i < numGR; i++) {
+    for (int i = 0; i < numJogadores; i++) {
         bool numeroRepetido = true;
         int num = 0;
 
-        while (numeroRepetido == true) {
-            int numero = numAleatorio(0, 2);
-            num = numeroCamisaGR[numero];
-
-            numeroRepetido = compararNumJogador(gr, num, i);
+        while (numeroRepetido) {
+            int indice = numAleatorio(0, numCamisas - 1);
+            num = camisas[indice];
+            numeroRepetido = compararNumJogador(jogadores, num, i);
         }
 
-
-        Jogador jogador = gerarUmJogadorPlantel(nomeJogadores, tamanho, posicao, num);
-        gr[i] = jogador;
+        jogadores[i] = gerarUmJogadorPlantel(nomeJogadores, tamanho, posicao, num);
     }
-
-    return gr;
+    return jogadores;
 }
 
-Jogador* criarDEF(string* nomeJogadores, int tamanho, int numDEF, int* numeroCamisaDEF) {
-    Jogador* def = new Jogador[numDEF];
-    string posicao = "DEF";
+Jogador* criarAleatorio(string* nomeJogadores, int tamanho, int numJogadores) {
+    Jogador* aleatorio = new Jogador[numJogadores];
+    string posicoes[] = {"GR", "DEF", "MED", "AVA"};
 
-    for (int i = 0; i < numDEF; i++) {
-        bool numeroRepetido = true;
-        int num = 0;
-
-        while (numeroRepetido == true) {
-            int numero = numAleatorio(0, 9);
-            num = numeroCamisaDEF[numero];
-
-            numeroRepetido = compararNumJogador(def, num, i);
-        }
-
-
-        Jogador jogador = gerarUmJogadorPlantel(nomeJogadores, tamanho, posicao, num);
-        def[i] = jogador;
-    }
-
-    return def;
-}
-
-Jogador* criarMED(string* nomeJogadores, int tamanho, int numMED, int* numeroCamisaMED) {
-    Jogador* med = new Jogador[numMED];
-    string posicao = "MED";
-    for (int i = 0; i < numMED; i++) {
-        bool numeroRepetido = true;
-        int num = 0;
-        while (numeroRepetido == true) {
-            int numero = numAleatorio(0, 9);
-            num = numeroCamisaMED[numero];
-
-            numeroRepetido = compararNumJogador(med, num, i);
-        }
-
-        Jogador jogador = gerarUmJogadorPlantel(nomeJogadores, tamanho, posicao, num);
-        med[i] = jogador;
-    }
-    return med;
-}
-
-Jogador* criarAVA(string* nomeJogadores, int tamanho, int numAVA, int* numeroCamisaAVA) {
-    Jogador* ava = new Jogador[numAVA];
-    string posicao = "AVA";
-    for (int i = 0; i < numAVA; i++) {
-        bool numeroRepetido = true;
-        int num = 0;
-        while (numeroRepetido == true) {
-            int numero = numAleatorio(0, 6);
-            num = numeroCamisaAVA[numero];
-            numeroRepetido = compararNumJogador(ava, num, i);
-        }
-
-        Jogador jogador = gerarUmJogadorPlantel(nomeJogadores, tamanho, posicao, num);
-        ava[i] = jogador;
-    }
-    return ava;
-}
-
-Jogador* criarAleatorio (string* nomeJogadores, int tamanho) {
-    Jogador* aleatorio = new Jogador[tamanho];
-    string posicoes[] = {"GOL", "DEF", "MED", "AVA"};
-
-    for (int i = 0; i < tamanho; i++) {
-        int indiceAleatorio = numAleatorio(0, 3);
-        string posSorteada = posicoes[indiceAleatorio];
-        Jogador jogador = gerarUmJogadorPlantel(nomeJogadores, tamanho, posSorteada, 0);
-        aleatorio[i] = jogador;
+    for (int i = 0; i < numJogadores; i++) {
+        string pos = posicoes[numAleatorio(0, 3)];
+        aleatorio[i] = gerarUmJogadorPlantel(nomeJogadores, tamanho, pos, 0);
     }
     return aleatorio;
 }
