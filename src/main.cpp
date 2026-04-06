@@ -107,12 +107,19 @@ int main() {
 
         do {
             cout << "\n[s] Proxima Jornada\n";
-            cout << "[o] Opcoes\n";
+            cout << "[o] Opcoes (Tatica)\n";
+            cout << "[t] Transferencias (Contratar)\n";
             cout << ">> ";
             getline(cin, input);
 
             if (input == "o") {
                 taticaAtual = pedirTatica(taticaAtual);
+            }
+            else if (input == "t") {
+                contratarJogador(edaFC, listaTransferencia, totalTransferencias);
+
+                imprimirPlantel(edaFC);
+                imprimirMercado(listaTransferencia, totalTransferencias);
             }
 
         } while (input != "s");
