@@ -17,6 +17,10 @@ int main() {
     int numJogosPorFase= 17;
     int numEquipas=tamArq("../data/equipas.txt") ;
     string*adversariosNomes= leituraArq("../data/equipas.txt", numEquipas);
+    //
+    Jogador* listaTransferencia = nullptr;
+    int totalTransferencias = 0;
+    //
     equipasAdversarias* adversarios = new equipasAdversarias[numEquipas];
     for (int i = 0; i < numEquipas; i++) {
         adversarios[i].nome = adversariosNomes[i];
@@ -80,6 +84,9 @@ int main() {
     }
 
     do {
+        Jogador* novosCandidatos = criarAleatorio(nomeJogadores, tamanho);
+        listaTransferencia = gerarTransferencia(novosCandidatos, 2, listaTransferencia, totalTransferencias);
+        delete[] novosCandidatos;
 
         cout << "\n******************************\n";
         cout << "* EDA FC - " << jornada << "a Jornada - " << edaFC.pontos << " pontos. *\n";
@@ -95,6 +102,7 @@ int main() {
 
         }
         imprimirPlantel(edaFC);
+        imprimirMercado(listaTransferencia, totalTransferencias);
         string input;
 
         do {
@@ -146,25 +154,6 @@ int main() {
     delete[] adversarios;
     delete[] adversariosFase2;
     delete[] adversariosNomes;
-
-
-
+    delete[] listaTransferencia;
     return 0;
 }
-
-// int main() {
-//     srand(time(NULL));
-//     int tamanho = tamArq("../data/nomes.txt");
-//     string* nomeJogadores = leituraArq("../data/nomes.txt", tamanho);
-//
-//     Jogador** mercado = nullptr;
-//     //For para passar as jornadas
-//     for (int jor = 0; jor < 34; jor++) {
-//         Jogador* novosSorteados = criarAleatorio(nomeJogadores, tamanho);
-//         mercado = gerarTransferencia(novosSorteados);
-//     }
-//     if (mercado != nullptr) {
-//         imprimirListaTransferencias(mercado, 34);
-//     }
-//     return 0;
-// }
