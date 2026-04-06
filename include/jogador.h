@@ -24,10 +24,10 @@ int numeroGR();
 int numeroDEF();
 int numeroMED();
 int numeroAVA();
-Jogador* criarGR(std::string* nomeJogadores, int tamanho, int numGR, int* numeroCamisaGR);
-Jogador* criarDEF(std::string* nomeJogadores, int tamanho, int numDEF, int* numeroCamisaDEF);
-Jogador* criarMED(std::string* nomeJogadores, int tamanho, int numMED, int* numeroCamisaMED);
-Jogador* criarAVA(std::string* nomeJogadores, int tamanho, int numAVA, int* numeroCamisaAVA);
+Jogador* criarGR(std::string* nomeJogadores, int tamanho, int numGR, const int* numeroCamisaGR);
+Jogador* criarDEF(std::string* nomeJogadores, int tamanho, int numDEF, const int* numeroCamisaDEF);
+Jogador* criarMED(std::string* nomeJogadores, int tamanho, int numMED, const int* numeroCamisaMED);
+Jogador* criarAVA(std::string* nomeJogadores, int tamanho, int numAVA, const int* numeroCamisaAVA);
 
 
 #endif //EDAP1_JOGADOR_H

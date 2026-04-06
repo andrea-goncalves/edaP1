@@ -6,7 +6,9 @@
 #include "../include/equipa.h"
 #include "../include/jogador.h"
 #include "../include/ficheiros.h"
+#include "../include/constantes.h"
 #include "../include/utils.h"
+#include "../include/lesionarSuspender.h"
 using namespace std;
 
 Jogador** gerarPlantel(Jogador* gr, Jogador* def, Jogador* med, Jogador* ava, int numGR, int numDEF, int numMED, int numAVA) {
@@ -312,4 +314,109 @@ void imprimirSuplentes(Jogador* suplentes) {
             << setw(10) << suplentes[i].qualidade << endl;
     }
     cout << "-----------------------------------------------------------------------------------------\n";
+}
+
+//gestão jesus
+int contarJogadoresPosicao(Equipa& equipa, int pos) {
+    return equipa.numJogadores[pos];
+}
+bool limitePosicaoAtingido(Equipa& equipa, int pos) {
+
+    int limites[4] = {GR_MAX, DEF_MAX, MED_MAX, AVA_MAX}; // GR, DEF, MED, AVA
+
+    if(equipa.numJogadores[pos] >= limites[pos]) {
+        cout << "Limite de jogadores nesta posicao atingido!\n";
+        return true;
+    }
+
+    return false;
+}
+bool numeroOcupado(Equipa& equipa, int numero) {
+    for(int p = 0; p < 4; p++) {
+        for(int i = 0; i < equipa.numJogadores[p]; i++) {
+            if(equipa.plantel[p][i].numero == numero) return true;
+        }
+    }
+    return false;
+}
+
+void listarNumerosLivres(Equipa& equipa, int posicao) {
+    const int* numeros;
+    int tamanho;
+    switch(posicao) {
+        case 0: numeros = numeroCamisaGR; tamanho = 3; break; // Ajusta os tamanhos se necessário
+        case 1: numeros = numeroCamisaDEF; tamanho = 10; break;
+        case 2: numeros = numeroCamisaMED; tamanho = 10; break;
+        case 3: numeros = numeroCamisaAVA; tamanho = 7; break;
+        default: return;
+    }
+
+    cout << "\nNumeros disponiveis: ";
+    for(int i = 0; i < tamanho; i++) {
+        if(!numeroOcupado(equipa, numeros[i])) {
+            cout << numeros[i] << " ";
+        }
+    }
+    cout << endl;
+}
+
+int escolherNumero(Equipa& equipa, int posicao) {
+    int num;
+    do {
+        listarNumerosLivres(equipa, posicao);
+        cout << "Escolha o novo numero: ";
+        cin >> num;
+        if(numeroOcupado(equipa, num)) cout << "[ERRO] Numero ocupado!\n";
+    } while(numeroOcupado(equipa, num));
+    return num;
+}
+
+void escolherJogadorGlobal(Equipa& equipa, int& pos, int& idx) {
+    imprimirPlantel(equipa);
+    cout << "\nEscolha a posicao atual do jogador (0-GR, 1-DEF, 2-MED, 3-AVA): ";
+    cin >> pos;
+    cout << "Indice do jogador nessa posicao (0 a " << equipa.numJogadores[pos] - 1 << "): ";
+    cin >> idx;
+
+    if(pos < 0 || pos > 3 || idx < 0 || idx >= equipa.numJogadores[pos]) {
+        cout << "[ERRO] Escolha invalida!\n";
+        pos = -1;
+        idx = -1;
+    }
+}
+
+void mudarPosicao(Equipa& equipa, int posAtual, int idxJogador, int novaPosicao) {
+
+    Jogador jogador = equipa.plantel[posAtual][idxJogador];
+
+    if (limitePosicaoAtingido(equipa,novaPosicao)) {
+        cout << "[ERRO] Vagas da posicao cheias!\n";
+        return;
+    }
+    int novoNumero = escolherNumero(equipa, novaPosicao);
+    jogador.numero = novoNumero;
+    jogador.posicao = (novaPosicao == 0) ? "GR" : (novaPosicao == 1) ? "DEF" : (novaPosicao == 2) ? "MED" : "AVA";
+
+    for(int i = idxJogador; i < equipa.numJogadores[posAtual] - 1; i++) {
+        equipa.plantel[posAtual][i] = equipa.plantel[posAtual][i+1];
+    }
+    equipa.numJogadores[posAtual]--;
+
+    int tamanhoNovo = equipa.numJogadores[novaPosicao];
+    Jogador* novoArray = new Jogador[tamanhoNovo + 1];
+
+    for(int i = 0; i < tamanhoNovo; i++) {
+        novoArray[i] = equipa.plantel[novaPosicao][i];
+    }
+
+    novoArray[tamanhoNovo] = jogador;
+
+    delete[] equipa.plantel[novaPosicao];
+    equipa.plantel[novaPosicao] = novoArray;
+    equipa.numJogadores[novaPosicao]++;
+
+
+    ordenarPlantelNumeroJogador(equipa);
+
+    cout << "\n[INFO] Posicao alterada com sucesso! O " << jogador.nome << " e agora " << jogador.posicao << ".\n";
 }

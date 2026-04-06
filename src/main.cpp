@@ -7,10 +7,11 @@
 #include "../include/equipasAdversarias.h"
 #include "../include/utils.h"
 #include "../include/lesionarSuspender.h"
-
+#include "../include/constantes.h"
+#include "../include/menu.h"
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
     srand(time(NULL));
     int tamanho = tamArq("../data/nomes.txt");
     string* nomeJogadores = leituraArq("../data/nomes.txt", tamanho);
@@ -29,15 +30,12 @@ int main() {
     int golosAdversario = 0;
 
 
-
-    int numeroCamisaGR[3] = { 1, 13, 30 };
-    int numeroCamisaDEF[10] = { 2, 3, 4, 5, 12, 15, 22, 24, 25, 26 };
-    int numeroCamisaMED[10] = { 6, 8, 10, 14, 16, 17, 20, 21, 23, 28 };
-    int numeroCamisaAVA[7] = { 7, 9, 11, 18, 19, 27, 29 };
+    //num max por role
     int numGR = numeroGR();
     int numDEF = numeroDEF();
     int numMED = numeroMED();
     int numAVA = numeroAVA();
+
     int numJogadorPlantel = numGR + numDEF + numMED + numAVA;
     Jogador* gr = criarGR(nomeJogadores, tamanho, numGR, numeroCamisaGR);
     Jogador* def = criarDEF(nomeJogadores, tamanho, numDEF, numeroCamisaDEF);
@@ -75,6 +73,11 @@ int main() {
 
     ordenarPlantelNumeroJogador(edaFC);
 
+    if (argc > 1) {
+        string ficheiroSave = argv[1];
+        cout << "\n[INFO] A tentar carregar save do argumento: " << ficheiroSave << "\n";
+        carregarEquipa(edaFC, jornada, ficheiroSave); // <--- adicionei a jornada aqui
+    }
 
 
     for (int i=0; i<17; i++ ) {
@@ -83,6 +86,8 @@ int main() {
 
     }
 
+    // Chama o menu e passa a equipa e a jornada
+    menuPrincipal(edaFC, jornada);
     do {
         recuperarLesionados(edaFC);
         recuperarSuspensos(edaFC);
@@ -116,12 +121,42 @@ int main() {
 
         do {
             cout << "\n[s] Proxima Jornada\n";
-            cout << "[o] Opcoes\n";
+            cout << "[o] Opcoes (Alterar Tatica)\n";
+            cout << "[1] Aplicar Lesao Manual\n";
+            cout << "[2] Reduzir Lesao Manual\n";
+            cout << "[3] Aplicar Castigo Manual\n";
+            cout << "[4] Reduzir Castigo Manual\n";
+            cout << "[g] Gravar Equipa\n";
+            cout << "[c] Carregar Equipa\n";
+
             cout << ">> ";
             getline(cin, input);
 
             if (input == "o") {
                 taticaAtual = pedirTatica(taticaAtual);
+            }
+            else if (input == "1" || input == "2" || input == "3" || input == "4") {
+                int numJ, semanas;
+                cout << "Numero do jogador: ";
+                cin >> numJ;
+                cout << "Numero de semanas: ";
+                cin >> semanas;
+                cin.ignore();
+
+                if (input == "1") aplicarLesaoManual(edaFC, numJ, semanas);
+                else if (input == "2") reduzirLesaoManual(edaFC, numJ, semanas);
+                else if (input == "3") aplicarCastigoManual(edaFC, numJ, semanas);
+                else if (input == "4") reduzirCastigoManual(edaFC, numJ, semanas);
+            }else if (input == "g") {
+                string ficheiro;
+                cout << "Nome do ficheiro para gravar (ex: save.txt): ";
+                getline(cin, ficheiro);
+                gravarEquipa(edaFC, jornada, ficheiro); // <--- adicionei a jornada aqui
+            }else if (input == "c") {
+                string ficheiro;
+                cout << "Nome do ficheiro a carregar: ";
+                getline(cin, ficheiro);
+                carregarEquipa(edaFC, jornada, ficheiro); // <--- adicionei a jornada aqui
             }
 
         } while (input != "s");

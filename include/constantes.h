@@ -61,5 +61,8 @@ constexpr const char* FILE_NOMES = "../config/nomes.txt";
 
 constexpr int MAX_PROBLES = 15;
 constexpr int MAX_PROBSUS = 20;
-
+inline constexpr int numeroCamisaGR[3] = { 1, 13, 30 };
+inline constexpr int numeroCamisaDEF[10] = { 2, 3, 4, 5, 12, 15, 22, 24, 25, 26 };
+inline constexpr int numeroCamisaMED[10] = { 6, 8, 10, 14, 16, 17, 20, 21, 23, 28 };
+inline constexpr int numeroCamisaAVA[7] = { 7, 9, 11, 18, 19, 27, 29 };
 #endif //EDAP1_CONSTANTES_H

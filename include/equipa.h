@@ -20,7 +20,7 @@ struct Equipa {
    int numSuspensos = 0;
    int pontos;
    Tatica tatica;
-   int numJogadores[4];
+   int numJogadores[4]; // por posição
    std::string sairam[11];
    std::string entraram[11];
    int numSubstituicoes = 0;
@@ -41,4 +41,11 @@ void imprimirTitulares(Jogador* titulares, Tatica tatica);
 Jogador* escolherSuplentes(Jogador** copiaPlantel, int* disponiveis, Tatica tatica);
 void imprimirSuplentes(Jogador* suplentes);
 
+void escolherJogadorGlobal(Equipa& equipa, int& pos, int& idx);
+void mudarPosicao(Equipa& equipa, int posAtual, int idxJogador, int novaPosicao);
+int escolherNumero(Equipa& equipa, int posicao);
+void listarNumerosLivres(Equipa& equipa, int posicao);
+bool numeroOcupado(Equipa& equipa, int numero) ;
+bool limitePosicaoAtingido(Equipa& equipa, int pos);
+int contarJogadoresPosicao(Equipa& equipa, int pos);
 #endif //EDAP1_EQUIPA_H

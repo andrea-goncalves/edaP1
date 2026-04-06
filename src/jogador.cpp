@@ -17,7 +17,7 @@ Jogador gerarUmJogadorPlantel(string* nomeJogadores, int tamanho, string posicao
     novo.nome = nomeAleatorio(nomeJogadores,tamanho);
     novo.idade = numAleatorio(18, 40);
     novo.qualidade = numAleatorio(0, 100);
-    novo.numero = numeroCamisa;//após estar criado o plantel, devemos verificar numeros repetidos
+    novo.numero = numeroCamisa; //após estar criado o plantel, devemos verificar numeros repetidos
     novo.probSus = numAleatorio(0, 20);
     novo.probLes = numAleatorio(0, 15);
     novo.posicao = posicao;
@@ -49,7 +49,7 @@ bool compararNumJogador(Jogador* array, int numComparar, int tamanho) {
     return false;
 }
 
-Jogador* criarGR(string* nomeJogadores, int tamanho, int numGR, int* numeroCamisaGR) {
+Jogador* criarGR(string* nomeJogadores, int tamanho, int numGR, const int* numeroCamisaGR) {
     Jogador* gr = new Jogador[numGR];
     string posicao = "GR";
 
@@ -72,7 +72,7 @@ Jogador* criarGR(string* nomeJogadores, int tamanho, int numGR, int* numeroCamis
     return gr;
 }
 
-Jogador* criarDEF(string* nomeJogadores, int tamanho, int numDEF, int* numeroCamisaDEF) {
+Jogador* criarDEF(string* nomeJogadores, int tamanho, int numDEF, const int* numeroCamisaDEF) {
     Jogador* def = new Jogador[numDEF];
     string posicao = "DEF";
 
@@ -95,7 +95,7 @@ Jogador* criarDEF(string* nomeJogadores, int tamanho, int numDEF, int* numeroCam
     return def;
 }
 
-Jogador* criarMED(string* nomeJogadores, int tamanho, int numMED, int* numeroCamisaMED) {
+Jogador* criarMED(string* nomeJogadores, int tamanho, int numMED, const int* numeroCamisaMED) {
     Jogador* med = new Jogador[numMED];
     string posicao = "MED";
     for (int i = 0; i < numMED; i++) {
@@ -114,7 +114,7 @@ Jogador* criarMED(string* nomeJogadores, int tamanho, int numMED, int* numeroCam
     return med;
 }
 
-Jogador* criarAVA(string* nomeJogadores, int tamanho, int numAVA, int* numeroCamisaAVA) {
+Jogador* criarAVA(string* nomeJogadores, int tamanho, int numAVA, const int* numeroCamisaAVA) {
     Jogador* ava = new Jogador[numAVA];
     string posicao = "AVA";
     for (int i = 0; i < numAVA; i++) {
