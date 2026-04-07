@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
         adversariosFase2[17 + i] = adversariosFase2[i];
     }
 
-    menuPrincipal(edaFC, jornada);
+    //menuPrincipal(edaFC, jornada);
 
     do {
         recuperarLesionados(edaFC);
