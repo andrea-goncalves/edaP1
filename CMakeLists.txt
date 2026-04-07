@@ -18,4 +18,6 @@ add_executable(edaP1 src/main.cpp
         include/lesionarSuspender.h
         include/constantes.h
         src/transferencias.cpp
-        include/transferencias.h)
+        include/transferencias.h
+        src/menu.cpp
+        include/menu.h)

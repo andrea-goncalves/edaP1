@@ -1,6 +1,3 @@
-//
-// Created by andre on 05/04/2026.
-//
 
 #ifndef EDAP1_CONSTANTES_H
 #define EDAP1_CONSTANTES_H
@@ -10,10 +7,11 @@ constexpr int MINIMO_JOGADORES = 20;
 constexpr int MAXIMO_JOGADORES = 30;
 constexpr int MAXIMO_ADD_TRANSFERENCIA = 2;
 
-const int CAMISAS_GR[3]   = { 1, 13, 30 };
-const int CAMISAS_DEF[10] = { 2, 3, 4, 5, 12, 15, 22, 24, 25, 26 };
-const int CAMISAS_MED[10] = { 6, 8, 10, 14, 16, 17, 20, 21, 23, 28 };
-const int CAMISAS_AVA[7]  = { 7, 9, 11, 18, 19, 27, 29 };
+inline constexpr int CAMISAS_GR[3]   = { 1, 13, 30 };
+inline constexpr int CAMISAS_DEF[10] = { 2, 3, 4, 5, 12, 15, 22, 24, 25, 26 };
+inline constexpr int CAMISAS_MED[10] = { 6, 8, 10, 14, 16, 17, 20, 21, 23, 28 };
+inline constexpr int CAMISAS_AVA[7]  = { 7, 9, 11, 18, 19, 27, 29 };
+
 constexpr int GR_MAX = 3;
 constexpr int GR_MIN = 2;
 constexpr int DEF_MAX = 10;

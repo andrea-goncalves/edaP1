@@ -42,4 +42,11 @@ void imprimirTitulares(Jogador* titulares, Tatica tatica);
 Jogador* escolherSuplentes(Jogador** copiaPlantel, int* disponiveis, Tatica tatica, int& numSuplentes);
 void imprimirSuplentes(Jogador* suplentes, int numSuplentes);
 
+void escolherJogadorGlobal(Equipa& equipa, int& pos, int& idx);
+void mudarPosicao(Equipa& equipa, int posAtual, int idxJogador, int novaPosicao);
+int escolherNumero(Equipa& equipa, int posicao);
+void listarNumerosLivres(Equipa& equipa, int posicao);
+bool numeroOcupado(Equipa& equipa, int numero) ;
+bool limitePosicaoAtingido(Equipa& equipa, int pos);
+int contarJogadoresPosicao(Equipa& equipa, int pos);
 #endif //EDAP1_EQUIPA_H

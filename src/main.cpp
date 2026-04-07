@@ -9,10 +9,11 @@
 #include "../include/constantes.h"
 #include "../include/lesionarSuspender.h"
 #include "../include/transferencias.h"
+#include "../include/menu.h"
 
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
     srand(time(NULL));
     int tamanho = tamArq("../data/nomes.txt");
     string* nomeJogadores = leituraArq("../data/nomes.txt", tamanho);
@@ -75,13 +76,18 @@ int main() {
 
     ordenarPlantelNumeroJogador(edaFC);
 
-
+    if (argc > 1) {
+        string ficheiroSave = argv[1];
+        cout << "\n[INFO] A tentar carregar save do argumento: " << ficheiroSave << "\n";
+        carregarEquipa(edaFC, jornada, ficheiroSave); // <--- adicionei a jornada aqui
+    }
 
     for (int i=0; i<17; i++ ) {
         adversariosFase2[i] = escolher(adversarios, numJogosPorFase);
         adversariosFase2[17 + i] = adversariosFase2[i];
-
     }
+
+    menuPrincipal(edaFC, jornada);
 
     do {
         recuperarLesionados(edaFC);
@@ -99,7 +105,6 @@ int main() {
             imprimirSuplentes(edaFC.suplentes, edaFC.numSuplentes);
             imprimirJogadoresSuspensos1(edaFC.suspensos, edaFC.numSuspensos);
             imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
-            imprimirMercado(listaTransferencia, totalTransferencias);
             if (edaFC.numSubstituicoes > 0) {
                 cout << "\nSubstituicoes:\n";
                 for (int i = 0; i < edaFC.numSubstituicoes; i++) {
@@ -107,6 +112,7 @@ int main() {
                          << eliminarAcentos(edaFC.entraram[i]) << "\n";
                 }
             }
+            imprimirMercado(listaTransferencia, totalTransferencias);
         }
         imprimirPlantel(edaFC);
         if (jornada > 1) {
@@ -120,6 +126,12 @@ int main() {
             cout << "\n[s] Proxima Jornada\n";
             cout << "[o] Opcoes\n";
             cout << "[t] Transferencias (Contratar)\n";
+            cout << "[1] Aplicar Lesao Manual\n";
+            cout << "[2] Reduzir Lesao Manual\n";
+            cout << "[3] Aplicar Castigo Manual\n";
+            cout << "[4] Reduzir Castigo Manual\n";
+            cout << "[g] Gravar Equipa\n";
+            cout << "[c] Carregar Equipa\n";
             cout << ">> ";
             getline(cin, input);
 
@@ -132,6 +144,30 @@ int main() {
                 imprimirPlantel(edaFC);
                 imprimirMercado(listaTransferencia, totalTransferencias);
             }
+            else if (input == "1" || input == "2" || input == "3" || input == "4") {
+                int numJ, semanas;
+                cout << "Numero do jogador: ";
+                cin >> numJ;
+                cout << "Numero de semanas: ";
+                cin >> semanas;
+                cin.ignore();
+
+                if (input == "1") aplicarLesaoManual(edaFC, numJ, semanas);
+                else if (input == "2") reduzirLesaoManual(edaFC, numJ, semanas);
+                else if (input == "3") aplicarCastigoManual(edaFC, numJ, semanas);
+                else if (input == "4") reduzirCastigoManual(edaFC, numJ, semanas);
+            }else if (input == "g") {
+                string ficheiro;
+                cout << "Nome do ficheiro para gravar (ex: save.txt): ";
+                getline(cin, ficheiro);
+                gravarEquipa(edaFC, jornada, ficheiro); // <--- adicionei a jornada aqui
+            }else if (input == "c") {
+                string ficheiro;
+                cout << "Nome do ficheiro a carregar: ";
+                getline(cin, ficheiro);
+                carregarEquipa(edaFC, jornada, ficheiro); // <--- adicionei a jornada aqui
+            }
+
 
         } while (input != "s");
 
