@@ -90,8 +90,8 @@ int main(int argc, char* argv[]) {
     //menuPrincipal(edaFC, jornada);
 
     do {
-        recuperarLesionados(edaFC);
-        recuperarSuspensos(edaFC);
+        recuperarLesSus(edaFC, lesao);
+        recuperarLesSus(edaFC, suspensao);
 
         cout << "\n******************************\n";
         cout << "* EDA FC - " << jornada << "a Jornada - " << edaFC.pontos << " pontos. *\n";
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
         imprimirPlantel(edaFC);
         if (jornada > 1) {
             imprimirJogadoresSuspensos2(edaFC.suspensos, edaFC.numSuspensos);
-            imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
+            imprimirJogadoresLesionados2(edaFC.lesionados, edaFC.numLesionados);
             imprimirMercado(listaTransferencia, totalTransferencias);
         }
         string input;
@@ -178,10 +178,20 @@ int main(int argc, char* argv[]) {
         while (true) {
             int totalDisponiveis = disponiveis[0] + disponiveis[1] + disponiveis[2] + disponiveis[3];
 
-            if (totalDisponiveis >= 17) break;
+            bool minGR = disponiveis[0] >= 1;
+            bool minDef = disponiveis[1] >= 3;
+            bool minMed = disponiveis[2] >= 2;
+            bool minAva = disponiveis[3] >= 1;
 
-            cout << "\nNao ha jogadores suficientes (minimo 17).\n";
-            cout << "[t] Comprar jogadores\n>> ";
+            if (totalDisponiveis >= 17 && minGR && minDef && minMed && minAva) break;
+
+            cout << "\nNao ha jogadores suficientes para a tatica atual:\n";
+            cout << "GR:  " << disponiveis[0] << " (minimo necessario: " << 1 << ")\n";
+            cout << "DEF: " << disponiveis[1] << " (minimo necessario: " << 3 << ")\n";
+            cout << "MED: " << disponiveis[2] << " (minimo necessario: " << 2<< ")\n";
+            cout << "AVA: " << disponiveis[3] << " (minimo necessario: " << 1 << ")\n";
+            cout << "[t] Comprar jogadores\n";
+            cout << "[o] Alterar tatica\n>> ";
 
             string op;
             getline(cin, op);
@@ -189,6 +199,9 @@ int main(int argc, char* argv[]) {
             if (op == "t") {
                 contratarJogador(edaFC, listaTransferencia, totalTransferencias);
                 ordenarPlantelNumeroJogador(edaFC);
+            }
+            else if (op == "o") {
+                taticaAtual = pedirTatica(taticaAtual);
             }
             disponiveis[0] = edaFC.numJogadores[0];
             disponiveis[1] = edaFC.numJogadores[1];
@@ -214,10 +227,10 @@ int main(int argc, char* argv[]) {
         listaTransferencia = gerarTransferencia(novosCandidatos, 2, listaTransferencia, totalTransferencias);
         delete[] novosCandidatos;
 
-        lesionar(edaFC.titulares, 11);
-        ListaLesionados(edaFC.titulares, 11, edaFC);
-        suspender(edaFC.titulares, 11);
-        ListaSuspensos(edaFC.titulares, 11, edaFC);
+        les_sus(edaFC.titulares, 11, lesao);
+        les_sus(edaFC.titulares, 11, suspensao);
+        ListaLesSus(edaFC.titulares, 11, edaFC, lesao);
+        ListaLesSus(edaFC.titulares, 11, edaFC, suspensao);
         substituicoes(edaFC.titulares, edaFC.suplentes, 11, edaFC.numSuplentes, edaFC);
 
         int lesionadosJornada = edaFC.numLesionados - lesionadosAntes;

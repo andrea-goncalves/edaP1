@@ -24,6 +24,8 @@ Jogador gerarUmJogadorPlantel(string* nomeJogadores, int tamanho, string posicao
     novo.probLes = numAleatorio(0, 15);
     novo.posicao = posicao;
     novo.diasTreino = 0;
+    novo.semanas_ate_retorno_castigo=0;
+    novo.semanas_ate_retorno_castigo=0;
 
 
     return novo;

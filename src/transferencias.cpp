@@ -65,11 +65,11 @@ void imprimirMercado(Jogador* listaTransf, int totalTransf) {
             for (int i = 0; i < totalTransf; i++) {
                 cout << left
                     << setw(6)  << (i + 1)<< "| "
-                    << setw(26) << eliminarAcentos(listaTransf[i].nome) << "| "
-                    << setw(4)  << listaTransf[i].posicao<< "| "
-                    << setw(8)  << listaTransf[i].idade << "| "
-                    << setw(6)  << listaTransf[i].probLes  << "| "
-                    << setw(10) <<listaTransf[i].probSus << "| "
+                    << setw(25) << eliminarAcentos(listaTransf[i].nome) << "| "
+                    << setw(7)  << listaTransf[i].posicao<< "| "
+                    << setw(6)  << listaTransf[i].idade << "| "
+                    << setw(10)  << listaTransf[i].probLes  << "| "
+                    << setw(12) <<listaTransf[i].probSus << "| "
                     << setw(10) << listaTransf[i].qualidade << endl;
             }
         }

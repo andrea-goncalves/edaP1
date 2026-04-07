@@ -39,23 +39,35 @@ void inserirJogador(Jogador** arrayDestino, int& numDestino, Jogador* novoJogado
     numDestino++;
 }
 
-void lesionar(Jogador* titulares, int numTitulares) {
+
+void les_sus(Jogador* titulares, int numTitulares, TipoEfeito tipo) {
     for (int i = 0; i < numTitulares; i++) {
-        titulares[i].semanas_ate_retorno_lesao = 0;
-        int probabilidade = numAleatorio(1, 100);
-        if (probabilidade <= titulares[i].probLes) {
-            titulares[i].semanas_ate_retorno_lesao = numAleatorio(1, 10);
+        int prob = numAleatorio(1, 100);
+
+        if (tipo == lesao) {
+            titulares[i].semanas_ate_retorno_lesao = 0;
+
+            if (prob <= titulares[i].probLes) {
+                titulares[i].semanas_ate_retorno_lesao = numAleatorio(1, 10);
+            }
+        } else {
+            titulares[i].semanas_ate_retorno_castigo = 0;
+
+            if (prob <= titulares[i].probSus) {
+                titulares[i].semanas_ate_retorno_castigo = numAleatorio(1, 10);
+            }
         }
     }
 }
 
 
-void ListaLesionados(Jogador* titulares, int numTitulares, Equipa& equipa) {
+void ListaLesSus(Jogador* titulares, int numTitulares, Equipa& equipa, TipoEfeito tipo) {
     for (int i = 0; i < numTitulares; i++) {
-        if (titulares[i].semanas_ate_retorno_lesao > 0) {
+        int semanas = (tipo == lesao)? titulares[i].semanas_ate_retorno_lesao: titulares[i].semanas_ate_retorno_castigo;
+
+        if (semanas > 0) {
             int pos = getPos(titulares[i].posicao);
             int indexNoPlantel = -1;
-
             for (int j = 0; j < equipa.numJogadores[pos]; j++) {
                 if (equipa.plantel[pos][j].numero == titulares[i].numero) {
                     indexNoPlantel = j;
@@ -63,30 +75,53 @@ void ListaLesionados(Jogador* titulares, int numTitulares, Equipa& equipa) {
                 }
             }
             if (indexNoPlantel == -1) continue;
+            Jogador* novo = new Jogador(equipa.plantel[pos][indexNoPlantel]);
 
-            Jogador* lesionados = new Jogador(equipa.plantel[pos][indexNoPlantel]);
-            lesionados->semanas_ate_retorno_lesao = titulares[i].semanas_ate_retorno_lesao;
-
-            inserirJogador(equipa.lesionados, equipa.numLesionados, lesionados);
-
-            for (int k = indexNoPlantel; k < equipa.numJogadores[pos] - 1; k++)
+            if (tipo == lesao){
+                novo->semanas_ate_retorno_lesao = semanas;
+                inserirJogador(equipa.lesionados, equipa.numLesionados, novo);
+            } else {
+                novo->semanas_ate_retorno_castigo = semanas;
+                inserirJogador(equipa.suspensos, equipa.numSuspensos, novo);
+            }
+            for (int k = indexNoPlantel; k < equipa.numJogadores[pos] - 1; k++) {
                 equipa.plantel[pos][k] = equipa.plantel[pos][k + 1];
+            }
             equipa.numJogadores[pos]--;
         }
     }
 }
-void recuperarLesionados(Equipa& equipa) {
+
+
+void recuperarLesSus(Equipa& equipa, TipoEfeito tipo) {
+    Jogador** lista;
+    int* num;
+
+    if (tipo == lesao) {
+        lista = equipa.lesionados;
+        num = &equipa.numLesionados;
+    } else {
+        lista = equipa.suspensos;
+        num = &equipa.numSuspensos;
+    }
+
     int i = 0;
-    while (i < equipa.numLesionados) {
-        equipa.lesionados[i]->semanas_ate_retorno_lesao--;
-        if (equipa.lesionados[i]->semanas_ate_retorno_lesao <= 0) {
+    while (i < *num) {
+        if (tipo == lesao)
+            lista[i]->semanas_ate_retorno_lesao--;
+        else
+            lista[i]->semanas_ate_retorno_castigo--;
 
-            inserirJogadorNoPlantel(equipa, equipa.lesionados[i]);
-            delete equipa.lesionados[i];
+        int semanas = (tipo == lesao)? lista[i]->semanas_ate_retorno_lesao: lista[i]->semanas_ate_retorno_castigo;
+        if (semanas <= 0) {
 
-            for (int k = i; k < equipa.numLesionados - 1; k++)
-                equipa.lesionados[k] = equipa.lesionados[k + 1];
-            equipa.numLesionados--;
+            inserirJogadorNoPlantel(equipa, lista[i]);
+            delete lista[i];
+
+            for (int k = i; k < *num - 1; k++)
+                lista[k] = lista[k + 1];
+
+            (*num)--;
         } else {
             i++;
         }
@@ -95,6 +130,29 @@ void recuperarLesionados(Equipa& equipa) {
 
 
 void imprimirJogadoresLesionados(Jogador** lesionados, int numeroLesionados) {
+    if (numeroLesionados == 0 || lesionados == nullptr) {
+        cout << "\nNenhum jogador se lesionou nesta jornada.\n";
+        return;
+    }
+    cout << "\nJogadores Lesionados:\n";
+    cout << "Nome                      | N   | Posicao | Idade | ProbLesao | ProbCastigo | Qualidade |Jogos Lesao \n";
+    cout << "-----------------------------------------------------------------------------------------------------------\n";
+    for (int i = 0; i < numeroLesionados; i++) {
+        cout << left
+            << setw(26) << eliminarAcentos(lesionados[i]->nome) << "| "
+            << setw(4)  << lesionados[i]->numero << "| "
+            << setw(8)  << eliminarAcentos(lesionados[i]->posicao) << "| "
+            << setw(6)  << lesionados[i]->idade << "| "
+            << setw(10) << lesionados[i]->probLes<< "| "
+            << setw(12) << lesionados[i]->probSus << "| "
+            << setw(10) << lesionados[i]->qualidade << "| "
+            << setw(10) << lesionados[i]->semanas_ate_retorno_lesao << endl;
+
+    }
+     cout << "----------------------------------------------------------------------------------------------------------\n";
+}
+
+void imprimirJogadoresLesionados2(Jogador** lesionados, int numeroLesionados) {
     if (numeroLesionados == 0 || lesionados == nullptr) {
         cout << "\nNenhum jogador se lesionou nesta jornada.\n";
         return;
@@ -114,63 +172,10 @@ void imprimirJogadoresLesionados(Jogador** lesionados, int numeroLesionados) {
             << setw(10) << lesionados[i]->semanas_ate_retorno_lesao << endl;
 
     }
-     cout << "----------------------------------------------------------------------------------------------------------\n";
+    cout << "----------------------------------------------------------------------------------------------------------\n";
 }
 
 
-void suspender(Jogador* titulares, int numTitulares) {
-    for (int i = 0; i < numTitulares; i++) {
-        titulares[i].semanas_ate_retorno_castigo = 0;
-        int probabilidade = numAleatorio(1, 100);
-        if (probabilidade <= titulares[i].probSus) {
-            titulares[i].semanas_ate_retorno_castigo = numAleatorio(1, 10);
-        }
-    }
-}
-
-
-void ListaSuspensos(Jogador* titulares, int numTitulares, Equipa& equipa) {
-    for (int i = 0; i < numTitulares; i++) {
-        if (titulares[i].semanas_ate_retorno_castigo > 0) {
-            int pos = getPos(titulares[i].posicao);
-            int indexNoPlantel = -1;
-
-            for (int j = 0; j < equipa.numJogadores[pos]; j++) {
-                if (equipa.plantel[pos][j].numero == titulares[i].numero) {
-                    indexNoPlantel = j;
-                    break;
-                }
-            }
-            if (indexNoPlantel == -1) continue;
-
-            Jogador* lesionados = new Jogador(equipa.plantel[pos][indexNoPlantel]);
-            lesionados->semanas_ate_retorno_castigo = titulares[i].semanas_ate_retorno_castigo;
-
-            inserirJogador(equipa.suspensos, equipa.numSuspensos, lesionados);
-
-            for (int k = indexNoPlantel; k < equipa.numJogadores[pos] - 1; k++)
-                equipa.plantel[pos][k] = equipa.plantel[pos][k + 1];
-            equipa.numJogadores[pos]--;
-        }
-    }
-}
-void recuperarSuspensos(Equipa& equipa) {
-    int i = 0;
-    while (i < equipa.numSuspensos) {
-        equipa.suspensos[i]->semanas_ate_retorno_castigo--;
-        if (equipa.suspensos[i]->semanas_ate_retorno_castigo <= 0) {
-
-            inserirJogadorNoPlantel(equipa, equipa.suspensos[i]);
-            delete equipa.suspensos[i];
-
-            for (int k = i; k < equipa.numSuspensos - 1; k++)
-                equipa.suspensos[k] = equipa.suspensos[k + 1];
-            equipa.numSuspensos--;
-        } else {
-            i++;
-        }
-    }
-}
 
 void imprimirJogadoresSuspensos1(Jogador** suspensos, int numeroSuspensos) {
     if (numeroSuspensos== 0 || suspensos == nullptr) {
@@ -178,7 +183,7 @@ void imprimirJogadoresSuspensos1(Jogador** suspensos, int numeroSuspensos) {
         return;
     }
     cout << "\nJogadores Suspensos:\n";
-    cout << "Nome                      | N   | Posicao | Idade | ProbLesao | ProbCastigo | Qualidade |Jogos Restantes \n";
+    cout << "Nome                      | N   | Posicao | Idade | ProbLesao | ProbCastigo | Qualidade |Jogos Castigo \n";
     cout << "-----------------------------------------------------------------------------------------------------------\n";
     for (int i = 0; i < numeroSuspensos; i++) {
         cout << left
