@@ -8,6 +8,7 @@
 #include "../include/utils.h"
 #include "../include/constantes.h"
 #include "../include/lesionarSuspender.h"
+#include "../include/transferencias.h"
 
 using namespace std;
 
@@ -25,11 +26,12 @@ int main() {
     }
     equipasAdversarias* adversariosFase2 = new equipasAdversarias[numEquipas];
 
+    Jogador* listaTransferencia = nullptr;
+    int totalTransferencias = 0;
+
     int jornada = 1;
     int golosEDAFC = 0;
     int golosAdversario = 0;
-
-
 
 
     int numGR = numeroGR();
@@ -97,6 +99,7 @@ int main() {
             imprimirSuplentes(edaFC.suplentes, edaFC.numSuplentes);
             imprimirJogadoresSuspensos1(edaFC.suspensos, edaFC.numSuspensos);
             imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
+            imprimirMercado(listaTransferencia, totalTransferencias);
             if (edaFC.numSubstituicoes > 0) {
                 cout << "\nSubstituicoes:\n";
                 for (int i = 0; i < edaFC.numSubstituicoes; i++) {
@@ -109,17 +112,25 @@ int main() {
         if (jornada > 1) {
             imprimirJogadoresSuspensos2(edaFC.suspensos, edaFC.numSuspensos);
             imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
+            imprimirMercado(listaTransferencia, totalTransferencias);
         }
         string input;
 
         do {
             cout << "\n[s] Proxima Jornada\n";
             cout << "[o] Opcoes\n";
+            cout << "[t] Transferencias (Contratar)\n";
             cout << ">> ";
             getline(cin, input);
 
             if (input == "o") {
                 taticaAtual = pedirTatica(taticaAtual);
+            }
+            else if (input == "t") {
+                contratarJogador(edaFC, listaTransferencia, totalTransferencias);
+                ordenarPlantelNumeroJogador(edaFC);
+                imprimirPlantel(edaFC);
+                imprimirMercado(listaTransferencia, totalTransferencias);
             }
 
         } while (input != "s");
@@ -128,12 +139,28 @@ int main() {
         Jogador** copiaPlantel = copiarPlantel(edaFC, disponiveis);
         ordenarPlantelQualidadeJogador(copiaPlantel, disponiveis);
 
-        int totalDisponiveis = disponiveis[0] + disponiveis[1] + disponiveis[2] + disponiveis[3];
-        if (totalDisponiveis < 17) {
+        while (true) {
+            int totalDisponiveis = disponiveis[0] + disponiveis[1] + disponiveis[2] + disponiveis[3];
+
+            if (totalDisponiveis >= 17) break;
+
             cout << "\nNao ha jogadores suficientes (minimo 17).\n";
-            cout << "Deve contratar jogadores na lista de transferencias.\n";
-            continue;
+            cout << "[t] Comprar jogadores\n>> ";
+
+            string op;
+            getline(cin, op);
+
+            if (op == "t") {
+                contratarJogador(edaFC, listaTransferencia, totalTransferencias);
+                ordenarPlantelNumeroJogador(edaFC);
+            }
+            disponiveis[0] = edaFC.numJogadores[0];
+            disponiveis[1] = edaFC.numJogadores[1];
+            disponiveis[2] = edaFC.numJogadores[2];
+            disponiveis[3] = edaFC.numJogadores[3];
         }
+
+
 
         if (edaFC.titulares != nullptr) delete[] edaFC.titulares;
         if (edaFC.suplentes != nullptr) delete[] edaFC.suplentes;
@@ -147,6 +174,10 @@ int main() {
         edaFC.titulares = escolherTitulares(copiaPlantel, disponiveis, taticaUsada);
         edaFC.suplentes = escolherSuplentes(copiaPlantel, disponiveis, taticaUsada, edaFC.numSuplentes);
         edaFC.numSubstituicoes = 0;
+        Jogador* novosCandidatos = criarAleatorio(nomeJogadores, tamanho, 2);
+        listaTransferencia = gerarTransferencia(novosCandidatos, 2, listaTransferencia, totalTransferencias);
+        delete[] novosCandidatos;
+
         lesionar(edaFC.titulares, 11);
         ListaLesionados(edaFC.titulares, 11, edaFC);
         suspender(edaFC.titulares, 11);
@@ -192,7 +223,7 @@ int main() {
     delete[] adversarios;
     delete[] adversariosFase2;
     delete[] adversariosNomes;
-
+    delete[] listaTransferencia;
 
     return 0;
 }

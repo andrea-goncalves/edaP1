@@ -19,7 +19,7 @@ Jogador gerarUmJogadorPlantel(string* nomeJogadores, int tamanho, string posicao
     novo.nome = nomeAleatorio(nomeJogadores,tamanho);
     novo.idade = numAleatorio(18, 40);
     novo.qualidade = numAleatorio(0, 100);
-    novo.numero = numeroCamisa;//após estar criado o plantel, devemos verificar numeros repetidos
+    novo.numero = numeroCamisa;
     novo.probSus = numAleatorio(0, 20);
     novo.probLes = numAleatorio(0, 15);
     novo.posicao = posicao;
