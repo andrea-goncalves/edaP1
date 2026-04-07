@@ -1,0 +1,8 @@
+//
+// Created by andre on 07/04/2026.
+//
+
+#ifndef EDAP1_TRANSFERENCIAS_H
+#define EDAP1_TRANSFERENCIAS_H
+
+#endif //EDAP1_TRANSFERENCIAS_H

@@ -18,6 +18,7 @@ struct Equipa {
    Jogador* suspensos[30];
    int numLesionados = 0;
    int numSuspensos = 0;
+   int numSuplentes = 0;
    int pontos;
    Tatica tatica;
    int numJogadores[4];
@@ -38,7 +39,7 @@ Jogador** copiarPlantel(Equipa& equipa, int* disponiveis) ;
 int getPos(std::string posicao);
 Jogador* escolherTitulares(Jogador** copiaPlantel, int* disponiveis, Tatica& tatica);
 void imprimirTitulares(Jogador* titulares, Tatica tatica);
-Jogador* escolherSuplentes(Jogador** copiaPlantel, int* disponiveis, Tatica tatica);
-void imprimirSuplentes(Jogador* suplentes);
+Jogador* escolherSuplentes(Jogador** copiaPlantel, int* disponiveis, Tatica tatica, int& numSuplentes);
+void imprimirSuplentes(Jogador* suplentes, int numSuplentes);
 
 #endif //EDAP1_EQUIPA_H

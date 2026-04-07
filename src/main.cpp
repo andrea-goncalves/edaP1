@@ -6,6 +6,7 @@
 #include "../include/equipa.h"
 #include "../include/equipasAdversarias.h"
 #include "../include/utils.h"
+#include "../include/constantes.h"
 #include "../include/lesionarSuspender.h"
 
 using namespace std;
@@ -30,19 +31,16 @@ int main() {
 
 
 
-    int numeroCamisaGR[3] = { 1, 13, 30 };
-    int numeroCamisaDEF[10] = { 2, 3, 4, 5, 12, 15, 22, 24, 25, 26 };
-    int numeroCamisaMED[10] = { 6, 8, 10, 14, 16, 17, 20, 21, 23, 28 };
-    int numeroCamisaAVA[7] = { 7, 9, 11, 18, 19, 27, 29 };
+
     int numGR = numeroGR();
     int numDEF = numeroDEF();
     int numMED = numeroMED();
     int numAVA = numeroAVA();
     int numJogadorPlantel = numGR + numDEF + numMED + numAVA;
-    Jogador* gr = criarGR(nomeJogadores, tamanho, numGR, numeroCamisaGR);
-    Jogador* def = criarDEF(nomeJogadores, tamanho, numDEF, numeroCamisaDEF);
-    Jogador* med = criarMED(nomeJogadores, tamanho, numMED, numeroCamisaMED);
-    Jogador* ava = criarAVA(nomeJogadores, tamanho, numAVA, numeroCamisaAVA);
+    Jogador* gr  = criarJogadores(nomeJogadores, tamanho, numGR,  "GR",  CAMISAS_GR,  3);
+    Jogador* def = criarJogadores(nomeJogadores, tamanho, numDEF, "DEF", CAMISAS_DEF, 10);
+    Jogador* med = criarJogadores(nomeJogadores, tamanho, numMED, "MED", CAMISAS_MED, 10);
+    Jogador* ava = criarJogadores(nomeJogadores, tamanho, numAVA, "AVA", CAMISAS_AVA, 7);
 
     Equipa edaFC;
     edaFC.nome="EDA FC";
@@ -96,7 +94,7 @@ int main() {
             cout << "Resultado Anterior\n";
             cout << "Resultado: EDA FC:" << golosEDAFC << " - " << eliminarAcentos(adversariosFase2[jornada-2].nome) << ":" << golosAdversario << "\n";
             imprimirTitulares(edaFC.titulares, taticaUsada);
-            imprimirSuplentes(edaFC.suplentes);
+            imprimirSuplentes(edaFC.suplentes, edaFC.numSuplentes);
             imprimirJogadoresSuspensos1(edaFC.suspensos, edaFC.numSuspensos);
             imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
             if (edaFC.numSubstituicoes > 0) {
@@ -130,6 +128,13 @@ int main() {
         Jogador** copiaPlantel = copiarPlantel(edaFC, disponiveis);
         ordenarPlantelQualidadeJogador(copiaPlantel, disponiveis);
 
+        int totalDisponiveis = disponiveis[0] + disponiveis[1] + disponiveis[2] + disponiveis[3];
+        if (totalDisponiveis < 17) {
+            cout << "\nNao ha jogadores suficientes (minimo 17).\n";
+            cout << "Deve contratar jogadores na lista de transferencias.\n";
+            continue;
+        }
+
         if (edaFC.titulares != nullptr) delete[] edaFC.titulares;
         if (edaFC.suplentes != nullptr) delete[] edaFC.suplentes;
 
@@ -137,21 +142,23 @@ int main() {
         int suspensosAntes = edaFC.numSuspensos;
 
         taticaUsada = taticaAtual;
+
+
         edaFC.titulares = escolherTitulares(copiaPlantel, disponiveis, taticaUsada);
-        edaFC.suplentes = escolherSuplentes(copiaPlantel, disponiveis, taticaUsada);
+        edaFC.suplentes = escolherSuplentes(copiaPlantel, disponiveis, taticaUsada, edaFC.numSuplentes);
         edaFC.numSubstituicoes = 0;
         lesionar(edaFC.titulares, 11);
         ListaLesionados(edaFC.titulares, 11, edaFC);
         suspender(edaFC.titulares, 11);
         ListaSuspensos(edaFC.titulares, 11, edaFC);
-        substituicoes(edaFC.titulares, edaFC.suplentes, 11, 6, edaFC);
+        substituicoes(edaFC.titulares, edaFC.suplentes, 11, edaFC.numSuplentes, edaFC);
 
         int lesionadosJornada = edaFC.numLesionados - lesionadosAntes;
         int suspensosJornada = edaFC.numSuspensos - suspensosAntes;
 
 
         if (verificarDerrota(lesionadosJornada, suspensosJornada, edaFC.numSubstituicoes)) {
-            cout << "\n[DERROTA] EDA FC nao tem jogadores suficientes!\n";
+            cout << "\n EDA FC nao tem jogadores suficientes!\n";
             golosEDAFC = 0;
             golosAdversario = numAleatorio(1, 5);
         } else {

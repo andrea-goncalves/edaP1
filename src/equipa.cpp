@@ -7,6 +7,8 @@
 #include "../include/jogador.h"
 #include "../include/ficheiros.h"
 #include "../include/utils.h"
+#include "../include/constantes.h"
+
 using namespace std;
 
 Jogador** gerarPlantel(Jogador* gr, Jogador* def, Jogador* med, Jogador* ava, int numGR, int numDEF, int numMED, int numAVA) {
@@ -171,9 +173,9 @@ Jogador* escolherTitulares(Jogador** copiaPlantel, int* disponiveis, Tatica& tat
         bool valido = true;
         for (int i = 0; i < 4; i++) {
             if (disponiveis[i] < tatica.titulares[i]) {
-                cout << "\n[AVISO CRITICO] Nao existem jogadores suficientes na posicao "
-                     << i << " Altere a tatica\n";
-                tatica = pedirTatica(tatica);
+                cout << "\nNao existem jogadores suficientes na posicao "
+                     << i << " Altere a tatica ou Compre jogadores\n";
+                tatica = pedirTatica(tatica); //colocar aqui el menu que jesus hizo
                 valido = false;
                 break;
             }
@@ -206,7 +208,7 @@ int getPos(string posicao) {
     return 3;
 }
 
-Jogador* escolherSuplentes(Jogador** copiaPlantel, int* disponiveis, Tatica tatica) {
+Jogador* escolherSuplentes(Jogador** copiaPlantel, int* disponiveis, Tatica tatica, int& numSuplentes) {
 
     Jogador* suplentes = new Jogador[6];
     int idx = 0;
@@ -253,6 +255,7 @@ Jogador* escolherSuplentes(Jogador** copiaPlantel, int* disponiveis, Tatica tati
             }
         }
     }
+    numSuplentes = idx;
     return suplentes;
 }
 
@@ -288,12 +291,12 @@ void imprimirTitulares(Jogador* titulares, Tatica tatica) {
 }
 
 
-void imprimirSuplentes(Jogador* suplentes) {
+void imprimirSuplentes(Jogador* suplentes, int numSuplentes) {
     cout << "\n*********** Suplentes: ***********\n";
     cout << "Nome                      | N   | Posicao | Idade | ProbLesao | ProbCastigo | Qualidade \n";
     cout << "-----------------------------------------------------------------------------------------\n";
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < numSuplentes; i++) {
 
         if (i > 0 && suplentes[i].posicao != suplentes[i-1].posicao) {
             cout << endl;

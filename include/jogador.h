@@ -4,6 +4,7 @@
 #define EDAP1_JOGADOR_H
 #include <string>
 
+
 struct Jogador {
     int numero;
     std::string nome;
@@ -24,10 +25,7 @@ int numeroGR();
 int numeroDEF();
 int numeroMED();
 int numeroAVA();
-Jogador* criarGR(std::string* nomeJogadores, int tamanho, int numGR, int* numeroCamisaGR);
-Jogador* criarDEF(std::string* nomeJogadores, int tamanho, int numDEF, int* numeroCamisaDEF);
-Jogador* criarMED(std::string* nomeJogadores, int tamanho, int numMED, int* numeroCamisaMED);
-Jogador* criarAVA(std::string* nomeJogadores, int tamanho, int numAVA, int* numeroCamisaAVA);
-
+Jogador* criarJogadores(std::string* nomeJogadores, int tamanho, int numJogadores, const std::string& posicao, const int* camisas, int numCamisas);
+Jogador* criarAleatorio(std::string* nomeJogadores, int tamanho, int numJogadores);
 
 #endif //EDAP1_JOGADOR_H

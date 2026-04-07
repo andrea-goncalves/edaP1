@@ -3,6 +3,8 @@
 #include <iomanip>
 #include "../include/jogador.h"
 #include "../include/utils.h"
+#include "../include/constantes.h"
+
 using namespace std;
 
 string nomeAleatorio(string* nomeJogadores, int tamanho) {
@@ -49,86 +51,32 @@ bool compararNumJogador(Jogador* array, int numComparar, int tamanho) {
     return false;
 }
 
-Jogador* criarGR(string* nomeJogadores, int tamanho, int numGR, int* numeroCamisaGR) {
-    Jogador* gr = new Jogador[numGR];
-    string posicao = "GR";
 
-    for (int i = 0; i < numGR; i++) {
+Jogador* criarJogadores(string* nomeJogadores, int tamanho, int numJogadores, const string& posicao, const int* camisas, int numCamisas) {
+    Jogador* jogadores = new Jogador[numJogadores];
+
+    for (int i = 0; i < numJogadores; i++) {
         bool numeroRepetido = true;
         int num = 0;
 
-        while (numeroRepetido == true) {
-            int numero = numAleatorio(0, 2);
-            num = numeroCamisaGR[numero];
-
-            numeroRepetido = compararNumJogador(gr, num, i);
+        while (numeroRepetido) {
+            int indice = numAleatorio(0, numCamisas - 1);
+            num = camisas[indice];
+            numeroRepetido = compararNumJogador(jogadores, num, i);
         }
 
-
-        Jogador jogador = gerarUmJogadorPlantel(nomeJogadores, tamanho, posicao, num);
-        gr[i] = jogador;
+        jogadores[i] = gerarUmJogadorPlantel(nomeJogadores, tamanho, posicao, num);
     }
-
-    return gr;
+    return jogadores;
 }
 
-Jogador* criarDEF(string* nomeJogadores, int tamanho, int numDEF, int* numeroCamisaDEF) {
-    Jogador* def = new Jogador[numDEF];
-    string posicao = "DEF";
+Jogador* criarAleatorio(string* nomeJogadores, int tamanho, int numJogadores) {
+    Jogador* aleatorio = new Jogador[numJogadores];
+    string posicoes[] = {"GR", "DEF", "MED", "AVA"};
 
-    for (int i = 0; i < numDEF; i++) {
-        bool numeroRepetido = true;
-        int num = 0;
-
-        while (numeroRepetido == true) {
-            int numero = numAleatorio(0, 9);
-            num = numeroCamisaDEF[numero];
-
-            numeroRepetido = compararNumJogador(def, num, i);
-        }
-
-
-        Jogador jogador = gerarUmJogadorPlantel(nomeJogadores, tamanho, posicao, num);
-        def[i] = jogador;
+    for (int i = 0; i < numJogadores; i++) {
+        string pos = posicoes[numAleatorio(0, 3)];
+        aleatorio[i] = gerarUmJogadorPlantel(nomeJogadores, tamanho, pos, 0);
     }
-
-    return def;
+    return aleatorio;
 }
-
-Jogador* criarMED(string* nomeJogadores, int tamanho, int numMED, int* numeroCamisaMED) {
-    Jogador* med = new Jogador[numMED];
-    string posicao = "MED";
-    for (int i = 0; i < numMED; i++) {
-        bool numeroRepetido = true;
-        int num = 0;
-        while (numeroRepetido == true) {
-            int numero = numAleatorio(0, 9);
-            num = numeroCamisaMED[numero];
-
-            numeroRepetido = compararNumJogador(med, num, i);
-        }
-
-        Jogador jogador = gerarUmJogadorPlantel(nomeJogadores, tamanho, posicao, num);
-        med[i] = jogador;
-    }
-    return med;
-}
-
-Jogador* criarAVA(string* nomeJogadores, int tamanho, int numAVA, int* numeroCamisaAVA) {
-    Jogador* ava = new Jogador[numAVA];
-    string posicao = "AVA";
-    for (int i = 0; i < numAVA; i++) {
-        bool numeroRepetido = true;
-        int num = 0;
-        while (numeroRepetido == true) {
-            int numero = numAleatorio(0, 6);
-            num = numeroCamisaAVA[numero];
-            numeroRepetido = compararNumJogador(ava, num, i);
-        }
-
-        Jogador jogador = gerarUmJogadorPlantel(nomeJogadores, tamanho, posicao, num);
-        ava[i] = jogador;
-    }
-    return ava;
-}
-

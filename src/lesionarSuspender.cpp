@@ -9,6 +9,8 @@
 #include "../include/ficheiros.h"
 #include "../include/utils.h"
 #include "../include/lesionarSuspender.h"
+#include "../include/constantes.h"
+
 using namespace std;
 
 void inserirJogadorNoPlantel(Equipa& equipa, Jogador* novo) {
@@ -221,7 +223,7 @@ void imprimirJogadoresSuspensos2(Jogador** suspensos, int numeroSuspensos) {
 
 void substituicoes(Jogador* titulares, Jogador* suplentes, int numTitulares, int numSuplentes, Equipa& equipa) {
     int numSubstituicoes = 0;
-    bool usado[6] = {false, false, false, false, false, false};
+    bool usado[6] = {false};
 
     for (int i = 0; i < numTitulares && numSubstituicoes < 3; i++) {
         if (titulares[i].semanas_ate_retorno_lesao > 0) {
@@ -230,7 +232,7 @@ void substituicoes(Jogador* titulares, Jogador* suplentes, int numTitulares, int
             int melhorSuplente = -1;
             int melhorQualidade = -1;
 
-            for (int s = 0; s < 6; s++) {
+            for (int s = 0; s < numSuplentes; s++) {
                 if (!usado[s] && suplentes[s].posicao == titulares[i].posicao && suplentes[s].qualidade > melhorQualidade){
                     melhorQualidade = suplentes[s].qualidade;
                     melhorSuplente = s;
