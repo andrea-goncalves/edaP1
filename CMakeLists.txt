@@ -20,4 +20,6 @@ add_executable(edaP1 src/main.cpp
         src/transferencias.cpp
         include/transferencias.h
         src/menu.cpp
-        include/menu.h)
+        include/menu.h
+        src/simulacao.cpp
+        include/simulacao.h)
