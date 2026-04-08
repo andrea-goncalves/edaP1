@@ -48,13 +48,13 @@ void les_sus(Jogador* titulares, int numTitulares, TipoEfeito tipo) {
             titulares[i].semanas_ate_retorno_lesao = 0;
 
             if (prob <= titulares[i].probLes) {
-                titulares[i].semanas_ate_retorno_lesao = numAleatorio(1, 10);
+                titulares[i].semanas_ate_retorno_lesao = numAleatorio(1, 10)+1;
             }
         } else {
             titulares[i].semanas_ate_retorno_castigo = 0;
 
             if (prob <= titulares[i].probSus) {
-                titulares[i].semanas_ate_retorno_castigo = numAleatorio(1, 10);
+                titulares[i].semanas_ate_retorno_castigo = numAleatorio(1, 10)+1;
             }
         }
     }

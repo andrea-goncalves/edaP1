@@ -202,11 +202,11 @@ void temporada(Equipa& edaFC, int argc, char* argv[]) {
 
             if (totalDisponiveis >= 17 && minGR && minDef && minMed && minAva) break;
 
-            cout << "\nNao ha jogadores suficientes para a tatica atual:\n";
-            cout << "GR:  " << disponiveis[0] << " (minimo necessario: " << 1 << ")\n";
-            cout << "DEF: " << disponiveis[1] << " (minimo necessario: " << 3 << ")\n";
-            cout << "MED: " << disponiveis[2] << " (minimo necessario: " << 2<< ")\n";
-            cout << "AVA: " << disponiveis[3] << " (minimo necessario: " << 1 << ")\n";
+            cout << "\nNao ha jogadores suficientes no plantel (min 17):\n";
+            cout << "GR:  " << disponiveis[0] << " (minimo necessario: " << 2 << ")\n";
+            cout << "DEF: " << disponiveis[1] << " (minimo necessario: " << 5 << ")\n";
+            cout << "MED: " << disponiveis[2] << " (minimo necessario: " << 4<< ")\n";
+            cout << "AVA: " << disponiveis[3] << " (minimo necessario: " << 2 << ")\n";
             cout << "[t] Comprar jogadores\n";
             cout << "[o] Alterar tatica\n>> ";
 
