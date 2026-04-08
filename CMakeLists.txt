@@ -22,4 +22,4 @@ add_executable(edaP1 src/main.cpp
         src/menu.cpp
         include/menu.h
         src/campeonato.cpp
-        src/campeonato.h)
+        include/campeonato.h)
