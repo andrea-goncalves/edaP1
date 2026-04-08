@@ -22,6 +22,7 @@ void imprimirJogadoresSuspensos1(Jogador** suspensos, int numeroSuspensos);
 void imprimirJogadoresSuspensos2(Jogador** suspensos, int numeroSuspensos);
 
 void substituicoes(Jogador* titulares, Jogador* suplentes, int numTitulares, int numSuplentes, Equipa& equipa);
+
 bool verificarDerrota(int lesionadosJornada, int suspensosJornada, int substituicoesJornada);
 
 void aplicarLesaoManual(Equipa& equipa, int numeroJogador, int semanas);

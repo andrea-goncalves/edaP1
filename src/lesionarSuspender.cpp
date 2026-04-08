@@ -225,7 +225,6 @@ void imprimirJogadoresSuspensos2(Jogador** suspensos, int numeroSuspensos) {
     cout << "-----------------------------------------------------------------------------------------------------------------------\n";
 }
 
-
 void substituicoes(Jogador* titulares, Jogador* suplentes, int numTitulares, int numSuplentes, Equipa& equipa) {
     int numSubstituicoes = 0;
     bool usado[6] = {false};

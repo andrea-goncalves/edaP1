@@ -126,6 +126,12 @@ void temporada(Equipa& edaFC, int argc, char* argv[]) {
             }
             imprimirMercado(listaTransferencia, totalTransferencias);
         }
+        /////////////////////////////////
+        cout<<edaFC.numJogadores[0]<<endl;
+        cout<<edaFC.numJogadores[1]<<endl;
+        cout<<edaFC.numJogadores[2]<<endl;
+        cout<<edaFC.numJogadores[3]<<endl;
+        /////////////////////////////////
         imprimirPlantel(edaFC);
         if (jornada > 1) {
             imprimirJogadoresSuspensos2(edaFC.suspensos, edaFC.numSuspensos);
@@ -231,9 +237,6 @@ void temporada(Equipa& edaFC, int argc, char* argv[]) {
             edaFC.suplentes = nullptr;
         }
 
-        int lesionadosAntes = edaFC.numLesionados;
-        int suspensosAntes = edaFC.numSuspensos;
-
         taticaUsada = taticaAtual;
 
         edaFC.titulares = escolherTitulares(copiaPlantel, disponiveis, taticaUsada);
@@ -244,14 +247,19 @@ void temporada(Equipa& edaFC, int argc, char* argv[]) {
         listaTransferencia = gerarTransferencia(novosCandidatos, 2, listaTransferencia, totalTransferencias);
         delete[] novosCandidatos;
 
+        int lesionadosAntes = edaFC.numLesionados;
+        int suspensosAntes = edaFC.numSuspensos;
+
+
         les_sus(edaFC.titulares, 11, lesao);
         les_sus(edaFC.titulares, 11, suspensao);
         ListaLesSus(edaFC.titulares, 11, edaFC, lesao);
         ListaLesSus(edaFC.titulares, 11, edaFC, suspensao);
-        substituicoes(edaFC.titulares, edaFC.suplentes, 11, edaFC.numSuplentes, edaFC);
 
         int lesionadosJornada = edaFC.numLesionados - lesionadosAntes;
         int suspensosJornada = edaFC.numSuspensos - suspensosAntes;
+
+        substituicoes(edaFC.titulares, edaFC.suplentes, 11, 6, edaFC);
 
 
         if (verificarDerrota(lesionadosJornada, suspensosJornada, edaFC.numSubstituicoes)) {
