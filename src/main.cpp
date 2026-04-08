@@ -21,11 +21,27 @@ int main(int argc, char* argv[]) {
     int numJogosPorFase= 17;
     int numEquipas=tamArq("../data/equipas.txt") ;
     string*adversariosNomes= leituraArq("../data/equipas.txt", numEquipas);
-    equipasAdversarias* adversarios = new equipasAdversarias[numEquipas];
-    for (int i = 0; i < numEquipas; i++) {
-        adversarios[i].nome = adversariosNomes[i];
+    // equipasAdversarias* adversarios = new equipasAdversarias[numEquipas];
+    // for (int i = 0; i < numEquipas; i++) {
+    //     adversarios[i].nome = adversariosNomes[i];
+    // }
+    //equipasAdversarias* adversariosFase2 = new equipasAdversarias[numEquipas];
+
+    /**
+     *criação das 17 equipes adversárias
+     */
+    Equipa adversarios [NUMERO_ADVERSARIOS];
+    for (int i= 0; i < NUMERO_ADVERSARIOS; i++) {
+        int indice = numAleatorio(0,numEquipas - 1);
+        adversarios[i].nome = adversariosNomes[indice];
+
+        string temp = adversariosNomes[indice];
+        adversariosNomes[indice] = adversariosNomes[numEquipas - 1];
+        adversariosNomes[numEquipas - 1] = temp;
+
+        numEquipas--;
     }
-    equipasAdversarias* adversariosFase2 = new equipasAdversarias[numEquipas];
+
 
     Jogador* listaTransferencia = nullptr;
     int totalTransferencias = 0;
@@ -65,6 +81,37 @@ int main(int argc, char* argv[]) {
     Tatica taticaAtual;
     Tatica taticaUsada;
 
+    for (int i = 0; i < NUMERO_ADVERSARIOS; i++) {
+        int numGR = numeroGR();
+        int numDEF = numeroDEF();
+        int numMED = numeroMED();
+        int numAVA = numeroAVA();
+        int numJogadorPlantel = numGR + numDEF + numMED + numAVA;
+        Jogador* gr  = criarJogadores(nomeJogadores, tamanho, numGR,  "GR",  CAMISAS_GR,  3);
+        Jogador* def = criarJogadores(nomeJogadores, tamanho, numDEF, "DEF", CAMISAS_DEF, 10);
+        Jogador* med = criarJogadores(nomeJogadores, tamanho, numMED, "MED", CAMISAS_MED, 10);
+        Jogador* ava = criarJogadores(nomeJogadores, tamanho, numAVA, "AVA", CAMISAS_AVA, 7);
+
+        adversarios[i].numJogadores[0] = numGR;
+        adversarios[i].numJogadores[1] = numDEF;
+        adversarios[i].numJogadores[2] = numMED;
+        adversarios[i].numJogadores[3] = numAVA;
+        adversarios[i].plantel=gerarPlantel(gr, def, med, ava, numGR, numDEF, numMED, numAVA);
+        adversarios[i].pontos = 0;
+        adversarios[i].numLesionados = 0;
+        adversarios[i].numSuspensos = 0;
+
+        delete[] gr;
+        delete[] def;
+        delete[] med;
+        delete[] ava;
+
+        for (int j = 0; j < 30; j++) {
+            adversarios[i].lesionados[j] = nullptr;
+            adversarios[i].suspensos[j] = nullptr;
+        }
+    }
+
 
 
     cout << numJogadorPlantel << endl;
@@ -82,10 +129,10 @@ int main(int argc, char* argv[]) {
         carregarEquipa(edaFC, jornada, ficheiroSave); // <--- adicionei a jornada aqui
     }
 
-    for (int i=0; i<17; i++ ) {
-        adversariosFase2[i] = escolher(adversarios, numJogosPorFase);
-        adversariosFase2[17 + i] = adversariosFase2[i];
-    }
+    // for (int i=0; i<17; i++ ) {
+    //     adversariosFase2[i] = escolher(adversarios, numJogosPorFase);
+    //     adversariosFase2[17 + i] = adversariosFase2[i];
+    // }
 
     //menuPrincipal(edaFC, jornada);
 
@@ -100,7 +147,7 @@ int main(int argc, char* argv[]) {
         if (jornada > 1) {
 
             cout << "Resultado Anterior\n";
-            cout << "Resultado: EDA FC:" << golosEDAFC << " - " << eliminarAcentos(adversariosFase2[jornada-2].nome) << ":" << golosAdversario << "\n";
+           // cout << "Resultado: EDA FC:" << golosEDAFC << " - " << eliminarAcentos(adversariosFase2[jornada-2].nome) << ":" << golosAdversario << "\n";
             imprimirTitulares(edaFC.titulares, taticaUsada);
             imprimirSuplentes(edaFC.suplentes, edaFC.numSuplentes);
             imprimirJogadoresSuspensos1(edaFC.suspensos, edaFC.numSuspensos);
@@ -257,7 +304,7 @@ int main(int argc, char* argv[]) {
     delete[] ava;
     delete[] nomeJogadores;
     delete[] adversarios;
-    delete[] adversariosFase2;
+    // delete[] adversariosFase2;
     delete[] adversariosNomes;
     delete[] listaTransferencia;
 
