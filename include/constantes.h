@@ -7,6 +7,8 @@ constexpr int MINIMO_JOGADORES = 20;
 constexpr int MAXIMO_JOGADORES = 30;
 constexpr int MAXIMO_ADD_TRANSFERENCIA = 2;
 
+constexpr int NUMERO_ADVERSARIOS = 17;
+
 inline constexpr int CAMISAS_GR[3]   = { 1, 13, 30 };
 inline constexpr int CAMISAS_DEF[10] = { 2, 3, 4, 5, 12, 15, 22, 24, 25, 26 };
 inline constexpr int CAMISAS_MED[10] = { 6, 8, 10, 14, 16, 17, 20, 21, 23, 28 };
