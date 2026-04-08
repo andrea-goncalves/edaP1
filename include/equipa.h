@@ -28,6 +28,7 @@ struct Equipa {
    std::string sairam[11];
    std::string entraram[11];
    int numSubstituicoes = 0;
+   int saldoGols;
 };
 
 
