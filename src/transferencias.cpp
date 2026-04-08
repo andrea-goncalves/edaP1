@@ -57,23 +57,30 @@ void imprimirMercado(Jogador* listaTransf, int totalTransf) {
 
         cout << "\n**********************\n";
         cout << "Transferencias: \n";
-        cout << "| N   |Nome                      |Posicao | Idade | ProbLesao | ProbCastigo | Qualidade \n";
-        cout << "-----------------------------------------------------------------------------------------\n";
+        cout << setw(5) << "N" << " |"
+                << setw(30)<< "Nome" << " |"
+                << setw(10) << "Posicao" << " |"
+                << setw(8) << "Idade" << " |"
+                << setw(15) << "ProbLesao" << " |"
+                << setw(15) << "ProbCastigo" << " |"
+                << setw(10) << "Qualidade"
+                << endl;
+        cout << "--------------------------------------------------------------------------------------------------------\n";
         if (totalTransf == 0 || listaTransf == nullptr) {
             cout << "Nenhum jogador disponivel no mercado.\n";
         } else {
             for (int i = 0; i < totalTransf; i++) {
                 cout << left
                     << setw(6)  << (i + 1)<< "| "
-                    << setw(26) << eliminarAcentos(listaTransf[i].nome) << "| "
-                    << setw(4)  << listaTransf[i].posicao<< "| "
+                    << setw(30) << eliminarAcentos(listaTransf[i].nome) << "| "
+                    << setw(10)  << listaTransf[i].posicao<< "| "
                     << setw(8)  << listaTransf[i].idade << "| "
-                    << setw(6)  << listaTransf[i].probLes  << "| "
-                    << setw(10) <<listaTransf[i].probSus << "| "
+                    << setw(15)  << listaTransf[i].probLes  << "| "
+                    << setw(15) <<listaTransf[i].probSus << "| "
                     << setw(10) << listaTransf[i].qualidade << endl;
             }
         }
-            cout << "-----------------------------------------------------------------------------------------\n";
+            cout << "--------------------------------------------------------------------------------------------------------\n";
 }
 
 
@@ -167,7 +174,6 @@ bool removerJogadorPlantel(Equipa &equipe, Jogador* &listaTransferencia, int &to
             }
         }
     }
-
     return false;
 }
 
