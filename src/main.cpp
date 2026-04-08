@@ -10,6 +10,7 @@
 #include "../include/lesionarSuspender.h"
 #include "../include/transferencias.h"
 #include "../include/menu.h"
+#include "../include/campeonato.h"
 
 using namespace std;
 
@@ -74,6 +75,11 @@ int main(int argc, char* argv[]) {
     edaFC.pontos = 0;
     edaFC.numLesionados = 0;
     edaFC.numSuspensos = 0;
+    edaFC.vitorias = 0;
+    edaFC.derrota = 0;
+    edaFC.empate = 0;
+    edaFC.saldoGols = 0;
+
     for (int i = 0; i < 30; i++) {
         edaFC.lesionados[i] = nullptr;
         edaFC.suspensos[i] = nullptr;
@@ -100,6 +106,10 @@ int main(int argc, char* argv[]) {
         adversarios[i].pontos = 0;
         adversarios[i].numLesionados = 0;
         adversarios[i].numSuspensos = 0;
+        adversarios[i].vitorias = 0;
+        adversarios[i].derrota = 0;
+        adversarios[i].empate = 0;
+        adversarios[i].saldoGols = 0;
 
         delete[] gr;
         delete[] def;
@@ -111,8 +121,6 @@ int main(int argc, char* argv[]) {
             adversarios[i].suspensos[j] = nullptr;
         }
     }
-
-
 
     cout << numJogadorPlantel << endl;
     cout << "Numero de GR: " << numGR << endl;
@@ -177,6 +185,7 @@ int main(int argc, char* argv[]) {
             cout << "[2] Reduzir Lesao Manual\n";
             cout << "[3] Aplicar Castigo Manual\n";
             cout << "[4] Reduzir Castigo Manual\n";
+            cout << "[5] Classificacao\n";
             cout << "[g] Gravar Equipa\n";
             cout << "[c] Carregar Equipa\n";
             cout << ">> ";
@@ -190,6 +199,9 @@ int main(int argc, char* argv[]) {
                 ordenarPlantelNumeroJogador(edaFC);
                 imprimirPlantel(edaFC);
                 imprimirMercado(listaTransferencia, totalTransferencias);
+            }
+            else if (input == "5") {
+                tabelaPontos(&edaFC,adversarios);
             }
             else if (input == "1" || input == "2" || input == "3" || input == "4") {
                 int numJ, semanas;
@@ -303,7 +315,7 @@ int main(int argc, char* argv[]) {
     delete[] med;
     delete[] ava;
     delete[] nomeJogadores;
-    delete[] adversarios;
+    //delete[] adversarios;
     // delete[] adversariosFase2;
     delete[] adversariosNomes;
     delete[] listaTransferencia;
