@@ -7,5 +7,6 @@
 #include "../include/equipa.h"
 
 void tabelaPontos (Equipa* principal, Equipa* adversarios);
+void atualizarResultado(Equipa& equipe, int golsFavor, int golsContra);
 
 #endif //EDAP1_CAMPEONATO_H
