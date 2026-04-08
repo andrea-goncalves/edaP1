@@ -63,3 +63,20 @@ void tabelaPontos(Equipa* principal, Equipa* adversarios) {
     cout << "-----------------------------------------------------------------------------------------------------------------" << endl;
 }
 
+
+void atualizarResultado(Equipa& equipe, int golsFavor, int golsContra) {
+
+    equipe.saldoGols += (golsFavor - golsContra);
+
+    if (golsFavor > golsContra) {
+        equipe.pontos += 3;
+        equipe.vitorias += 1;
+    }
+    else if (golsFavor == golsContra) {
+        equipe.pontos += 1;
+        equipe.empate += 1;
+    }
+    else {
+        equipe.derrota += 1;
+    }
+}
