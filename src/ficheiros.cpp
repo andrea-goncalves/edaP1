@@ -99,26 +99,28 @@ void gravarEquipa(const Equipa& equipa, const int jornada, const string& nomeFic
             out << jg.numero << "\n";
             out << jg.nome << "\n";
             out << jg.posicao << "\n";
-            out << jg.idade << " " << jg.qualidade << " " << jg.probLes << " "
-                << jg.probSus << " " << jg.diasTreino << " "
-                << jg.semanas_ate_retorno_lesao << " " << jg.semanas_ate_retorno_castigo << "\n";
+            out << jg.idade << " " << jg.qualidade << " " << jg.probLes << " " << jg.probSus << " " << jg.diasTreino << " "<< jg.semanas_ate_retorno_lesao << " " << jg.semanas_ate_retorno_castigo << "\n";
         }
     }
     out << equipa.numLesionados << "\n";
     for (int i = 0; i < equipa.numLesionados; i++) {
-        Jogador& jg = *(equipa.lesionados[i]);
-        out << jg.numero << "\n";
-        out << jg.nome << "\n";
-        out << jg.posicao << "\n";
-        out << jg.idade << " " << jg.qualidade << " " << jg.probLes << " " << jg.probSus << " " << jg.diasTreino << " " << jg.semanas_ate_retorno_lesao << " " << jg.semanas_ate_retorno_castigo << "\n";
+        if (equipa.lesionados[i] != nullptr) {
+            Jogador& jg = *(equipa.lesionados[i]);
+            out << jg.numero << "\n";
+            out << jg.nome << "\n";
+            out << jg.posicao << "\n";
+            out << jg.idade << " " << jg.qualidade << " " << jg.probLes << " " << jg.probSus << " " << jg.diasTreino << " " << jg.semanas_ate_retorno_lesao << " " << jg.semanas_ate_retorno_castigo << "\n";
+        }
     }
     out << equipa.numSuspensos << "\n";
     for (int i = 0; i < equipa.numSuspensos; i++) {
-        Jogador& jg = *(equipa.suspensos[i]);
-        out << jg.numero << "\n";
-        out << jg.nome << "\n";
-        out << jg.posicao << "\n";
-        out << jg.idade << " " << jg.qualidade << " " << jg.probLes << " " << jg.probSus << " " << jg.diasTreino << " " << jg.semanas_ate_retorno_lesao << " " << jg.semanas_ate_retorno_castigo << "\n";
+        if (equipa.suspensos[i] != nullptr) {
+            Jogador& jg = *(equipa.suspensos[i]);
+            out << jg.numero << "\n";
+            out << jg.nome << "\n";
+            out << jg.posicao << "\n";
+            out << jg.idade << " " << jg.qualidade << " " << jg.probLes << " " << jg.probSus << " " << jg.diasTreino << " " << jg.semanas_ate_retorno_lesao << " " << jg.semanas_ate_retorno_castigo << "\n";
+        }
     }
     out.close();
     cout << " Equipa e estado do campeonato gravados com sucesso!\n";
@@ -150,6 +152,7 @@ bool carregarEquipa(Equipa& equipa, int& jornada, const string& nomeFicheiro) {
             in >> equipa.plantel[i][j].idade >> equipa.plantel[i][j].qualidade >> equipa.plantel[i][j].probLes >> equipa.plantel[i][j].probSus >> equipa.plantel[i][j].diasTreino >> equipa.plantel[i][j].semanas_ate_retorno_lesao >> equipa.plantel[i][j].semanas_ate_retorno_castigo;
         }
     }
+    in.ignore();
     in >> equipa.numLesionados;
     for (int i = 0; i < equipa.numLesionados; i++) {
         Jogador jogadorTemp;
@@ -161,6 +164,7 @@ bool carregarEquipa(Equipa& equipa, int& jornada, const string& nomeFicheiro) {
         Jogador* jg = new Jogador(jogadorTemp);
         equipa.lesionados[i] = jg;
     }
+    in.ignore();
     in >> equipa.numSuspensos;
     for (int i = 0; i < equipa.numSuspensos; i++) {
         Jogador jogadorTemp;
