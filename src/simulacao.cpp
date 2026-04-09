@@ -104,6 +104,7 @@ void temporada(Equipa& edaFC, int argc, char* argv[]) {
     do {
         recuperarLesSus(edaFC, lesao);
         recuperarLesSus(edaFC, suspensao);
+        treinar(edaFC);
 
         cout << "\n******************************\n";
         cout << "* EDA FC - " << jornada << "a Jornada - " << edaFC.pontos << " pontos. *\n";
@@ -185,6 +186,7 @@ void temporada(Equipa& edaFC, int argc, char* argv[]) {
             disponiveis[1] = edaFC.numJogadores[1];
             disponiveis[2] = edaFC.numJogadores[2];
             disponiveis[3] = edaFC.numJogadores[3];
+
         }
 
         Jogador** copiaPlantel = copiarPlantel(edaFC, disponiveis);
@@ -202,9 +204,11 @@ void temporada(Equipa& edaFC, int argc, char* argv[]) {
         }
 
         taticaUsada = taticaAtual;
-
-        edaFC.titulares = escolherTitulares(copiaPlantel, disponiveis, taticaUsada);
-        edaFC.suplentes = escolherSuplentes(copiaPlantel, disponiveis, taticaUsada, edaFC.numSuplentes);
+        if (!edaFC.escolhaManual) {
+            edaFC.titulares = escolherTitulares(copiaPlantel, disponiveis, taticaUsada);
+            edaFC.suplentes = escolherSuplentes(copiaPlantel, disponiveis, taticaUsada, edaFC.numSuplentes);
+        }
+        edaFC.escolhaManual = false;
         edaFC.numSubstituicoes = 0;
 
         Jogador* novosCandidatos = criarAleatorio(nomesMercado, tamanhoNomes, 2);

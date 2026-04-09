@@ -25,6 +25,7 @@ struct Equipa {
    std::string sairam[11];
    std::string entraram[11];
    int numSubstituicoes = 0;
+   bool escolhaManual = false;
 };
 
 
@@ -49,4 +50,9 @@ void listarNumerosLivres(Equipa& equipa, int posicao);
 bool numeroOcupado(Equipa& equipa, int numero) ;
 bool limitePosicaoAtingido(Equipa& equipa, int pos);
 int contarJogadoresPosicao(Equipa& equipa, int pos);
+void treinar(Equipa& equipa);
+
+void escolherEquipaManual(Equipa& equipa);
+Jogador* escolherSuplentesManual(Jogador** copiaPlantel, int* disponiveis, int& numSuplentes);
+Jogador* escolherTitularesManual(Jogador** copiaPlantel, int* disponiveis, Tatica& tatica);
 #endif //EDAP1_EQUIPA_H
