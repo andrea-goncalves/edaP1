@@ -36,13 +36,15 @@ Jogador* gerarTransferencia(Jogador* novos, int numNovos, Jogador* listaAntiga, 
     for (int i = 0; i < numNovos; i++) {
         novoVetor[totalTransferencias + i] = novos[i];
     }
-    int idx1 = novoTamanho - 2;
-    int idx2 = novoTamanho - 1;
+    if (novoTamanho >= 2) {
+        int idx1 = novoTamanho - 2;
+        int idx2 = novoTamanho - 1;
 
-    if (posicao(novoVetor[idx2].posicao) < posicao(novoVetor[idx1].posicao)) {
-        Jogador temp = novoVetor[idx1];
-        novoVetor[idx1] = novoVetor[idx2];
-        novoVetor[idx2] = temp;
+        if (posicao(novoVetor[idx2].posicao) < posicao(novoVetor[idx1].posicao)) {
+            Jogador temp = novoVetor[idx1];
+            novoVetor[idx1] = novoVetor[idx2];
+            novoVetor[idx2] = temp;
+        }
     }
     if (listaAntiga != nullptr) {
         delete[] listaAntiga;
@@ -181,18 +183,20 @@ Jogador removerTransferencia(Jogador* &listaTransferencia, int &totalTransferenc
 
     Jogador escolhido = listaTransferencia[indice];
 
-    Jogador* novoArray = new Jogador[totalTransferencias - 1];
+    if (totalTransferencias >= 1) {
+        Jogador* novoArray = new Jogador[totalTransferencias - 1];
 
-    int k = 0;
-    for (int i = 0; i < totalTransferencias; i++) {
-        if (i != indice) {
-            novoArray[k++] = listaTransferencia[i];
+        int k = 0;
+        for (int i = 0; i < totalTransferencias; i++) {
+            if (i != indice) {
+                novoArray[k++] = listaTransferencia[i];
+            }
         }
+
+
+        delete[] listaTransferencia;
+        listaTransferencia = novoArray;
     }
-
-    delete[] listaTransferencia;
-    listaTransferencia = novoArray;
-
     totalTransferencias--;
 
     return escolhido;
@@ -209,13 +213,11 @@ void contratarJogador(Equipa &equipe, Jogador* &listaTransferencia, int &totalTr
         cout << "Indice invalido!\n";
         return;
     }
-
-    Jogador contratado = listaTransferencia[idx];
+    Jogador contratado = removerTransferencia(listaTransferencia, totalTransferencias, idx);
+    //Jogador contratado = listaTransferencia[idx];
     int posIdx = posicao(contratado.posicao);
 
     if (podeAdicionar(equipe, posIdx) && totalJogadores(equipe) < 30) {
-        removerTransferencia(listaTransferencia, totalTransferencias, idx);
-
         contratado.numero = escolherCamisaDisponivel(equipe, posIdx);
         adicionarJogadorPlantel(equipe, contratado);
 
