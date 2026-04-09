@@ -72,13 +72,9 @@ int main(int argc, char* argv[]) {
     edaFC.pontos = 0;
     edaFC.titulares = nullptr;
     edaFC.suplentes = nullptr;
-    edaFC.pontos = 0;
     edaFC.numLesionados = 0;
     edaFC.numSuspensos = 0;
-    edaFC.vitorias = 0;
-    edaFC.derrota = 0;
-    edaFC.empate = 0;
-    edaFC.saldoGols = 0;
+
 
     for (int i = 0; i < 30; i++) {
         edaFC.lesionados[i] = nullptr;
@@ -103,13 +99,8 @@ int main(int argc, char* argv[]) {
         adversarios[i].numJogadores[2] = numMED;
         adversarios[i].numJogadores[3] = numAVA;
         adversarios[i].plantel=gerarPlantel(gr, def, med, ava, numGR, numDEF, numMED, numAVA);
-        adversarios[i].pontos = 0;
         adversarios[i].numLesionados = 0;
         adversarios[i].numSuspensos = 0;
-        adversarios[i].vitorias = 0;
-        adversarios[i].derrota = 0;
-        adversarios[i].empate = 0;
-        adversarios[i].saldoGols = 0;
 
         delete[] gr;
         delete[] def;
