@@ -323,7 +323,7 @@ int contarJogadoresPosicao(Equipa& equipa, int pos) {
 }
 bool limitePosicaoAtingido(Equipa& equipa, int pos) {
 
-    int limites[4] = {GR_MAX, DEF_MAX, MED_MAX, AVA_MAX}; // GR, DEF, MED, AVA
+    int limites[4] = {GR_MAX, DEF_MAX, MED_MAX, AVA_MAX};
 
     if(equipa.numJogadores[pos] >= limites[pos]) {
         cout << "Limite de jogadores nesta posicao atingido!\n";
@@ -345,7 +345,7 @@ void listarNumerosLivres(Equipa& equipa, int posicao) {
     const int* numeros;
     int tamanho;
     switch(posicao) {
-        case 0: numeros = CAMISAS_GR; tamanho = 3; break; // Ajusta os tamanhos se necessário
+        case 0: numeros = CAMISAS_GR; tamanho = 3; break;
         case 1: numeros = CAMISAS_DEF; tamanho = 10; break;
         case 2: numeros = CAMISAS_MED; tamanho = 10; break;
         case 3: numeros = CAMISAS_AVA; tamanho = 7; break;

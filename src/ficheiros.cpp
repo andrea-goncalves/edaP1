@@ -152,22 +152,25 @@ bool carregarEquipa(Equipa& equipa, int& jornada, const string& nomeFicheiro) {
     }
     in >> equipa.numLesionados;
     for (int i = 0; i < equipa.numLesionados; i++) {
-        Jogador* jg = new Jogador();
-        in >> jg->numero;
+        Jogador jogadorTemp;
+        in >> jogadorTemp.numero;
         in.ignore();
-        getline(in, jg->nome);
-        getline(in, jg->posicao);
-        in >> jg->idade >> jg->qualidade >> jg->probLes >> jg->probSus >> jg->diasTreino >> jg->semanas_ate_retorno_lesao >> jg->semanas_ate_retorno_castigo;
+        getline(in, jogadorTemp.nome);
+        getline(in, jogadorTemp.posicao);
+        in >> jogadorTemp.idade >> jogadorTemp.qualidade >> jogadorTemp.probLes >> jogadorTemp.probSus >> jogadorTemp.diasTreino >> jogadorTemp.semanas_ate_retorno_lesao >> jogadorTemp.semanas_ate_retorno_castigo;
+        Jogador* jg = new Jogador(jogadorTemp);
         equipa.lesionados[i] = jg;
     }
     in >> equipa.numSuspensos;
     for (int i = 0; i < equipa.numSuspensos; i++) {
-        Jogador* jg = new Jogador();
-        in >> jg->numero;
+        Jogador jogadorTemp;
+        in >> jogadorTemp.numero;
         in.ignore();
-        getline(in, jg->nome);
-        getline(in, jg->posicao);
-        in >> jg->idade >> jg->qualidade >> jg->probLes >> jg->probSus >> jg->diasTreino >> jg->semanas_ate_retorno_lesao >> jg->semanas_ate_retorno_castigo;
+        getline(in, jogadorTemp.nome);
+        getline(in, jogadorTemp.posicao);
+        in >> jogadorTemp.idade >>jogadorTemp.qualidade >> jogadorTemp.probLes >> jogadorTemp.probSus >> jogadorTemp.diasTreino >> jogadorTemp.semanas_ate_retorno_lesao >> jogadorTemp.semanas_ate_retorno_castigo;
+
+        Jogador* jg = new Jogador(jogadorTemp);
         equipa.suspensos[i] = jg;
     }
     in.close();

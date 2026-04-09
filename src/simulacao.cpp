@@ -143,54 +143,15 @@ void temporada(Equipa& edaFC, int argc, char* argv[]) {
         do {
             cout << "\n[s] Proxima Jornada\n";
             cout << "[o] Opcoes\n";
-            cout << "[t] Transferencias (Contratar)\n";
-            cout << "[1] Aplicar Lesao Manual\n";
-            cout << "[2] Reduzir Lesao Manual\n";
-            cout << "[3] Aplicar Castigo Manual\n";
-            cout << "[4] Reduzir Castigo Manual\n";
-            cout << "[g] Gravar Equipa\n";
-            cout << "[c] Carregar Equipa\n";
             cout << ">> ";
             getline(cin, input);
 
             if (input == "o") {
-                taticaAtual = pedirTatica(taticaAtual);
+                menuPrincipal(edaFC, jornada);
             }
-            else if (input == "t") {
-                contratarJogador(edaFC, listaTransferencia, totalTransferencias);
-                ordenarPlantelNumeroJogador(edaFC);
-                imprimirPlantel(edaFC);
-                imprimirMercado(listaTransferencia, totalTransferencias);
-            }
-            else if (input == "1" || input == "2" || input == "3" || input == "4") {
-                int numJ, semanas;
-                cout << "Numero do jogador: ";
-                cin >> numJ;
-                cout << "Numero de semanas: ";
-                cin >> semanas;
-                cin.ignore();
-
-                if (input == "1") aplicarLesaoManual(edaFC, numJ, semanas);
-                else if (input == "2") reduzirLesaoManual(edaFC, numJ, semanas);
-                else if (input == "3") aplicarCastigoManual(edaFC, numJ, semanas);
-                else if (input == "4") reduzirCastigoManual(edaFC, numJ, semanas);
-            }else if (input == "g") {
-                string ficheiro;
-                cout << "Nome do ficheiro para gravar (ex: save.txt): ";
-                getline(cin, ficheiro);
-                gravarEquipa(edaFC, jornada, ficheiro);
-            }else if (input == "c") {
-                string ficheiro;
-                cout << "Nome do ficheiro a carregar: ";
-                getline(cin, ficheiro);
-                carregarEquipa(edaFC, jornada, ficheiro);
-            }
-
         } while (input != "s");
 
         int disponiveis[4] = { edaFC.numJogadores[0], edaFC.numJogadores[1], edaFC.numJogadores[2], edaFC.numJogadores[3] };
-        Jogador** copiaPlantel = copiarPlantel(edaFC, disponiveis);
-        ordenarPlantelQualidadeJogador(copiaPlantel, disponiveis);
 
         while (true) {
             int totalDisponiveis = disponiveis[0] + disponiveis[1] + disponiveis[2] + disponiveis[3];
@@ -218,13 +179,16 @@ void temporada(Equipa& edaFC, int argc, char* argv[]) {
                 ordenarPlantelNumeroJogador(edaFC);
             }
             else if (op == "o") {
-                taticaAtual = pedirTatica(taticaAtual);
+                menuPrincipal(edaFC, jornada);
             }
             disponiveis[0] = edaFC.numJogadores[0];
             disponiveis[1] = edaFC.numJogadores[1];
             disponiveis[2] = edaFC.numJogadores[2];
             disponiveis[3] = edaFC.numJogadores[3];
         }
+
+        Jogador** copiaPlantel = copiarPlantel(edaFC, disponiveis);
+        ordenarPlantelQualidadeJogador(copiaPlantel, disponiveis);
 
 
 
