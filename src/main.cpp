@@ -13,9 +13,8 @@
 #include "../include/validarPlantel.h"
 
 using namespace std;
-void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransferencia, int totalTransferencias, Tatica& taticaUsada, int golosEDAFC, int golosAdversario, int tamanho, string* nomeJogadores, equipasAdversarias* adversariosFase2);
 
-
+void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransferencia, int totalTransferencias, Tatica& taticaUsada, int golosEDAFC, int golosAdversario, int golosTotais, int tamanho, string* nomeJogadores, equipasAdversarias* adversariosFase2);
 int main(int argc, char* argv[]) {
     srand(time(NULL));
     int tamanho = tamArq("../data/nomes.txt");
@@ -36,6 +35,7 @@ int main(int argc, char* argv[]) {
     int jornada = 1;
     int golosEDAFC = 0;
     int golosAdversario = 0;
+    int golosTotais = 0;
 
 
     int numGR = numeroGR();
@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
     }
 
     //////
-    menu(jornada, edaFC, taticaAtual, listaTransferencia, totalTransferencias, taticaUsada, golosEDAFC, golosAdversario, tamanho, nomeJogadores, adversariosFase2);
+    menu(jornada, edaFC, taticaAtual, listaTransferencia, totalTransferencias, taticaUsada, golosEDAFC, golosAdversario,golosTotais,tamanho, nomeJogadores, adversariosFase2);
     ///////
 
     for (int i = 0; i < edaFC.numLesionados; i++) delete edaFC.lesionados[i];
@@ -119,12 +119,13 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransferencia, int totalTransferencias, Tatica& taticaUsada, int golosEDAFC, int golosAdversario, int tamanho, string* nomeJogadores, equipasAdversarias* adversariosFase2) {
+void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransferencia, int totalTransferencias, Tatica& taticaUsada, int golosEDAFC, int golosAdversario, int golosTotais, int tamanho, string* nomeJogadores, equipasAdversarias* adversariosFase2) {
 
-int aux=0;
+bool aux=false;
     char opcao;
     int numJ, semanas;
     string ficheiro;
+
     while (jornada <= 34) {
         cout << "\n******************************\n";
         cout << "* EDA FC - " << jornada << "a Jornada - " << edaFC.pontos << " pontos. *\n";
@@ -138,8 +139,8 @@ int aux=0;
         std::cout << "[4] Reduzir Castigo Manual\n";
         std::cout << "[5] Ver Equipa (Plantel, Lesionados, Suspensos)\n";
         std::cout << "[6] Treino Especifico\n";
-        std::cout << "[7] Alteracoes Manuais (Editar Jogadores)\n";
-        std::cout << "[8] Escolher Convocados\n";
+        std::cout << "[7] Escolher Convocados\n";
+        //std::cout << "[8] Alteracoes Manuais (Editar Jogadores)\n";
         std::cout << "[g] Gravar Equipa\n";
         std::cout << "[c] Carregar Equipa\n";
         std::cout << "----------------------------------------\n";
@@ -186,8 +187,15 @@ int aux=0;
                         golosAdversario = 3;
                     }
                     else {
-                        golosEDAFC = numAleatorio(0, 8);
-                        golosAdversario = numAleatorio(0, 8);
+                        while (aux==false) {
+                            golosEDAFC = numAleatorio(0, 8);
+                            golosAdversario = numAleatorio(0, 8);
+                            golosTotais = golosEDAFC + golosAdversario;
+                            if (0 <= golosTotais && golosTotais <= 8) {
+                                aux = true;
+                            }
+                        }
+
                     }
                     if (golosEDAFC > golosAdversario)       edaFC.pontos += 3;
                     else if (golosEDAFC == golosAdversario) edaFC.pontos += 1;
@@ -230,8 +238,14 @@ int aux=0;
                         golosAdversario = 3;
                     }
                     else {
-                        golosEDAFC = numAleatorio(0, 8);
-                        golosAdversario = numAleatorio(0, 8);
+                        while (aux==false) {
+                            golosEDAFC = numAleatorio(0, 8);
+                            golosAdversario = numAleatorio(0, 8);
+                            golosTotais = golosEDAFC + golosAdversario;
+                            if (0 <= golosTotais && golosTotais <= 8) {
+                                aux = true;
+                            }
+                        }
                     }
                     if (golosEDAFC > golosAdversario)       edaFC.pontos += 3;
                     else if (golosEDAFC == golosAdversario) edaFC.pontos += 1;
@@ -281,7 +295,7 @@ int aux=0;
             else {
 
                 cout << "\nNão se pode jogar esta jornada. Necessitas de arranjar o plantel.\n";
-                menu(jornada, edaFC, taticaAtual, listaTransferencia, totalTransferencias, taticaUsada, golosEDAFC, golosAdversario, tamanho, nomeJogadores, adversariosFase2);
+                menu(jornada, edaFC, taticaAtual, listaTransferencia, totalTransferencias, taticaUsada, golosEDAFC, golosAdversario, golosTotais, tamanho, nomeJogadores, adversariosFase2);
             }
 
 
@@ -344,12 +358,13 @@ int aux=0;
             menuTreino(edaFC);
             break;
         case '7':
+            escolherEquipaManual(edaFC, taticaAtual);
+            break;
+        /*case '8':
+
             menuAlteracoesManuais(edaFC);
             break;
-        case '8':
-            escolherEquipaManual(edaFC);
-                imprimirTitulares(edaFC.titulares, taticaUsada);
-            break;
+        */
         case 'g':
 
             cout << "Nome do ficheiro para gravar (ex: save.txt): ";

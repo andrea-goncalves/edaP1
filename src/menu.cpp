@@ -220,7 +220,7 @@ void menuPrincipal(Equipa& equipa, int& jornada) {
                 menuAlteracoesManuais(equipa);
                 break;
             case 6:
-                escolherEquipaManual(equipa);
+               // escolherEquipaManual(equipa);
                 break;
             case 0:
                 cout << "A preparar a equipa para entrar em campo...\n";

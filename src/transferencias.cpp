@@ -79,10 +79,60 @@ void imprimirMercado(Jogador* listaTransf, int totalTransf) {
 
 
 bool podeAdicionar(Equipa &equipe, int pos) {
-    if (pos == 0 && equipe.numJogadores[0] >= 3) return false;
-    if (pos == 1 && equipe.numJogadores[1] >= 10) return false;
-    if (pos == 2 && equipe.numJogadores[2] >= 10) return false;
-    if (pos == 3 && equipe.numJogadores[3] >= 7) return false;
+    int numGRsuspensos = 0, numGRlesionados = 0;
+    for (int i = 0; i < equipe.numSuspensos; i++) {
+        if (equipe.suspensos[i] != nullptr && equipe.suspensos[i]->posicao == "GR") {
+            numGRsuspensos++;
+        }
+    }
+    for (int i = 0; i < equipe.numLesionados; i++) {
+        if (equipe.lesionados[i] != nullptr && equipe.lesionados[i]->posicao == "GR") {
+            numGRlesionados++;
+        }
+    }
+    int totalGRs = equipe.numJogadores[0] + numGRsuspensos + numGRlesionados;
+    int numDEFsuspensos = 0, numDEFlesionados = 0;
+    for (int i = 0; i < equipe.numSuspensos; i++) {
+        if (equipe.suspensos[i] != nullptr && equipe.suspensos[i]->posicao == "DEF") {
+            numDEFsuspensos++;
+        }
+    }
+    for (int i = 0; i < equipe.numLesionados; i++) {
+        if (equipe.lesionados[i] != nullptr && equipe.lesionados[i]->posicao == "DEF") {
+            numDEFlesionados++;
+        }
+    }
+    int totalDEFs = equipe.numJogadores[1] + numDEFsuspensos + numDEFlesionados;
+    int numMEDsuspensos = 0, numMEDlesionados = 0;
+    for (int i = 0; i < equipe.numSuspensos; i++) {
+        if (equipe.suspensos[i] != nullptr && equipe.suspensos[i]->posicao == "MED") {
+            numMEDsuspensos++;
+        }
+    }
+    for (int i = 0; i < equipe.numLesionados; i++) {
+        if (equipe.lesionados[i] != nullptr && equipe.lesionados[i]->posicao == "MED") {
+            numMEDlesionados++;
+        }
+    }
+    int totalMEDs = equipe.numJogadores[2] + numMEDsuspensos + numMEDlesionados;
+    int numAVAsuspensos = 0, numAVAlesionados = 0;
+    for (int i = 0; i < equipe.numSuspensos; i++) {
+        if (equipe.suspensos[i] != nullptr && equipe.suspensos[i]->posicao == "AVA") {
+            numAVAsuspensos++;
+        }
+    }
+    for (int i = 0; i < equipe.numLesionados; i++) {
+        if (equipe.lesionados[i] != nullptr && equipe.lesionados[i]->posicao == "AVA") {
+            numAVAlesionados++;
+        }
+    }
+    int totalAVAs = equipe.numJogadores[3] + numAVAsuspensos + numAVAlesionados;
+
+
+    if (pos == 0 && totalGRs >= 3) return false;
+    if (pos == 1 && totalDEFs >= 10) return false;
+    if (pos == 2 && totalMEDs >= 10) return false;
+    if (pos == 3 && totalAVAs >= 7) return false;
     return true;
 }
 int escolherCamisaDisponivel(Equipa &equipe, int posIdx) {
@@ -216,7 +266,7 @@ Jogador removerTransferencia(Jogador* &listaTransferencia, int &totalTransferenc
 
     return escolhido;
 }
-
+/*
 void contratarJogador(Equipa &equipe, Jogador* &listaTransferencia, int &totalTransferencias) {
     int indice;
     cout << "Escolha o ID do jogador (1 a " << totalTransferencias << "): ";
@@ -253,7 +303,6 @@ void contratarJogador(Equipa &equipe, Jogador* &listaTransferencia, int &totalTr
                 }
             }
         }
-
         if (posJogadorSai == -1) {
             cout << "Jogador nao encontrado!\n";
             return;
@@ -275,4 +324,128 @@ void contratarJogador(Equipa &equipe, Jogador* &listaTransferencia, int &totalTr
             cout << "Jogador para dispensa nao encontrado" << endl;
         }
     }
+}
+*/
+void contratarJogador(Equipa &equipe, Jogador* &listaTransferencia, int &totalTransferencias) {
+    int indice;
+    cout << "Escolha o ID do jogador (1 a " << totalTransferencias << "): ";
+    cin >> indice;
+    cin.ignore();
+
+    int idx = indice - 1;
+    if (idx < 0 || idx >= totalTransferencias) {
+        cout << "Indice invalido!\n";
+        return;
+    }
+
+    Jogador contratado = listaTransferencia[idx];
+    int posIdx = posicao(contratado.posicao);
+
+    if (podeAdicionar(equipe, posIdx) && totalJogadores(equipe) < 30) {
+        removerTransferencia(listaTransferencia, totalTransferencias, idx);
+        contratado.numero = escolherCamisaDisponivel(equipe, posIdx);
+        adicionarJogadorPlantel(equipe, contratado);
+        cout << "Contratado com sucesso! Numero: " << contratado.numero << endl;
+        return;
+    }
+
+    cout << "Limite atingido. Numero da camisa de quem sai: ";
+    int numCamisa;
+    cin >> numCamisa;
+    cin.ignore();
+
+
+    bool encontrado = false;
+    int  posJogadorSai = -1;
+
+    for (int i = 0; i < 4 && !encontrado; i++) {
+        for (int j = 0; j < equipe.numJogadores[i] && !encontrado; j++) {
+            if (equipe.plantel[i][j].numero == numCamisa) {
+                posJogadorSai = i;
+                encontrado    = true;
+            }
+        }
+    }
+
+    if (!encontrado) {
+        for (int i = 0; i < equipe.numLesionados && !encontrado; i++) {
+            if (equipe.lesionados[i] != nullptr &&
+                equipe.lesionados[i]->numero == numCamisa) {
+
+                posJogadorSai = posicao(equipe.lesionados[i]->posicao);
+
+
+                Jogador* salvo = equipe.lesionados[i];
+                salvo->numero  = 0;
+                adicionarTransferencia(*salvo, listaTransferencia, totalTransferencias);
+
+                for (int k = i; k < equipe.numLesionados - 1; k++)
+                    equipe.lesionados[k] = equipe.lesionados[k + 1];
+
+                equipe.lesionados[equipe.numLesionados - 1] = nullptr;
+                equipe.numLesionados--;
+                delete salvo;
+
+                encontrado = true;
+            }
+        }
+    }
+
+    if (!encontrado) {
+        for (int i = 0; i < equipe.numSuspensos && !encontrado; i++) {
+            if (equipe.suspensos[i] != nullptr &&
+                equipe.suspensos[i]->numero == numCamisa) {
+
+                posJogadorSai = posicao(equipe.suspensos[i]->posicao);
+
+
+                Jogador* salvo = equipe.suspensos[i];
+                salvo->numero  = 0;
+                adicionarTransferencia(*salvo, listaTransferencia, totalTransferencias);
+
+                for (int k = i; k < equipe.numSuspensos - 1; k++)
+                    equipe.suspensos[k] = equipe.suspensos[k + 1];
+
+                equipe.suspensos[equipe.numSuspensos - 1] = nullptr;
+                equipe.numSuspensos--;
+                delete salvo;
+
+                encontrado = true;
+            }
+        }
+    }
+
+    if (!encontrado) {
+        cout << "Jogador nao encontrado!\n";
+        return;
+    }
+
+    if (posJogadorSai != posIdx) {
+        cout << "Nao e permitido trocar jogadores de posicoes diferentes!\n";
+        return;
+    }
+
+    bool estavaNoPlantel = true;
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < equipe.numJogadores[i]; j++)
+            if (equipe.plantel[i][j].numero == numCamisa)
+                estavaNoPlantel = true;
+
+
+    removerJogadorPlantel(equipe, listaTransferencia, totalTransferencias, numCamisa);
+
+    int idxActualizado = -1;
+    for (int i = 0; i < totalTransferencias; i++) {
+        if (listaTransferencia[i].nome == contratado.nome &&
+            listaTransferencia[i].posicao == contratado.posicao) {
+            idxActualizado = i;
+            break;
+        }
+    }
+    if (idxActualizado != -1)
+        removerTransferencia(listaTransferencia, totalTransferencias, idxActualizado);
+
+    contratado.numero = escolherCamisaDisponivel(equipe, posIdx);
+    adicionarJogadorPlantel(equipe, contratado);
+    cout << "Troca efetuada com sucesso! Novo numero: " << contratado.numero << endl;
 }
