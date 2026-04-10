@@ -174,7 +174,7 @@ bool carregarEquipa(Equipa& equipa, int& jornada, const string& nomeFicheiro, Jo
                 getline(in, jogadorTemp.posicao);
                 in >> jogadorTemp.idade >> jogadorTemp.qualidade >> jogadorTemp.probLes >> jogadorTemp.probSus >> jogadorTemp.diasTreino >> jogadorTemp.semanas_ate_retorno_lesao >> jogadorTemp.semanas_ate_retorno_castigo;
 
-                // Criar um novo objeto dinâmico para armazenar
+
                 Jogador* jg = new Jogador(jogadorTemp);
                 equipa.lesionados[i] = jg;
             }
@@ -188,7 +188,6 @@ bool carregarEquipa(Equipa& equipa, int& jornada, const string& nomeFicheiro, Jo
         getline(in, jogadorTemp.posicao);
         in >> jogadorTemp.idade >> jogadorTemp.qualidade >> jogadorTemp.probLes >> jogadorTemp.probSus >> jogadorTemp.diasTreino >> jogadorTemp.semanas_ate_retorno_lesao >> jogadorTemp.semanas_ate_retorno_castigo;
 
-        // Criar um novo objeto dinâmico para armazenar
         Jogador* jg = new Jogador(jogadorTemp);
         equipa.suspensos[i] = jg;
     }

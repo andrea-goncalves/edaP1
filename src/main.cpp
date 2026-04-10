@@ -16,15 +16,14 @@ using namespace std;
 void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransferencia, int totalTransferencias, Tatica& taticaUsada, int golosEDAFC, int golosAdversario, int tamanho, string* nomeJogadores, equipasAdversarias* adversariosFase2);
 
 
-////-----------------------------------------MAIN----------------------------------------------------------------///
 int main(int argc, char* argv[]) {
     srand(time(NULL));
-    int tamanho = tamArq("C:/Users/ale/nina/data/nomes.txt");
-    string* nomeJogadores = leituraArq("C:/Users/ale/nina/data/nomes.txt", tamanho);
+    int tamanho = tamArq("../data/nomes.txt");
+    string* nomeJogadores = leituraArq("../data/nomes.txt", tamanho);
 
     int numJogosPorFase = 17;
-    int numEquipas = tamArq("C:/Users/ale/nina/data/equipas.txt");
-    string* adversariosNomes = leituraArq("C:/Users/ale/nina/data/equipas.txt", numEquipas);
+    int numEquipas = tamArq("../data/equipas.txt");
+    string* adversariosNomes = leituraArq("../data/equipas.txt", numEquipas);
     equipasAdversarias* adversarios = new equipasAdversarias[numEquipas];
     for (int i = 0; i < numEquipas; i++) {
         adversarios[i].nome = adversariosNomes[i];
@@ -88,7 +87,7 @@ int main(int argc, char* argv[]) {
     if (argc > 1) {
         string ficheiroSave = argv[1];
         cout << "\n[INFO] A tentar carregar save do argumento: " << ficheiroSave << "\n";
-        carregarEquipa(edaFC, jornada, ficheiroSave, listaTransferencia, totalTransferencias); // <--- adicionei a jornada aqui
+        carregarEquipa(edaFC, jornada, ficheiroSave, listaTransferencia, totalTransferencias);
     }
 
     for (int i = 0; i < 17; i++) {
@@ -145,10 +144,9 @@ void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransf
         switch (opcao) {
         case 's': {
 
-            // Validar si el plantel disponible cumple con las restricciones
+
             if (validarPlantelDisponible(edaFC, taticaAtual)) {
-                // El plantel es válido, se puede jugar la jornada
-                // TODO: Implementar la lógica de juego de la jornada
+
                 int disponiveis[4] = {
                     edaFC.numJogadores[0],
                     edaFC.numJogadores[1],
@@ -167,7 +165,7 @@ void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransf
                 edaFC.titulares = escolherTitulares(copiaPlantel, disponiveis, taticaUsada);
                 edaFC.suplentes = escolherSuplentes(copiaPlantel, disponiveis, taticaUsada, edaFC.numSuplentes);
                 edaFC.numSubstituicoes = 0;
-                /////
+
                 lesionar(edaFC.titulares, numTitulares);
                 ListaLesionados(edaFC.titulares, numTitulares, edaFC);
                 suspender(edaFC.titulares, numTitulares);
@@ -205,11 +203,11 @@ void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransf
                 }
                 cout << "\n" << endl;
                 cout << "\n" << endl;
-                ////////
+
                 Jogador* novosCandidatos = criarAleatorio(nomeJogadores, tamanho, 2);
                 listaTransferencia = gerarTransferencia(novosCandidatos, 2, listaTransferencia, totalTransferencias);
                 delete[] novosCandidatos;
-                ////////
+
                 ordenarPlantelNumeroJogador(edaFC);
                 imprimirPlantel(edaFC);
                 imprimirJogadoresSuspensos2(edaFC.suspensos, edaFC.numSuspensos);
@@ -217,19 +215,19 @@ void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransf
                 imprimirMercado(listaTransferencia, totalTransferencias);
 
                 jornada++;
-                //recuperar jogadores lesionados e suspensos
+
                 recuperarLesionados(edaFC);
                 recuperarSuspensos(edaFC);
             }
             else {
-                // El plantel no es válido
+
                 cout << "\nNão se pode jogar esta jornada. Necessitas de arranjar o plantel.\n";
                 menu(jornada, edaFC, taticaAtual, listaTransferencia, totalTransferencias, taticaUsada, golosEDAFC, golosAdversario, tamanho, nomeJogadores, adversariosFase2);
             }
 
 
             break;
-        } // fin case 's'
+        }
 
         case 'o':
             taticaAtual = pedirTatica(taticaAtual);
@@ -284,7 +282,7 @@ void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransf
             cout << "Nome do ficheiro para gravar (ex: save.txt): ";
             cin.ignore();
             getline(cin, ficheiro);
-            gravarEquipa(edaFC, jornada, ficheiro, listaTransferencia, totalTransferencias); // <--- adicionei a jornada aqui
+            gravarEquipa(edaFC, jornada, ficheiro, listaTransferencia, totalTransferencias);
             break;
 
         case 'c':
@@ -292,7 +290,7 @@ void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransf
             cout << "Nome do ficheiro a carregar: ";
             cin.ignore();
             getline(cin, ficheiro);
-            carregarEquipa(edaFC, jornada, ficheiro, listaTransferencia, totalTransferencias); // <--- adicionei a jornada aqui
+            carregarEquipa(edaFC, jornada, ficheiro, listaTransferencia, totalTransferencias);
             break;
 
         default:

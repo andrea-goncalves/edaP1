@@ -97,12 +97,10 @@ int escolherCamisaDisponivel(Equipa &equipe, int posIdx) {
     for (int i = 0; i < tamRef; i++) {
         bool ocupado = false;
 
-        // Verifica se o número está no plantel
         if (compararNumJogador(equipe.plantel[posIdx], listaRef[i], equipe.numJogadores[posIdx])) {
             ocupado = true;
         }
 
-        // Verifica se o número está entre os lesionados
         if (!ocupado) {
             for (int j = 0; j < equipe.numLesionados; j++) {
                 if (equipe.lesionados[j] != nullptr && equipe.lesionados[j]->numero == listaRef[i]) {
@@ -112,7 +110,6 @@ int escolherCamisaDisponivel(Equipa &equipe, int posIdx) {
             }
         }
 
-        // Verifica se o número está entre os suspensos
         if (!ocupado) {
             for (int j = 0; j < equipe.numSuspensos; j++) {
                 if (equipe.suspensos[j] != nullptr && equipe.suspensos[j]->numero == listaRef[i]) {
@@ -237,10 +234,8 @@ void contratarJogador(Equipa &equipe, Jogador* &listaTransferencia, int &totalTr
 
     if (podeAdicionar(equipe, posIdx) && totalJogadores(equipe) < 30) {
         removerTransferencia(listaTransferencia, totalTransferencias, idx);
-
         contratado.numero = escolherCamisaDisponivel(equipe, posIdx);
         adicionarJogadorPlantel(equipe, contratado);
-        //inserirJogadorNoPlantel(equipe, &contratado);
         cout << "Contratado com sucesso! Numero: " << contratado.numero << endl;
     }
     else {
@@ -273,10 +268,8 @@ void contratarJogador(Equipa &equipe, Jogador* &listaTransferencia, int &totalTr
         if (removerJogadorPlantel(equipe, listaTransferencia, totalTransferencias, numCamisa)) {
 
             removerTransferencia(listaTransferencia, totalTransferencias, idx);
-
             contratado.numero = escolherCamisaDisponivel(equipe, posIdx);
             adicionarJogadorPlantel(equipe, contratado);
-            //inserirJogadorNoPlantel(equipe, &contratado);
             cout << "Troca efetuada com sucesso! Novo numero: " << contratado.numero << endl;
         } else {
             cout << "Jogador para dispensa nao encontrado" << endl;

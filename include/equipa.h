@@ -19,7 +19,7 @@ struct Equipa {
    int numLesionados = 0;
    int numSuspensos = 0;
    int numSuplentes = 0;
-   int pontos;
+   int pontos=0;
    Tatica tatica;
    int numJogadores[4];
    std::string sairam[11];

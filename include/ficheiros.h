@@ -1,6 +1,4 @@
-//
-// Created by andre on 29/03/2026.
-//
+
 
 #ifndef EDAP1_FICHEIROS_H
 #define EDAP1_FICHEIROS_H

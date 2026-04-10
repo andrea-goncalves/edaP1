@@ -6,17 +6,15 @@
 using namespace std;
 
 bool validarPlantelDisponible(Equipa& equipa, Tatica& taticaAtual) {
-    // Calcular el número de jugadores disponibles por posición (excluyendo lesionados y suspensos)
     int disponibles[4] = {
-        equipa.numJogadores[0],  // GR
-        equipa.numJogadores[1],  // DEF
-        equipa.numJogadores[2],  // MED
-        equipa.numJogadores[3]   // AVA
+        equipa.numJogadores[0],
+        equipa.numJogadores[1],
+        equipa.numJogadores[2],
+        equipa.numJogadores[3]
     };
     
     int totalDisponiveis = disponibles[0] + disponibles[1] + disponibles[2] + disponibles[3];
-    
-    // Restricción 1: Verificar si hay al menos 17 jugadores
+
     if (totalDisponiveis < 13) {
         cout << "\n";
         cout << "Não há suficientes jogadores disponíveis.\n";
@@ -27,8 +25,7 @@ bool validarPlantelDisponible(Equipa& equipa, Tatica& taticaAtual) {
         cout << "  AVA: " << disponibles[3] << " (mínimo: 1)\n";
         return false;
     }
-    
-    // Restricción 2: Verificar si la táctica es compatible con los jugadores disponibles
+
     bool compatibleConTactica = true;
     string posiciones[] = {"GR", "DEF", "MED", "AVA"};
     
@@ -52,8 +49,7 @@ bool validarPlantelDisponible(Equipa& equipa, Tatica& taticaAtual) {
         cout << "Alterare a tática ou compre jogadores\n";
         return false;
     }
-    
-    // Si llegamos aquí, el plantel cumple todas las restricciones
+
 
     return true;
 }
