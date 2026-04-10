@@ -81,7 +81,6 @@ void limparMemoriaEquipa(Equipa& equipa) {
     equipa.numSuspensos = 0;
     equipa.numSubstituicoes = 0;
 }
-
 void gravarEquipa(const Equipa& equipa, const int jornada, const string& nomeFicheiro) {
     ofstream out(nomeFicheiro);
     if (!out.is_open()) {
@@ -125,7 +124,6 @@ void gravarEquipa(const Equipa& equipa, const int jornada, const string& nomeFic
     out.close();
     cout << " Equipa e estado do campeonato gravados com sucesso!\n";
 }
-
 bool carregarEquipa(Equipa& equipa, int& jornada, const string& nomeFicheiro) {
     ifstream in(nomeFicheiro);
     if (!in.is_open()) {

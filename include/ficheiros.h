@@ -1,6 +1,4 @@
-//
-// Created by andre on 29/03/2026.
-//
+
 
 #ifndef EDAP1_FICHEIROS_H
 #define EDAP1_FICHEIROS_H
@@ -13,4 +11,5 @@ std::string eliminarAcentos(const std::string& str);
 
 void gravarEquipa(const Equipa& equipa, const int jornada, const std::string& nomeFicheiro);
 bool carregarEquipa(Equipa& equipa, int& jornada, const std::string& nomeFicheiro);
+
 #endif //EDAP1_FICHEIROS_H
