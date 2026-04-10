@@ -115,8 +115,12 @@ bool validarTatica(Tatica tatica) {
     for (int i = 0; i < 4; i++) {
         total += tatica.titulares[i];
     }
-    if (total != 11) {
-        cout << "A tatica deve ter 11 titulares, tem " << total << "\n";
+    if (total < 7) {
+        cout << "A tatica deve ter minimo 7 titulares, tem " << total << "\n";
+        return false;
+    }
+    if (total>11) {
+        cout << "A tatica deve ter no maximo 11 titulares, tem " << total << "\n";
         return false;
     }
     return true;
@@ -128,7 +132,7 @@ Tatica pedirTatica(Tatica taticaAtual) {
     cout << "\nTatica atual: 1-" << tatica.titulares[1] << "-"
          << tatica.titulares[2] << "-" << tatica.titulares[3] << "\n";
     cout << "Deseja alterar a tatica? (s/n): ";
-
+    cin.ignore();
     string input;
     getline(cin, input);
 
@@ -167,7 +171,7 @@ Jogador** copiarPlantel(Equipa& equipa, int* disponiveis) {
     }
     return copia;
 }
-
+/*
 Jogador* escolherTitulares(Jogador** copiaPlantel, int* disponiveis, Tatica& tatica) {
 
     while (true) {
@@ -201,14 +205,55 @@ Jogador* escolherTitulares(Jogador** copiaPlantel, int* disponiveis, Tatica& tat
 
     return titulares;
 }
+*/
+Jogador* escolherTitulares(Jogador** copiaPlantel, int* disponiveis, Tatica& tatica) {
 
+    // Validar que hay suficientes por posición
+    while (true) {
+        bool valido = true;
+        for (int i = 0; i < 4; i++) {
+            if (disponiveis[i] < tatica.titulares[i]) {
+                cout << "\nNao existem jogadores suficientes na posicao "
+                    << i << " Altere a tatica\n";
+                tatica = pedirTatica(tatica);
+                valido = false;
+                break;
+            }
+        }
+        if (valido) break;
+    }
+
+    Jogador* titulares = new Jogador[11];
+    int idx = 0;
+
+    // Copia local para no contaminar disponiveis del caller
+    int disponiveisLocais[4] = { disponiveis[0], disponiveis[1], disponiveis[2], disponiveis[3] };
+
+    for (int i = 0; i < 4; i++) {
+        // Tomar los primeros tatica.titulares[i] (ya ordenados por calidad)
+        for (int j = 0; j < tatica.titulares[i]; j++) {
+            titulares[idx++] = copiaPlantel[i][j];
+        }
+
+        // Desplazar los restantes al inicio para que escolherSuplentes los vea bien
+        int restantes = disponiveisLocais[i] - tatica.titulares[i];
+        for (int j = 0; j < restantes; j++) {
+            copiaPlantel[i][j] = copiaPlantel[i][tatica.titulares[i] + j];
+        }
+
+        // Actualizar disponiveis para que escolherSuplentes sepa cuántos quedan
+        disponiveis[i] = restantes;
+    }
+
+    return titulares;
+}
 int getPos(string posicao) {
     if (posicao == "GR") return 0;
     if (posicao == "DEF") return 1;
     if (posicao == "MED") return 2;
     return 3;
 }
-
+/*
 Jogador* escolherSuplentes(Jogador** copiaPlantel, int* disponiveis, Tatica tatica, int& numSuplentes) {
 
     Jogador* suplentes = new Jogador[6];
@@ -259,7 +304,61 @@ Jogador* escolherSuplentes(Jogador** copiaPlantel, int* disponiveis, Tatica tati
     numSuplentes = idx;
     return suplentes;
 }
+*/
+Jogador* escolherSuplentes(Jogador** copiaPlantel, int* disponiveis, Tatica tatica, int& numSuplentes) {
 
+    // Copia local — no tocar disponiveis[] del caller
+    int disp[4] = { disponiveis[0], disponiveis[1], disponiveis[2], disponiveis[3] };
+
+    Jogador* suplentes = new Jogador[6];
+    int idx = 0;
+
+    for (int i = 0; i < 4; i++) {
+        int preencher = tatica.suplentes[i];
+        for (int j = 0; j < preencher && idx < 6; j++) {
+            if (disp[i] > 0) {
+                suplentes[idx++] = copiaPlantel[i][0];
+                for (int k = 1; k < disp[i]; k++) {
+                    copiaPlantel[i][k - 1] = copiaPlantel[i][k];
+                }
+                disp[i]--;
+            }
+        }
+    }
+
+    while (idx < 6) {
+        int pos = -1;
+        for (int i = 0; i < 4; i++) {
+            if (disp[i] > 0) {
+                if (pos == -1 || copiaPlantel[i][0].qualidade > copiaPlantel[pos][0].qualidade) {
+                    pos = i;
+                }
+            }
+        }
+        if (pos != -1) {
+            suplentes[idx++] = copiaPlantel[pos][0];
+            for (int k = 1; k < disp[pos]; k++) {
+                copiaPlantel[pos][k - 1] = copiaPlantel[pos][k];
+            }
+            disp[pos]--;
+        }
+        else break;
+    }
+
+    // Ordenar suplentes por posición
+    for (int i = 0; i < idx - 1; i++) {
+        for (int j = 0; j < idx - i - 1; j++) {
+            if (getPos(suplentes[j].posicao) > getPos(suplentes[j + 1].posicao)) {
+                Jogador temp = suplentes[j];
+                suplentes[j] = suplentes[j + 1];
+                suplentes[j + 1] = temp;
+            }
+        }
+    }
+
+    numSuplentes = idx;
+    return suplentes;
+}
 
 void imprimirTitulares(Jogador* titulares, Tatica tatica) {
     cout << "\n*********** Titulares: ***********\n";

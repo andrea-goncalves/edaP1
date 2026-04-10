@@ -10,6 +10,7 @@
 #include "../include/utils.h"
 #include "../include/equipa.h"
 #include "../include/constantes.h"
+#include "../include/lesionarSuspender.h"
 
 using namespace std;
 
@@ -94,7 +95,34 @@ int escolherCamisaDisponivel(Equipa &equipe, int posIdx) {
     else                  { listaRef = CAMISAS_AVA; tamRef = 7; }
 
     for (int i = 0; i < tamRef; i++) {
-        if (!compararNumJogador(equipe.plantel[posIdx], listaRef[i], equipe.numJogadores[posIdx])) {
+        bool ocupado = false;
+
+        // Verifica se o número está no plantel
+        if (compararNumJogador(equipe.plantel[posIdx], listaRef[i], equipe.numJogadores[posIdx])) {
+            ocupado = true;
+        }
+
+        // Verifica se o número está entre os lesionados
+        if (!ocupado) {
+            for (int j = 0; j < equipe.numLesionados; j++) {
+                if (equipe.lesionados[j] != nullptr && equipe.lesionados[j]->numero == listaRef[i]) {
+                    ocupado = true;
+                    break;
+                }
+            }
+        }
+
+        // Verifica se o número está entre os suspensos
+        if (!ocupado) {
+            for (int j = 0; j < equipe.numSuspensos; j++) {
+                if (equipe.suspensos[j] != nullptr && equipe.suspensos[j]->numero == listaRef[i]) {
+                    ocupado = true;
+                    break;
+                }
+            }
+        }
+
+        if (!ocupado) {
             return listaRef[i];
         }
     }
@@ -212,7 +240,7 @@ void contratarJogador(Equipa &equipe, Jogador* &listaTransferencia, int &totalTr
 
         contratado.numero = escolherCamisaDisponivel(equipe, posIdx);
         adicionarJogadorPlantel(equipe, contratado);
-
+        //inserirJogadorNoPlantel(equipe, &contratado);
         cout << "Contratado com sucesso! Numero: " << contratado.numero << endl;
     }
     else {
@@ -248,7 +276,7 @@ void contratarJogador(Equipa &equipe, Jogador* &listaTransferencia, int &totalTr
 
             contratado.numero = escolherCamisaDisponivel(equipe, posIdx);
             adicionarJogadorPlantel(equipe, contratado);
-
+            //inserirJogadorNoPlantel(equipe, &contratado);
             cout << "Troca efetuada com sucesso! Novo numero: " << contratado.numero << endl;
         } else {
             cout << "Jogador para dispensa nao encontrado" << endl;

@@ -10,13 +10,37 @@
 #include "../include/utils.h"
 #include "../include/lesionarSuspender.h"
 #include "../include/constantes.h"
+#include "../include/transferencias.h"
 
 using namespace std;
-
+/*
 void inserirJogadorNoPlantel(Equipa& equipa, Jogador* novo) {
     int pos = getPos(novo->posicao);
+    cout << equipa.numJogadores[pos] << endl;
+	cout << "Posicao: " << novo->posicao << " Numero: " << novo->numero << " Qualidade: " << novo->qualidade << endl;
     equipa.plantel[pos][equipa.numJogadores[pos]] = *novo;
     equipa.numJogadores[pos]++;
+    ordenarPlantelNumeroJogador(equipa);
+}
+*/
+void inserirJogadorNoPlantel(Equipa& equipa, Jogador* novo) {
+    int pos = getPos(novo->posicao);
+    int tam = equipa.numJogadores[pos];
+	
+    // Reasignar con espacio para uno más
+    Jogador* novoArray = new Jogador[tam + 1];
+
+    for (int i = 0; i < tam; i++) {
+        novoArray[i] = equipa.plantel[pos][i];
+    }
+
+    novoArray[tam] = *novo;
+
+    delete[] equipa.plantel[pos];
+    equipa.plantel[pos] = novoArray;
+
+    equipa.numJogadores[pos]++;
+
     ordenarPlantelNumeroJogador(equipa);
 }
 void inserirJogador(Jogador** arrayDestino, int& numDestino, Jogador* novoJogador) {
@@ -44,7 +68,8 @@ void lesionar(Jogador* titulares, int numTitulares) {
         titulares[i].semanas_ate_retorno_lesao = 0;
         int probabilidade = numAleatorio(1, 100);
         if (probabilidade <= titulares[i].probLes) {
-            titulares[i].semanas_ate_retorno_lesao = numAleatorio(1, 10);
+            titulares[i].semanas_ate_retorno_lesao = numAleatorio(1, 10)+1;
+			cout << "Jogador " << titulares[i].nome << " lesionou-se por " << titulares[i].semanas_ate_retorno_lesao << " semanas.\n";
         }
     }
 }
@@ -80,8 +105,13 @@ void recuperarLesionados(Equipa& equipa) {
     while (i < equipa.numLesionados) {
         equipa.lesionados[i]->semanas_ate_retorno_lesao--;
         if (equipa.lesionados[i]->semanas_ate_retorno_lesao <= 0) {
+            // Copiar dados antes de inserir
+            Jogador jogadorTemp = *(equipa.lesionados[i]);
 
-            inserirJogadorNoPlantel(equipa, equipa.lesionados[i]);
+            // Inserir no plantel
+            inserirJogadorNoPlantel(equipa, &jogadorTemp);
+
+            // Agora fazer delete do objeto original
             delete equipa.lesionados[i];
 
             for (int k = i; k < equipa.numLesionados - 1; k++)
@@ -159,8 +189,13 @@ void recuperarSuspensos(Equipa& equipa) {
     while (i < equipa.numSuspensos) {
         equipa.suspensos[i]->semanas_ate_retorno_castigo--;
         if (equipa.suspensos[i]->semanas_ate_retorno_castigo <= 0) {
+            // Copiar dados antes de inserir
+            Jogador jogadorTemp = *(equipa.suspensos[i]);
 
-            inserirJogadorNoPlantel(equipa, equipa.suspensos[i]);
+            // Inserir no plantel
+            inserirJogadorNoPlantel(equipa, &jogadorTemp);
+
+            // Agora fazer delete do objeto original
             delete equipa.suspensos[i];
 
             for (int k = i; k < equipa.numSuspensos - 1; k++)

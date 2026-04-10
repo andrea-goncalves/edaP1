@@ -89,7 +89,7 @@ void menuGestao(Equipa& equipa) {
     } while(opcao != 0);
 }
 
-void menuGravarCarregar(Equipa& equipa, int& jornada) {
+void menuGravarCarregar(Equipa& equipa, int& jornada, Jogador*& listaTransferencia, int& totalTransferencias) {
     int opcao;
 
     do {
@@ -106,12 +106,12 @@ void menuGravarCarregar(Equipa& equipa, int& jornada) {
             string ficheiro;
             cout << "Nome do ficheiro para gravar (ex: save.txt): ";
             getline(cin, ficheiro);
-            gravarEquipa(equipa, jornada, ficheiro);
+            gravarEquipa(equipa, jornada, ficheiro, listaTransferencia, totalTransferencias);
         } else if (opcao == 2) {
             string ficheiro;
             cout << "Nome do ficheiro a carregar: ";
             getline(cin, ficheiro);
-            carregarEquipa(equipa, jornada, ficheiro);
+            carregarEquipa(equipa, jornada, ficheiro, listaTransferencia, totalTransferencias);
         } else if (opcao != 0) {
             cout << "Opcao invalida!\n";
         }
@@ -211,7 +211,7 @@ void menuPrincipal(Equipa& equipa, int& jornada) {
                 menuGestao(equipa);
                 break;
             case 4:
-                menuGravarCarregar(equipa, jornada);
+                //menuGravarCarregar(equipa, jornada);
                 break;
             case 5:
                 menuAlteracoesManuais(equipa);

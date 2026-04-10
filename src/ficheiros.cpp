@@ -82,7 +82,7 @@ void limparMemoriaEquipa(Equipa& equipa) {
     equipa.numSubstituicoes = 0;
 }
 
-void gravarEquipa(const Equipa& equipa, const int jornada, const string& nomeFicheiro) {
+void gravarEquipa(const Equipa& equipa, const int jornada, const string& nomeFicheiro, Jogador* listaTransferencia, int totalTransferencias) {
     ofstream out(nomeFicheiro);
     if (!out.is_open()) {
         cout << "Erro ao abrir o ficheiro para gravar!\n";
@@ -104,27 +104,41 @@ void gravarEquipa(const Equipa& equipa, const int jornada, const string& nomeFic
                 << jg.semanas_ate_retorno_lesao << " " << jg.semanas_ate_retorno_castigo << "\n";
         }
     }
-    out << equipa.numLesionados << "\n";
+     out << equipa.numLesionados << "\n";
     for (int i = 0; i < equipa.numLesionados; i++) {
-        Jogador& jg = *(equipa.lesionados[i]);
-        out << jg.numero << "\n";
-        out << jg.nome << "\n";
-        out << jg.posicao << "\n";
-        out << jg.idade << " " << jg.qualidade << " " << jg.probLes << " " << jg.probSus << " " << jg.diasTreino << " " << jg.semanas_ate_retorno_lesao << " " << jg.semanas_ate_retorno_castigo << "\n";
+        if (equipa.lesionados[i] != nullptr) {
+            Jogador& jg = *(equipa.lesionados[i]);
+            out << jg.numero << "\n";
+            out << jg.nome << "\n";
+            out << jg.posicao << "\n";
+            out << jg.idade << " " << jg.qualidade << " " << jg.probLes << " " << jg.probSus << " " << jg.diasTreino << " " << jg.semanas_ate_retorno_lesao << " " << jg.semanas_ate_retorno_castigo << "\n";
+        }
     }
-    out << equipa.numSuspensos << "\n";
+     out << equipa.numSuspensos << "\n";
     for (int i = 0; i < equipa.numSuspensos; i++) {
-        Jogador& jg = *(equipa.suspensos[i]);
-        out << jg.numero << "\n";
-        out << jg.nome << "\n";
-        out << jg.posicao << "\n";
-        out << jg.idade << " " << jg.qualidade << " " << jg.probLes << " " << jg.probSus << " " << jg.diasTreino << " " << jg.semanas_ate_retorno_lesao << " " << jg.semanas_ate_retorno_castigo << "\n";
+        if (equipa.suspensos[i] != nullptr) {
+            Jogador& jg = *(equipa.suspensos[i]);
+            out << jg.numero << "\n";
+            out << jg.nome << "\n";
+            out << jg.posicao << "\n";
+            out << jg.idade << " " << jg.qualidade << " " << jg.probLes << " " << jg.probSus << " " << jg.diasTreino << " " << jg.semanas_ate_retorno_lesao << " " << jg.semanas_ate_retorno_castigo << "\n";
+        }
+    }
+    out << totalTransferencias << "\n";
+    for (int i = 0; i < totalTransferencias; i++) {
+        if (listaTransferencia != nullptr) {
+            Jogador& jg = listaTransferencia[i];
+            out << jg.numero << "\n";
+            out << jg.nome << "\n";
+            out << jg.posicao << "\n";
+            out << jg.idade << " " << jg.qualidade << " " << jg.probLes << " " << jg.probSus << " " << jg.diasTreino << " " << jg.semanas_ate_retorno_lesao << " " << jg.semanas_ate_retorno_castigo << "\n";
+        }
     }
     out.close();
     cout << " Equipa e estado do campeonato gravados com sucesso!\n";
 }
 
-bool carregarEquipa(Equipa& equipa, int& jornada, const string& nomeFicheiro) {
+bool carregarEquipa(Equipa& equipa, int& jornada, const string& nomeFicheiro, Jogador*& listaTransferencia, int& totalTransferencias) {
     ifstream in(nomeFicheiro);
     if (!in.is_open()) {
         cout << "Nao foi possivel encontrar o ficheiro: " << nomeFicheiro << "\n";
@@ -147,28 +161,53 @@ bool carregarEquipa(Equipa& equipa, int& jornada, const string& nomeFicheiro) {
             in.ignore();
             getline(in, equipa.plantel[i][j].nome);
             getline(in, equipa.plantel[i][j].posicao);
-            in >> equipa.plantel[i][j].idade >> equipa.plantel[i][j].qualidade >> equipa.plantel[i][j].probLes >> equipa.plantel[i][j].probSus >> equipa.plantel[i][j].diasTreino >> equipa.plantel[i][j].semanas_ate_retorno_lesao >> equipa.plantel[i][j].semanas_ate_retorno_castigo;
-        }
-    }
-    in >> equipa.numLesionados;
-    for (int i = 0; i < equipa.numLesionados; i++) {
-        Jogador* jg = new Jogador();
-        in >> jg->numero;
-        in.ignore();
-        getline(in, jg->nome);
-        getline(in, jg->posicao);
-        in >> jg->idade >> jg->qualidade >> jg->probLes >> jg->probSus >> jg->diasTreino >> jg->semanas_ate_retorno_lesao >> jg->semanas_ate_retorno_castigo;
-        equipa.lesionados[i] = jg;
-    }
-    in >> equipa.numSuspensos;
+                     in >> equipa.plantel[i][j].idade >> equipa.plantel[i][j].qualidade >> equipa.plantel[i][j].probLes >> equipa.plantel[i][j].probSus >> equipa.plantel[i][j].diasTreino >> equipa.plantel[i][j].semanas_ate_retorno_lesao >> equipa.plantel[i][j].semanas_ate_retorno_castigo;
+                }
+            }
+            in.ignore();
+            in >> equipa.numLesionados;
+            for (int i = 0; i < equipa.numLesionados; i++) {
+                Jogador jogadorTemp;
+                in >> jogadorTemp.numero;
+                in.ignore();
+                getline(in, jogadorTemp.nome);
+                getline(in, jogadorTemp.posicao);
+                in >> jogadorTemp.idade >> jogadorTemp.qualidade >> jogadorTemp.probLes >> jogadorTemp.probSus >> jogadorTemp.diasTreino >> jogadorTemp.semanas_ate_retorno_lesao >> jogadorTemp.semanas_ate_retorno_castigo;
+
+                // Criar um novo objeto dinâmico para armazenar
+                Jogador* jg = new Jogador(jogadorTemp);
+                equipa.lesionados[i] = jg;
+            }
+            in.ignore();
+            in >> equipa.numSuspensos;
     for (int i = 0; i < equipa.numSuspensos; i++) {
-        Jogador* jg = new Jogador();
-        in >> jg->numero;
+        Jogador jogadorTemp;
+        in >> jogadorTemp.numero;
         in.ignore();
-        getline(in, jg->nome);
-        getline(in, jg->posicao);
-        in >> jg->idade >> jg->qualidade >> jg->probLes >> jg->probSus >> jg->diasTreino >> jg->semanas_ate_retorno_lesao >> jg->semanas_ate_retorno_castigo;
+        getline(in, jogadorTemp.nome);
+        getline(in, jogadorTemp.posicao);
+        in >> jogadorTemp.idade >> jogadorTemp.qualidade >> jogadorTemp.probLes >> jogadorTemp.probSus >> jogadorTemp.diasTreino >> jogadorTemp.semanas_ate_retorno_lesao >> jogadorTemp.semanas_ate_retorno_castigo;
+
+        // Criar um novo objeto dinâmico para armazenar
+        Jogador* jg = new Jogador(jogadorTemp);
         equipa.suspensos[i] = jg;
+    }
+    in.ignore();
+    in >> totalTransferencias;
+    if (totalTransferencias > 0) {
+        if (listaTransferencia != nullptr) {
+            delete[] listaTransferencia;
+        }
+        listaTransferencia = new Jogador[totalTransferencias];
+        for (int i = 0; i < totalTransferencias; i++) {
+            in >> listaTransferencia[i].numero;
+            in.ignore();
+            getline(in, listaTransferencia[i].nome);
+            getline(in, listaTransferencia[i].posicao);
+            in >> listaTransferencia[i].idade >> listaTransferencia[i].qualidade >> listaTransferencia[i].probLes >> listaTransferencia[i].probSus >> listaTransferencia[i].diasTreino >> listaTransferencia[i].semanas_ate_retorno_lesao >> listaTransferencia[i].semanas_ate_retorno_castigo;
+        }
+    } else {
+        listaTransferencia = nullptr;
     }
     in.close();
     cout << " Equipa e campeonato carregados! Bem-vindo de volta a jornada " << jornada << "!\n";

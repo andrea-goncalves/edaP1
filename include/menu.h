@@ -16,6 +16,6 @@ void menuAlteracoesManuais();
 int escolherJogador(Equipa& equipa);
 void menuAlteracoesManuais(Equipa& equipa);
 void menuGestao(Equipa& equipa);
-void menuGravarCarregar(Equipa& equipa, int& jornada);
+void menuGravarCarregar(Equipa& equipa, int& jornada, Jogador*& listaTransferencia, int& totalTransferencias);
 
 #endif //EDAP1_MENU_H
