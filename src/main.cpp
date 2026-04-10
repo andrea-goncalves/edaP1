@@ -61,6 +61,7 @@ int main(int argc, char* argv[]) {
     edaFC.pontos = 0;
     edaFC.numLesionados = 0;
     edaFC.numSuspensos = 0;
+
     for (int i = 0; i < 30; i++) {
         edaFC.lesionados[i] = nullptr;
         edaFC.suspensos[i] = nullptr;
@@ -120,7 +121,7 @@ int main(int argc, char* argv[]) {
 
 void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransferencia, int totalTransferencias, Tatica& taticaUsada, int golosEDAFC, int golosAdversario, int tamanho, string* nomeJogadores, equipasAdversarias* adversariosFase2) {
 
-
+int aux=0;
     char opcao;
     int numJ, semanas;
     string ficheiro;
@@ -135,72 +136,128 @@ void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransf
         std::cout << "[2] Reduzir Lesao Manual\n";
         std::cout << "[3] Aplicar Castigo Manual\n";
         std::cout << "[4] Reduzir Castigo Manual\n";
+        std::cout << "[5] Ver Equipa (Plantel, Lesionados, Suspensos)\n";
+        std::cout << "[6] Treino Especifico\n";
+        std::cout << "[7] Alteracoes Manuais (Editar Jogadores)\n";
+        std::cout << "[8] Escolher Convocados\n";
         std::cout << "[g] Gravar Equipa\n";
         std::cout << "[c] Carregar Equipa\n";
         std::cout << "----------------------------------------\n";
         std::cout << "Escolha uma opcao: ";
         std::cin >> opcao;
 
+
+
         switch (opcao) {
         case 's': {
 
 
             if (validarPlantelDisponible(edaFC, taticaAtual)) {
+                if (!edaFC.escolhaManual) {
+                    int disponiveis[4] = {
+                        edaFC.numJogadores[0],
+                        edaFC.numJogadores[1],
+                        edaFC.numJogadores[2],
+                        edaFC.numJogadores[3]
+                    };
+                    Jogador** copiaPlantel = copiarPlantel(edaFC, disponiveis);
+                    ordenarPlantelQualidadeJogador(copiaPlantel, disponiveis);
+                    if (edaFC.titulares != nullptr) delete[] edaFC.titulares;
+                    if (edaFC.suplentes != nullptr) delete[] edaFC.suplentes;
 
-                int disponiveis[4] = {
-                    edaFC.numJogadores[0],
-                    edaFC.numJogadores[1],
-                    edaFC.numJogadores[2],
-                    edaFC.numJogadores[3]
-                };
-                Jogador** copiaPlantel = copiarPlantel(edaFC, disponiveis);
-                ordenarPlantelQualidadeJogador(copiaPlantel, disponiveis);
-                if (edaFC.titulares != nullptr) delete[] edaFC.titulares;
-                if (edaFC.suplentes != nullptr) delete[] edaFC.suplentes;
+                    int lesionadosAntes = edaFC.numLesionados;
+                    int suspensosAntes = edaFC.numSuspensos;
+                    taticaUsada = taticaAtual;
+                    int numTitulares = taticaUsada.titulares[0] + taticaUsada.titulares[1] + taticaUsada.titulares[2] + taticaUsada.titulares[3];
+                    edaFC.titulares = escolherTitulares(copiaPlantel, disponiveis, taticaUsada);
+                    edaFC.suplentes = escolherSuplentes(copiaPlantel, disponiveis, taticaUsada, edaFC.numSuplentes);
+                    //imprimirTitulares(edaFC.titulares, taticaUsada);
+                     lesionar(edaFC.titulares, numTitulares);
+                    ListaLesionados(edaFC.titulares, numTitulares, edaFC);
+                    suspender(edaFC.titulares, numTitulares);
+                    ListaSuspensos(edaFC.titulares, numTitulares, edaFC);
+                    substituicoes(edaFC.titulares, edaFC.suplentes, numTitulares, edaFC.numSuplentes, edaFC);
+                    int lesionadosJornada = edaFC.numLesionados - lesionadosAntes;
+                    int suspensosJornada = edaFC.numSuspensos - suspensosAntes;
 
-                int lesionadosAntes = edaFC.numLesionados;
-                int suspensosAntes = edaFC.numSuspensos;
-                taticaUsada = taticaAtual;
-                int numTitulares = taticaUsada.titulares[0] + taticaUsada.titulares[1] + taticaUsada.titulares[2] + taticaUsada.titulares[3];
-                edaFC.titulares = escolherTitulares(copiaPlantel, disponiveis, taticaUsada);
-                edaFC.suplentes = escolherSuplentes(copiaPlantel, disponiveis, taticaUsada, edaFC.numSuplentes);
-                edaFC.numSubstituicoes = 0;
+                    if (verificarDerrota(lesionadosJornada, suspensosJornada, edaFC.numSubstituicoes)) {
+                        cout << "\n EDA FC nao tem jogadores suficientes!\n";
+                        golosEDAFC = 0;
+                        golosAdversario = 3;
+                    }
+                    else {
+                        golosEDAFC = numAleatorio(0, 8);
+                        golosAdversario = numAleatorio(0, 8);
+                    }
+                    if (golosEDAFC > golosAdversario)       edaFC.pontos += 3;
+                    else if (golosEDAFC == golosAdversario) edaFC.pontos += 1;
+                    else edaFC.pontos += 0;
 
-                lesionar(edaFC.titulares, numTitulares);
-                ListaLesionados(edaFC.titulares, numTitulares, edaFC);
-                suspender(edaFC.titulares, numTitulares);
-                ListaSuspensos(edaFC.titulares, numTitulares, edaFC);
-                substituicoes(edaFC.titulares, edaFC.suplentes, numTitulares, edaFC.numSuplentes, edaFC);
-                int lesionadosJornada = edaFC.numLesionados - lesionadosAntes;
-                int suspensosJornada = edaFC.numSuspensos - suspensosAntes;
+                    for (int i = 0; i < 4; i++) delete[] copiaPlantel[i];
+                    delete[] copiaPlantel;
 
-                if (verificarDerrota(lesionadosJornada, suspensosJornada, edaFC.numSubstituicoes)) {
-                    cout << "\n EDA FC nao tem jogadores suficientes!\n";
-                    golosEDAFC = 0;
-                    golosAdversario = 3;
+                    cout << "Resultado Anterior\n";
+                    cout << "Resultado: EDA FC:" << golosEDAFC << " - " << eliminarAcentos(adversariosFase2[jornada - 1].nome) << ":" << golosAdversario << "\n";
+                    imprimirTitulares(edaFC.titulares, taticaUsada);
+                    imprimirSuplentes(edaFC.suplentes, edaFC.numSuplentes);
+                    imprimirJogadoresSuspensos1(edaFC.suspensos, edaFC.numSuspensos);
+                    imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
+                    if (edaFC.numSubstituicoes > 0) {
+                        cout << "\nSubstituicoes:\n";
+                        for (int i = 0; i < edaFC.numSubstituicoes; i++) {
+                            cout << eliminarAcentos(edaFC.sairam[i]) << " -> "
+                                << eliminarAcentos(edaFC.entraram[i]) << "\n";
+                            }
+                        }
                 }
                 else {
-                    golosEDAFC = numAleatorio(0, 8);
-                    golosAdversario = numAleatorio(0, 8);
-                }
-                if (golosEDAFC > golosAdversario)       edaFC.pontos += 3;
-                else if (golosEDAFC == golosAdversario) edaFC.pontos += 1;
-                else 									 edaFC.pontos += 0;
-                for (int i = 0; i < 4; i++) delete[] copiaPlantel[i];
-                delete[] copiaPlantel;
-                cout << "Resultado Anterior\n";
-                cout << "Resultado: EDA FC:" << golosEDAFC << " - " << eliminarAcentos(adversariosFase2[jornada - 1].nome) << ":" << golosAdversario << "\n";
-                imprimirTitulares(edaFC.titulares, taticaUsada);
-                imprimirSuplentes(edaFC.suplentes, edaFC.numSuplentes);
-                imprimirJogadoresSuspensos1(edaFC.suspensos, edaFC.numSuspensos);
-                imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
-                if (edaFC.numSubstituicoes > 0) {
-                    cout << "\nSubstituicoes:\n";
-                    for (int i = 0; i < edaFC.numSubstituicoes; i++) {
-                        cout << eliminarAcentos(edaFC.sairam[i]) << " -> "
-                            << eliminarAcentos(edaFC.entraram[i]) << "\n";
+
+                    int lesionadosAntes = edaFC.numLesionados;
+                    int suspensosAntes = edaFC.numSuspensos;
+                    taticaUsada = taticaAtual;
+                    int numTitulares = taticaUsada.titulares[0] + taticaUsada.titulares[1] + taticaUsada.titulares[2] + taticaUsada.titulares[3];
+                    lesionar(edaFC.titulares, numTitulares);
+                    ListaLesionados(edaFC.titulares, numTitulares, edaFC);
+                    suspender(edaFC.titulares, numTitulares);
+                    ListaSuspensos(edaFC.titulares, numTitulares, edaFC);
+                    substituicoes(edaFC.titulares, edaFC.suplentes, numTitulares, edaFC.numSuplentes, edaFC);
+                    int lesionadosJornada = edaFC.numLesionados - lesionadosAntes;
+                    int suspensosJornada = edaFC.numSuspensos - suspensosAntes;
+
+                    if (verificarDerrota(lesionadosJornada, suspensosJornada, edaFC.numSubstituicoes)) {
+                        cout << "\n EDA FC nao tem jogadores suficientes!\n";
+                        golosEDAFC = 0;
+                        golosAdversario = 3;
                     }
+                    else {
+                        golosEDAFC = numAleatorio(0, 8);
+                        golosAdversario = numAleatorio(0, 8);
+                    }
+                    if (golosEDAFC > golosAdversario)       edaFC.pontos += 3;
+                    else if (golosEDAFC == golosAdversario) edaFC.pontos += 1;
+                    else edaFC.pontos += 0;
+                    cout << "Resultado Anterior\n";
+                    cout << "Resultado: EDA FC:" << golosEDAFC << " - " << eliminarAcentos(adversariosFase2[jornada - 1].nome) << ":" << golosAdversario << "\n";
+                    imprimirTitulares(edaFC.titulares, taticaUsada);
+                    imprimirSuplentes(edaFC.suplentes, edaFC.numSuplentes);
+                    imprimirJogadoresSuspensos1(edaFC.suspensos, edaFC.numSuspensos);
+                    imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
+                    if (edaFC.numSubstituicoes > 0) {
+                        cout << "\nSubstituicoes:\n";
+                        for (int i = 0; i < edaFC.numSubstituicoes; i++) {
+                            cout << eliminarAcentos(edaFC.sairam[i]) << " -> "
+                                << eliminarAcentos(edaFC.entraram[i]) << "\n";
+                            }
+                        }
+
                 }
+
+               ///////
+                edaFC.escolhaManual = false;
+                edaFC.numSubstituicoes = 0;
+
+
+
                 cout << "\n" << endl;
                 cout << "\n" << endl;
 
@@ -213,11 +270,13 @@ void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransf
                 imprimirJogadoresSuspensos2(edaFC.suspensos, edaFC.numSuspensos);
                 imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
                 imprimirMercado(listaTransferencia, totalTransferencias);
+                treinar(edaFC);
 
                 jornada++;
 
                 recuperarLesionados(edaFC);
                 recuperarSuspensos(edaFC);
+
             }
             else {
 
@@ -276,7 +335,21 @@ void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransf
             cin.ignore();
             reduzirCastigoManual(edaFC, numJ, semanas);
             break;
-
+        case '5':
+            imprimirPlantel(edaFC);
+            imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
+            imprimirJogadoresSuspensos1(edaFC.suspensos, edaFC.numSuspensos);
+            break;
+        case '6':
+            menuTreino(edaFC);
+            break;
+        case '7':
+            menuAlteracoesManuais(edaFC);
+            break;
+        case '8':
+            escolherEquipaManual(edaFC);
+                imprimirTitulares(edaFC.titulares, taticaUsada);
+            break;
         case 'g':
 
             cout << "Nome do ficheiro para gravar (ex: save.txt): ";

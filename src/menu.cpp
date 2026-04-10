@@ -39,13 +39,15 @@ void menuTreino(Equipa& equipa) {
                 escolherJogadorGlobal(equipa, posAtual, idxJogador);
 
                 if(posAtual != -1) {
-                    equipa.plantel[posAtual][idxJogador].qualidade += 5;
-                    // Nao deixa a qualidade passar de 100
-                    if(equipa.plantel[posAtual][idxJogador].qualidade > 100) {
-                        equipa.plantel[posAtual][idxJogador].qualidade = 100;
-                    }
-                    cout << "[INFO] Qualidade de " << equipa.plantel[posAtual][idxJogador].nome
-                         << " aumentou para " << equipa.plantel[posAtual][idxJogador].qualidade << "!\n";
+                    int semanas;
+                    cout << "Quantas semanas de treino deseja? ";
+                    cin >> semanas;
+
+                    equipa.plantel[posAtual][idxJogador].diasTreino = semanas;
+
+                    cout << "[INFO] "
+                         << equipa.plantel[posAtual][idxJogador].nome
+                         << " vai treinar durante " << semanas << " semanas.\n";
                 }
                 break;
             }
@@ -194,6 +196,7 @@ void menuPrincipal(Equipa& equipa, int& jornada) {
         cout << "3 - Gestao Fisica e Disciplinar\n";
         cout << "4 - Gravar / Carregar Campeonato\n";
         cout << "5 - Alteracoes Manuais (Editar Jogadores)\n";
+        cout << "6 - Escolher Convocados\n";
         cout << "0 - Avancar para o Jogo!\n";
         cout << "Opcao: ";
         cin >> opcao;
@@ -215,6 +218,9 @@ void menuPrincipal(Equipa& equipa, int& jornada) {
                 break;
             case 5:
                 menuAlteracoesManuais(equipa);
+                break;
+            case 6:
+                escolherEquipaManual(equipa);
                 break;
             case 0:
                 cout << "A preparar a equipa para entrar em campo...\n";
