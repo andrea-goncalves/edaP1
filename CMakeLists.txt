@@ -11,4 +11,15 @@ add_executable(edaP1 src/main.cpp
         src/ficheiros.cpp
         include/ficheiros.h
         src/utils.cpp
-        include/utils.h)
+        include/utils.h
+        src/equipasAdversarias.cpp
+        include/equipasAdversarias.h
+        src/lesionarSuspender.cpp
+        include/lesionarSuspender.h
+        include/constantes.h
+        src/transferencias.cpp
+        include/transferencias.h
+        src/menu.cpp
+        include/menu.h
+        src/validarPlantel.cpp
+        include/validarPlantel.h)

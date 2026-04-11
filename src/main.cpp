@@ -1,48 +1,414 @@
 #include <iostream>
 #include <iomanip>
 #include <ctime>
-#include <windows.h>
 #include "../include/jogador.h"
 #include "../include/ficheiros.h"
 #include "../include/equipa.h"
+#include "../include/equipasAdversarias.h"
+#include "../include/utils.h"
+#include "../include/constantes.h"
+#include "../include/lesionarSuspender.h"
+#include "../include/transferencias.h"
+#include "../include/menu.h"
+#include "../include/validarPlantel.h"
+
 using namespace std;
 
-int main() {
+void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransferencia, int totalTransferencias, Tatica& taticaUsada, int golosEDAFC, int golosAdversario, int golosTotais, int tamanho, string* nomeJogadores, equipasAdversarias* adversariosFase2);
+int main(int argc, char* argv[]) {
     srand(time(NULL));
-    SetConsoleOutputCP(CP_UTF8);
     int tamanho = tamArq("../data/nomes.txt");
     string* nomeJogadores = leituraArq("../data/nomes.txt", tamanho);
-    int numeroCamisaGR[3] = { 1, 13, 30 };
-    int numeroCamisaDEF[10] = { 2, 3, 4, 5, 12, 15, 22, 24, 25, 26 };
-    int numeroCamisaMED[10] = { 6, 8, 10, 14, 16, 17, 20, 21, 23, 28 };
-    int numeroCamisaAVA[7] = { 7, 9, 11, 18, 19, 27, 29 };
+
+    int numJogosPorFase = 17;
+    int numEquipas = tamArq("../data/equipas.txt");
+    string* adversariosNomes = leituraArq("../data/equipas.txt", numEquipas);
+    equipasAdversarias* adversarios = new equipasAdversarias[numEquipas];
+    for (int i = 0; i < numEquipas; i++) {
+        adversarios[i].nome = adversariosNomes[i];
+    }
+    equipasAdversarias* adversariosFase2 = new equipasAdversarias[numEquipas];
+
+    Jogador* listaTransferencia = nullptr;
+    int totalTransferencias = 0;
+
+    int jornada = 1;
+    int golosEDAFC = 0;
+    int golosAdversario = 0;
+    int golosTotais = 0;
+
+
     int numGR = numeroGR();
     int numDEF = numeroDEF();
     int numMED = numeroMED();
     int numAVA = numeroAVA();
-
     int numJogadorPlantel = numGR + numDEF + numMED + numAVA;
+    Jogador* gr = criarJogadores(nomeJogadores, tamanho, numGR, "GR", CAMISAS_GR, 3);
+    Jogador* def = criarJogadores(nomeJogadores, tamanho, numDEF, "DEF", CAMISAS_DEF, 10);
+    Jogador* med = criarJogadores(nomeJogadores, tamanho, numMED, "MED", CAMISAS_MED, 10);
+    Jogador* ava = criarJogadores(nomeJogadores, tamanho, numAVA, "AVA", CAMISAS_AVA, 7);
+
+    Equipa edaFC;
+    edaFC.nome = "EDA FC";
+    edaFC.numJogadores[0] = numGR;
+    edaFC.numJogadores[1] = numDEF;
+    edaFC.numJogadores[2] = numMED;
+    edaFC.numJogadores[3] = numAVA;
+    edaFC.plantel = gerarPlantel(gr, def, med, ava, numGR, numDEF, numMED, numAVA);
+    edaFC.pontos = 0;
+    edaFC.titulares = nullptr;
+    edaFC.suplentes = nullptr;
+    edaFC.pontos = 0;
+    edaFC.numLesionados = 0;
+    edaFC.numSuspensos = 0;
+
+    for (int i = 0; i < 30; i++) {
+        edaFC.lesionados[i] = nullptr;
+        edaFC.suspensos[i] = nullptr;
+    }
+    Tatica taticaAtual;
+    Tatica taticaUsada;
+
+
+
     cout << numJogadorPlantel << endl;
-    cout << "Número de GR: " << numGR << endl;
-    cout << "Número de DEF: " << numDEF << endl;
-    cout << "Número de MED: " << numMED << endl;
-    cout << "Número de AVA: " << numAVA << endl;
+    cout << "Numero de GR: " << numGR << endl;
+    cout << edaFC.numJogadores[0] << endl;
+    cout << "Numero de DEF: " << numDEF << endl;
+    cout << edaFC.numJogadores[1] << endl;
+    cout << "Numero de MED: " << numMED << endl;
+    cout << edaFC.numJogadores[2] << endl;
+    cout << "Numero de AVA: " << numAVA << endl;
+    cout << edaFC.numJogadores[3] << endl;
 
-    Jogador* gr = criarGR(nomeJogadores, tamanho, numGR, numeroCamisaGR);
-    Jogador* def = criarDEF(nomeJogadores, tamanho, numDEF, numeroCamisaDEF);
-    Jogador* med = criarMED(nomeJogadores, tamanho, numMED, numeroCamisaMED);
-    Jogador* ava = criarAVA(nomeJogadores, tamanho, numAVA, numeroCamisaAVA);
-    Jogador** plantel = gerarPlantel(gr, def, med, ava, numGR, numDEF, numMED, numAVA);
 
-    ordenarPlantelQualidadeJogador(plantel, numGR, numDEF, numMED, numAVA);
-    imprimirPlantel(plantel,numGR, numDEF, numMED, numAVA );
+    ordenarPlantelNumeroJogador(edaFC);
+    imprimirPlantel(edaFC);
 
-    delete[] gr;  // Recuerda liberar también los arrays intermedios
+    if (argc > 1) {
+        string ficheiroSave = argv[1];
+        cout << "\n[INFO] A tentar carregar save do argumento: " << ficheiroSave << "\n";
+        carregarEquipa(edaFC, jornada, ficheiroSave, listaTransferencia, totalTransferencias);
+    }
+
+    for (int i = 0; i < 17; i++) {
+        adversariosFase2[i] = escolher(adversarios, numJogosPorFase);
+        adversariosFase2[17 + i] = adversariosFase2[i];
+    }
+
+    //////
+    menu(jornada, edaFC, taticaAtual, listaTransferencia, totalTransferencias, taticaUsada, golosEDAFC, golosAdversario,golosTotais,tamanho, nomeJogadores, adversariosFase2);
+    ///////
+
+    for (int i = 0; i < edaFC.numLesionados; i++) delete edaFC.lesionados[i];
+    for (int i = 0; i < edaFC.numSuspensos; i++) delete edaFC.suspensos[i];
+    for (int i = 0; i < 4; i++) delete[] edaFC.plantel[i];
+    delete[] edaFC.plantel;
+    delete[] edaFC.titulares;
+    delete[] edaFC.suplentes;
+    delete[] gr;
     delete[] def;
     delete[] med;
     delete[] ava;
-    delete[] plantel;
     delete[] nomeJogadores;
+    delete[] adversarios;
+    delete[] adversariosFase2;
+    delete[] adversariosNomes;
+    delete[] listaTransferencia;
 
     return 0;
+}
+
+/** * @brief Função principal do menu do jogo, onde o jogador pode escolher as opções para avançar na jornada, configurar a equipa, realizar transferências, entre outras ações.
+ *
+ * @param jornada Referência para o número da jornada atual.
+ * @param edaFC Referência para a equipa do jogador (EDA FC).
+ * @param taticaAtual Referência para a tática atual da equipa.
+ * @param listaTransferencia Ponteiro para a lista de jogadores disponíveis para transferência.
+ * @param totalTransferencias Número total de transferências realizadas.
+ * @param taticaUsada Referência para a tática usada na jornada atual.
+ * @param golosEDAFC Número de golos marcados pelo EDA FC na jornada atual.
+ * @param golosAdversario Número de golos marcados pelo adversário na jornada atual.
+ * @param golosTotais Número total de golos marcados na jornada atual.
+ * @param tamanho Tamanho do array de nomes de jogadores.
+ * @param nomeJogadores Array de strings contendo os nomes dos jogadores disponíveis.
+ * @param adversariosFase2 Array de estruturas contendo os adversários da fase 2 do campeonato.
+ */
+void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransferencia, int totalTransferencias, Tatica& taticaUsada, int golosEDAFC, int golosAdversario, int golosTotais, int tamanho, string* nomeJogadores, equipasAdversarias* adversariosFase2) {
+
+bool aux=false;
+    char opcao;
+    char opcao2;
+    int numJ, semanas;
+    string ficheiro;
+
+    while (jornada <= 34) {
+
+        std::cout << "[s] Proxima Jornada\n";
+        std::cout << "[o] Opcoes\n";
+        std::cout << "----------------------------------------\n";
+        std::cout << "Escolha uma opcao: ";
+        std::cin >> opcao;
+
+
+
+        switch (opcao) {
+        case 's': {
+
+
+            if (validarPlantelDisponible(edaFC, taticaAtual)) {
+                if (!edaFC.escolhaManual) {
+                    int disponiveis[4] = {
+                        edaFC.numJogadores[0],
+                        edaFC.numJogadores[1],
+                        edaFC.numJogadores[2],
+                        edaFC.numJogadores[3]
+                    };
+                    Jogador** copiaPlantel = copiarPlantel(edaFC, disponiveis);
+                    ordenarPlantelQualidadeJogador(copiaPlantel, disponiveis);
+                    if (edaFC.titulares != nullptr) delete[] edaFC.titulares;
+                    if (edaFC.suplentes != nullptr) delete[] edaFC.suplentes;
+
+                    int lesionadosAntes = edaFC.numLesionados;
+                    int suspensosAntes = edaFC.numSuspensos;
+                    taticaUsada = taticaAtual;
+                    int numTitulares = taticaUsada.titulares[0] + taticaUsada.titulares[1] + taticaUsada.titulares[2] + taticaUsada.titulares[3];
+                    edaFC.titulares = escolherTitulares(copiaPlantel, disponiveis, taticaUsada);
+                    edaFC.suplentes = escolherSuplentes(copiaPlantel, disponiveis, taticaUsada, edaFC.numSuplentes);
+
+                    lesionar(edaFC.titulares, numTitulares);
+                    ListaLesionados(edaFC.titulares, numTitulares, edaFC);
+                    suspender(edaFC.titulares, numTitulares);
+                    ListaSuspensos(edaFC.titulares, numTitulares, edaFC);
+                    substituicoes(edaFC.titulares, edaFC.suplentes, numTitulares, edaFC.numSuplentes, edaFC);
+                    int lesionadosJornada = edaFC.numLesionados - lesionadosAntes;
+                    int suspensosJornada = edaFC.numSuspensos - suspensosAntes;
+
+                    if (verificarDerrota(lesionadosJornada, suspensosJornada, edaFC.numSubstituicoes)) {
+                        cout << "\n EDA FC nao tem jogadores suficientes!\n";
+                        golosEDAFC = 0;
+                        golosAdversario = 3;
+                    }
+                    else {
+                        while (aux==false) {
+                            golosEDAFC = numAleatorio(0, 8);
+                            golosAdversario = numAleatorio(0, 8);
+                            golosTotais = golosEDAFC + golosAdversario;
+                            if (0 <= golosTotais && golosTotais <= 8) {
+                                aux = true;
+                            }
+                        }
+
+                    }
+                    if (golosEDAFC > golosAdversario)       edaFC.pontos += 3;
+                    else if (golosEDAFC == golosAdversario) edaFC.pontos += 1;
+                    else edaFC.pontos += 0;
+
+                    for (int i = 0; i < 4; i++) delete[] copiaPlantel[i];
+                    delete[] copiaPlantel;
+                    cout << "\n******************************\n";
+                    cout << "* EDA FC - " << jornada << "a Jornada - " << edaFC.pontos << " pontos. *\n";
+                    cout << "******************************\n";
+                    cout << "Resultado Anterior\n";
+                    cout << "Resultado: EDA FC:" << golosEDAFC << " - " << eliminarAcentos(adversariosFase2[jornada - 1].nome) << ":" << golosAdversario << "\n";
+                    imprimirTitulares(edaFC.titulares, taticaUsada);
+                    imprimirSuplentes(edaFC.suplentes, edaFC.numSuplentes);
+                    imprimirJogadoresSuspensos1(edaFC.suspensos, edaFC.numSuspensos);
+                    imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
+                    if (edaFC.numSubstituicoes > 0) {
+                        cout << "\nSubstituicoes:\n";
+                        for (int i = 0; i < edaFC.numSubstituicoes; i++) {
+                            cout << eliminarAcentos(edaFC.sairam[i]) << " -> "
+                                << eliminarAcentos(edaFC.entraram[i]) << "\n";
+                            }
+                        }
+                }
+                else {
+
+                    int lesionadosAntes = edaFC.numLesionados;
+                    int suspensosAntes = edaFC.numSuspensos;
+                    taticaUsada = taticaAtual;
+                    int numTitulares = taticaUsada.titulares[0] + taticaUsada.titulares[1] + taticaUsada.titulares[2] + taticaUsada.titulares[3];
+                    lesionar(edaFC.titulares, numTitulares);
+                    ListaLesionados(edaFC.titulares, numTitulares, edaFC);
+                    suspender(edaFC.titulares, numTitulares);
+                    ListaSuspensos(edaFC.titulares, numTitulares, edaFC);
+                    substituicoes(edaFC.titulares, edaFC.suplentes, numTitulares, edaFC.numSuplentes, edaFC);
+                    int lesionadosJornada = edaFC.numLesionados - lesionadosAntes;
+                    int suspensosJornada = edaFC.numSuspensos - suspensosAntes;
+
+                    if (verificarDerrota(lesionadosJornada, suspensosJornada, edaFC.numSubstituicoes)) {
+                        cout << "\n EDA FC nao tem jogadores suficientes!\n";
+                        golosEDAFC = 0;
+                        golosAdversario = 3;
+                    }
+                    else {
+                        while (aux==false) {
+                            golosEDAFC = numAleatorio(0, 8);
+                            golosAdversario = numAleatorio(0, 8);
+                            golosTotais = golosEDAFC + golosAdversario;
+                            if (0 <= golosTotais && golosTotais <= 8) {
+                                aux = true;
+                            }
+                        }
+                    }
+                    if (golosEDAFC > golosAdversario)       edaFC.pontos += 3;
+                    else if (golosEDAFC == golosAdversario) edaFC.pontos += 1;
+                    else edaFC.pontos += 0;
+                    cout << "Resultado Anterior\n";
+                    cout << "Resultado: EDA FC:" << golosEDAFC << " - " << eliminarAcentos(adversariosFase2[jornada - 1].nome) << ":" << golosAdversario << "\n";
+                    imprimirTitulares(edaFC.titulares, taticaUsada);
+                    imprimirSuplentes(edaFC.suplentes, edaFC.numSuplentes);
+                    imprimirJogadoresSuspensos1(edaFC.suspensos, edaFC.numSuspensos);
+                    imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
+                    if (edaFC.numSubstituicoes > 0) {
+                        cout << "\nSubstituicoes:\n";
+                        for (int i = 0; i < edaFC.numSubstituicoes; i++) {
+                            cout << eliminarAcentos(edaFC.sairam[i]) << " -> "
+                                << eliminarAcentos(edaFC.entraram[i]) << "\n";
+                            }
+                        }
+
+                }
+
+
+                edaFC.escolhaManual = false;
+                edaFC.numSubstituicoes = 0;
+
+
+                cout << "\n" << endl;
+                cout << "\n" << endl;
+
+                Jogador* novosCandidatos = criarAleatorio(nomeJogadores, tamanho, 2);
+                listaTransferencia = gerarTransferencia(novosCandidatos, 2, listaTransferencia, totalTransferencias);
+                delete[] novosCandidatos;
+
+                ordenarPlantelNumeroJogador(edaFC);
+                imprimirPlantel(edaFC);
+                imprimirJogadoresSuspensos2(edaFC.suspensos, edaFC.numSuspensos);
+                imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
+                imprimirMercado(listaTransferencia, totalTransferencias);
+                treinar(edaFC);
+
+                jornada++;
+
+                recuperarLesionados(edaFC);
+                recuperarSuspensos(edaFC);
+
+            }
+            else {
+
+                cout << "\nNao se pode jogar esta jornada. Necessitas de arranjar o plantel.\n";
+                menu(jornada, edaFC, taticaAtual, listaTransferencia, totalTransferencias, taticaUsada, golosEDAFC, golosAdversario, golosTotais, tamanho, nomeJogadores, adversariosFase2);
+            }
+
+
+            break;
+        }
+
+        case 'o':
+    std::cout << "\n";
+    std::cout << "Menu de Opcoes\n";
+    std::cout << "[m] Mudar Tatica \n";
+    std::cout << "[t] Transferencias (Contratar)\n";
+    std::cout << "[1] Aplicar Lesao Manual\n";
+    std::cout << "[2] Reduzir Lesao Manual\n";
+    std::cout << "[3] Aplicar Castigo Manual\n";
+    std::cout << "[4] Reduzir Castigo Manual\n";
+    std::cout << "[5] Ver Equipa (Plantel, Lesionados, Suspensos)\n";
+    std::cout << "[6] Treino Especifico\n";
+    std::cout << "[7] Escolher Convocados\n";
+    std::cout << "[g] Gravar Equipa\n";
+    std::cout << "[c] Carregar Equipa\n";
+    std::cout << "----------------------------------------\n";
+    std::cout << "Escolha uma opcao: ";
+    std::cin >> opcao2;
+    //taticaAtual = pedirTatica(taticaAtual);
+    switch (opcao2)
+    {
+        case 'm':
+            taticaAtual = pedirTatica(taticaAtual);
+			break;
+        case 't':
+            contratarJogador(edaFC, listaTransferencia, totalTransferencias);
+            ordenarPlantelNumeroJogador(edaFC);
+            imprimirPlantel(edaFC);
+            imprimirMercado(listaTransferencia, totalTransferencias);
+            break;
+
+        case '1':
+
+            cout << "Numero do jogador: ";
+            cin >> numJ;
+            cout << "Numero de semanas: ";
+            cin >> semanas;
+            cin.ignore();
+            aplicarLesaoManual(edaFC, numJ, semanas);
+            break;
+
+        case '2':
+            cout << "Numero do jogador: ";
+            cin >> numJ;
+            cout << "Numero de semanas: ";
+            cin >> semanas;
+            cin.ignore();
+            reduzirLesaoManual(edaFC, numJ, semanas);
+            break;
+
+        case '3':
+            cout << "Numero do jogador: ";
+            cin >> numJ;
+            cout << "Numero de semanas: ";
+            cin >> semanas;
+            cin.ignore();
+            aplicarCastigoManual(edaFC, numJ, semanas);
+            break;
+
+        case '4':
+            cout << "Numero do jogador: ";
+            cin >> numJ;
+            cout << "Numero de semanas: ";
+            cin >> semanas;
+            cin.ignore();
+            reduzirCastigoManual(edaFC, numJ, semanas);
+            break;
+        case '5':
+            imprimirPlantel(edaFC);
+            imprimirJogadoresLesionados(edaFC.lesionados, edaFC.numLesionados);
+            imprimirJogadoresSuspensos1(edaFC.suspensos, edaFC.numSuspensos);
+            break;
+        case '6':
+            menuTreino(edaFC);
+            break;
+        case '7':
+            escolherEquipaManual(edaFC, taticaAtual);
+            break;
+
+        case 'g':
+
+            cout << "Nome do ficheiro para gravar (ex: save.txt): ";
+            cin.ignore();
+            getline(cin, ficheiro);
+            gravarEquipa(edaFC, jornada, ficheiro, listaTransferencia, totalTransferencias);
+            break;
+
+        case 'c':
+
+            cout << "Nome do ficheiro a carregar: ";
+            cin.ignore();
+            getline(cin, ficheiro);
+            carregarEquipa(edaFC, jornada, ficheiro, listaTransferencia, totalTransferencias);
+            break;
+
+        default:
+            std::cout << ">> Opcao invalida. Tente novamente.\n";
+            break;
+    }
+    break;
+
+        default:
+            std::cout << ">> Opcao invalida. Tente novamente.\n";
+            break;
+        }
+    }
 }
