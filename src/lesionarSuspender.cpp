@@ -73,7 +73,7 @@ void lesionar(Jogador* titulares, int numTitulares) {
         titulares[i].semanas_ate_retorno_lesao = 0;
         int probabilidade = numAleatorio(1, 100);
         if (probabilidade <= titulares[i].probLes) {
-            titulares[i].semanas_ate_retorno_lesao = numAleatorio(1, LIMITE_TEMPO_LESIONADO)+1;
+            titulares[i].semanas_ate_retorno_lesao = numAleatorio(1, LIMITE_TEMPO_LESIONADO);
         }
     }
 }

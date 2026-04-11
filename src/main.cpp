@@ -154,7 +154,7 @@ bool aux=false;
 
         switch (opcao) {
         case 's': {
-
+            aux = false;
 
             if (validarPlantelDisponible(edaFC, taticaAtual)) {
                 if (!edaFC.escolhaManual) {
@@ -191,6 +191,7 @@ bool aux=false;
                     }
                     else {
                         while (aux==false) {
+
                             golosEDAFC = numAleatorio(0, 8);
                             golosAdversario = numAleatorio(0, 8);
                             golosTotais = golosEDAFC + golosAdversario;
@@ -251,6 +252,7 @@ bool aux=false;
                                 aux = true;
                             }
                         }
+
                     }
                     if (golosEDAFC > golosAdversario)       edaFC.pontos += 3;
                     else if (golosEDAFC == golosAdversario) edaFC.pontos += 1;

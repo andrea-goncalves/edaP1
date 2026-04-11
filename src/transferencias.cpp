@@ -21,10 +21,10 @@ using namespace std;
  * @return O índice correspondente à posição (0 para "GR", 1 para "DEF", 2 para "MED", 3 para "AVA"), ou -1 se a posição for inválida.
  */
 int posicao(std::string pos) {
-    if (pos == "GR") return POSICAO_GR;
-    if (pos == "DEF") return POSICAO_DEF;
-    if (pos == "MED") return POSICAO_MED;
-    if (pos == "AVA") return POSICAO_AVA;
+    if (pos == "GR") return 0;
+    if (pos == "DEF") return 1;
+    if (pos == "MED") return 2;
+    if (pos == "AVA") return 3;
     return -1;
 }
 /**
@@ -34,7 +34,7 @@ int posicao(std::string pos) {
  * @return O número total de jogadores na equipe.
  */
 int totalJogadores(Equipa &equipe) {
-    return equipe.numJogadores[POSICAO_GR] + equipe.numJogadores[POSICAO_DEF] + equipe.numJogadores[POSICAO_MED] + equipe.numJogadores[POSICAO_AVA];
+    return equipe.numJogadores[0] + equipe.numJogadores[1] + equipe.numJogadores[2] + equipe.numJogadores[3];
 }
 
 /**
@@ -179,10 +179,10 @@ int escolherCamisaDisponivel(Equipa &equipe, int posIdx) {
     const int* listaRef;
     int tamRef;
 
-    if (posIdx == 0)      { listaRef = CAMISAS_GR;  tamRef = GR_MAX; }
-    else if (posIdx == 1) { listaRef = CAMISAS_DEF; tamRef = DEF_MAX; }
-    else if (posIdx == 2) { listaRef = CAMISAS_MED; tamRef = MED_MAX; }
-    else                  { listaRef = CAMISAS_AVA; tamRef = AVA_MAX; }
+    if (posIdx == 0)      { listaRef = CAMISAS_GR;  tamRef = 3; }
+    else if (posIdx == 1) { listaRef = CAMISAS_DEF; tamRef = 10; }
+    else if (posIdx == 2) { listaRef = CAMISAS_MED; tamRef = 10; }
+    else                  { listaRef = CAMISAS_AVA; tamRef = 7; }
 
     for (int i = 0; i < tamRef; i++) {
         bool ocupado = false;
