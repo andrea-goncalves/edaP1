@@ -4,7 +4,14 @@
 #include <iostream>
 
 using namespace std;
-
+/** * @brief Valida se o plantel da equipe é suficiente e compatível com a tática atual.
+ *
+ * Esta função verifica se o número total de jogadores disponíveis na equipe é suficiente para formar um plantel completo (mínimo de 13 jogadores). Além disso, ela compara o número de jogadores disponíveis em cada posição (goleiro, defensor, meio-campista, atacante) com os requisitos da tática atual. Se o plantel não for suficiente ou não for compatível com a tática, a função exibe mensagens informativas e retorna false. Caso contrário, retorna true.
+ *
+ * @param equipa Referência para a equipe cujo plantel será validado.
+ * @param taticaAtual Referência para a tática atual da equipe, que contém os requisitos de jogadores por posição.
+ * @return true se o plantel for válido e compatível com a tática, ou false caso contrário.
+ */
 bool validarPlantelDisponible(Equipa& equipa, Tatica& taticaAtual) {
     int disponibles[4] = {
         equipa.numJogadores[0],

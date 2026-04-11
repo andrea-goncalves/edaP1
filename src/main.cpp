@@ -119,6 +119,21 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
+/** * @brief Função principal do menu do jogo, onde o jogador pode escolher as opções para avançar na jornada, configurar a equipa, realizar transferências, entre outras ações.
+ *
+ * @param jornada Referência para o número da jornada atual.
+ * @param edaFC Referência para a equipa do jogador (EDA FC).
+ * @param taticaAtual Referência para a tática atual da equipa.
+ * @param listaTransferencia Ponteiro para a lista de jogadores disponíveis para transferência.
+ * @param totalTransferencias Número total de transferências realizadas.
+ * @param taticaUsada Referência para a tática usada na jornada atual.
+ * @param golosEDAFC Número de golos marcados pelo EDA FC na jornada atual.
+ * @param golosAdversario Número de golos marcados pelo adversário na jornada atual.
+ * @param golosTotais Número total de golos marcados na jornada atual.
+ * @param tamanho Tamanho do array de nomes de jogadores.
+ * @param nomeJogadores Array de strings contendo os nomes dos jogadores disponíveis.
+ * @param adversariosFase2 Array de estruturas contendo os adversários da fase 2 do campeonato.
+ */
 void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransferencia, int totalTransferencias, Tatica& taticaUsada, int golosEDAFC, int golosAdversario, int golosTotais, int tamanho, string* nomeJogadores, equipasAdversarias* adversariosFase2) {
 
 bool aux=false;
@@ -131,16 +146,6 @@ bool aux=false;
 
         std::cout << "[s] Proxima Jornada\n";
         std::cout << "[o] Opcoes\n";
-        /* std::cout << "[t] Transferencias (Contratar)\n";
-        std::cout << "[1] Aplicar Lesao Manual\n";
-        std::cout << "[2] Reduzir Lesao Manual\n";
-        std::cout << "[3] Aplicar Castigo Manual\n";
-        std::cout << "[4] Reduzir Castigo Manual\n";
-        std::cout << "[5] Ver Equipa (Plantel, Lesionados, Suspensos)\n";
-        std::cout << "[6] Treino Especifico\n";
-        std::cout << "[7] Escolher Convocados\n";
-        std::cout << "[g] Gravar Equipa\n";
-        std::cout << "[c] Carregar Equipa\n"; */
         std::cout << "----------------------------------------\n";
         std::cout << "Escolha uma opcao: ";
         std::cin >> opcao;

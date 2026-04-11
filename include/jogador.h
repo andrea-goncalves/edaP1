@@ -4,7 +4,11 @@
 #define EDAP1_JOGADOR_H
 #include <string>
 
-
+/**
+ * @brief Estrutura que representa um jogador de futebol, contendo informações sobre o número do jogador, nome, posição, idade, qualidade, probabilidade de lesão, probabilidade de suspensão, dias de treino e semanas até o retorno de lesão ou castigo.
+ *
+ * A estrutura Jogador armazena os atributos essenciais de um jogador de futebol. O campo "numero" representa o número da camisa do jogador, enquanto "nome" e "posicao" armazenam o nome e a posição do jogador em campo (goleiro, defensor, meio-campista ou atacante). Os campos "idade" e "qualidade" indicam a idade do jogador e sua qualidade geral. As probabilidades de lesão e suspensão são representadas pelos campos "probLes" e "probSus", respectivamente. Além disso, os campos "diasTreino", "semanas_ate_retorno_lesao" e "semanas_ate_retorno_castigo" fornecem informações sobre o tempo necessário para o treinamento e o retorno do jogador após uma lesão ou suspensão.
+ */
 struct Jogador {
     int numero;
     std::string nome;

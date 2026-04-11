@@ -9,7 +9,12 @@
 
 using namespace std;
 
-
+/** * @brief Exibe o menu de treino específico, permitindo ao usuário escolher entre mudar a posição de um jogador ou melhorar a qualidade de um jogador através de semanas de treino.
+ *
+ * O menu apresenta as opções disponíveis para o usuário e processa a escolha feita. Se o usuário optar por mudar a posição de um jogador, ele será solicitado a escolher um jogador e a nova posição desejada. Se o usuário optar por melhorar a qualidade de um jogador, ele será solicitado a escolher um jogador e o número de semanas de treino que deseja aplicar. O menu continuará sendo exibido até que o usuário escolha voltar.
+ *
+ * @param equipa Referência para a equipe do jogador, que será modificada com base nas escolhas feitas no menu.
+ */
 void menuTreino(Equipa& equipa) {
     int opcao;
 
@@ -60,6 +65,12 @@ void menuTreino(Equipa& equipa) {
     } while(opcao != 0);
 }
 
+/** * @brief Exibe o menu de gestão física e disciplinar, permitindo ao usuário aplicar ou reduzir lesões e castigos a jogadores específicos da equipe.
+ *
+ * O menu apresenta as opções disponíveis para o usuário e processa a escolha feita. Se o usuário optar por aplicar ou reduzir uma lesão ou castigo, ele será solicitado a escolher um jogador e o número de semanas que deseja aplicar ou reduzir. O menu continuará sendo exibido até que o usuário escolha voltar.
+ *
+ * @param equipa Referência para a equipe do jogador, que será modificada com base nas escolhas feitas no menu.
+ */
 void menuGestao(Equipa& equipa) {
     int opcao;
 
@@ -90,7 +101,15 @@ void menuGestao(Equipa& equipa) {
 
     } while(opcao != 0);
 }
-
+/** * @brief Exibe o menu de gravação e carregamento, permitindo ao usuário escolher entre gravar o estado atual do campeonato em um arquivo ou carregar um estado previamente salvo.
+ *
+ * O menu apresenta as opções disponíveis para o usuário e processa a escolha feita. Se o usuário optar por gravar o campeonato, ele será solicitado a fornecer um nome de arquivo para salvar os dados. Se o usuário optar por carregar um campeonato, ele será solicitado a fornecer o nome do arquivo que deseja carregar. O menu continuará sendo exibido até que o usuário escolha voltar.
+ *
+ * @param equipa Referência para a equipe do jogador, que será modificada com base nas escolhas feitas no menu.
+ * @param jornada Referência para a variável que representa a jornada atual do campeonato, que será modificada ao carregar um estado salvo.
+ * @param listaTransferencia Ponteiro para a lista de jogadores disponíveis para transferência, que será modificada ao carregar um estado salvo.
+ * @param totalTransferencias Referência para a variável que representa o total de transferências realizadas, que será modificada ao carregar um estado salvo.
+ */
 void menuGravarCarregar(Equipa& equipa, int& jornada, Jogador*& listaTransferencia, int& totalTransferencias) {
     int opcao;
 

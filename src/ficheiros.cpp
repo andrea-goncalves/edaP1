@@ -5,6 +5,11 @@
 #include "../include/ficheiros.h"
 using namespace std;
 
+/** * @brief Conta o número de linhas em um arquivo.
+ *
+ * @param path O caminho para o arquivo.
+ * @return O número de linhas no arquivo, ou -1 se o arquivo não puder ser aberto.
+ */
 int tamArq(const string& path) {
     int contador = 0;
     string linha;
@@ -22,7 +27,12 @@ int tamArq(const string& path) {
     return contador;
 }
 
-
+/** * @brief Lê um arquivo e armazena cada linha em um array de strings.
+ *
+ * @param path O caminho para o arquivo.
+ * @param tamanho Referência para armazenar o número de linhas lidas.
+ * @return Um ponteiro para um array de strings contendo as linhas do arquivo, ou nullptr se o arquivo não puder ser aberto ou estiver vazio.
+ */
 string* leituraArq(const string& path, int& tamanho) {
     tamanho=tamArq(path);
     if (tamanho <= 0) {
@@ -43,6 +53,11 @@ string* leituraArq(const string& path, int& tamanho) {
     return vArquivos;
 }
 
+/** * @brief Remove acentos de uma string.
+ *
+ * @param str A string de entrada que pode conter acentos.
+ * @return Uma nova string com os acentos removidos.
+ */
 string eliminarAcentos(const string& str) {
     string result = str;
 
@@ -63,7 +78,10 @@ string eliminarAcentos(const string& str) {
     }
     return result;
 }
-
+/** * @brief Limpa a memória alocada para a equipa, incluindo o plantel, jogadores lesionados e suspensos.
+ *
+ * @param equipa Referência para a equipa cuja memória deve ser limpa.
+ */
 void limparMemoriaEquipa(Equipa& equipa) {
     if (equipa.plantel != nullptr) {
         for (int i = 0; i < 4; i++)
@@ -82,6 +100,14 @@ void limparMemoriaEquipa(Equipa& equipa) {
     equipa.numSubstituicoes = 0;
 }
 
+/** * @brief Grava o estado da equipa e do campeonato em um arquivo.
+ *
+ * @param equipa A equipa a ser gravada.
+ * @param jornada O número da jornada atual.
+ * @param nomeFicheiro O nome do arquivo onde os dados serão gravados.
+ * @param listaTransferencia A lista de jogadores disponíveis para transferência.
+ * @param totalTransferencias O número total de transferências realizadas.
+ */
 void gravarEquipa(const Equipa& equipa, const int jornada, const string& nomeFicheiro, Jogador* listaTransferencia, int totalTransferencias) {
     ofstream out(nomeFicheiro);
     if (!out.is_open()) {
@@ -138,6 +164,15 @@ void gravarEquipa(const Equipa& equipa, const int jornada, const string& nomeFic
     cout << " Equipa e estado do campeonato gravados com sucesso!\n";
 }
 
+/** * @brief Carrega o estado da equipa e do campeonato a partir de um arquivo.
+ *
+ * @param equipa Referência para a equipa onde os dados serão carregados.
+ * @param jornada Referência para o número da jornada atual, que será atualizado com os dados do arquivo.
+ * @param nomeFicheiro O nome do arquivo de onde os dados serão carregados.
+ * @param listaTransferencia Ponteiro para a lista de jogadores disponíveis para transferência, que será atualizado com os dados do arquivo.
+ * @param totalTransferencias Referência para o número total de transferências realizadas, que será atualizado com os dados do arquivo.
+ * @return true se o carregamento for bem-sucedido, ou false se houver um erro ao abrir o arquivo.
+ */
 bool carregarEquipa(Equipa& equipa, int& jornada, const string& nomeFicheiro, Jogador*& listaTransferencia, int& totalTransferencias) {
     ifstream in(nomeFicheiro);
     if (!in.is_open()) {

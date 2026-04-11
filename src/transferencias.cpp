@@ -14,6 +14,12 @@
 
 using namespace std;
 
+/**
+ * @brief Converte a posição de um jogador para um índice numérico.
+ *
+ * @param pos A posição do jogador como string ("GR", "DEF", "MED", "AVA").
+ * @return O índice correspondente à posição (0 para "GR", 1 para "DEF", 2 para "MED", 3 para "AVA"), ou -1 se a posição for inválida.
+ */
 int posicao(std::string pos) {
     if (pos == "GR") return 0;
     if (pos == "DEF") return 1;
@@ -21,11 +27,25 @@ int posicao(std::string pos) {
     if (pos == "AVA") return 3;
     return -1;
 }
-
+/**
+ * @brief Calcula o número total de jogadores em uma equipe.
+ *
+ * @param equipe A equipe para a qual o total de jogadores será calculado.
+ * @return O número total de jogadores na equipe.
+ */
 int totalJogadores(Equipa &equipe) {
     return equipe.numJogadores[0] + equipe.numJogadores[1] + equipe.numJogadores[2] + equipe.numJogadores[3];
 }
 
+/**
+ * @brief Gera uma nova lista de transferências combinando jogadores novos e antigos.
+ *
+ * @param novos Um array de jogadores novos a serem adicionados à lista de transferências.
+ * @param numNovos O número de jogadores novos no array.
+ * @param listaAntiga A lista antiga de jogadores disponíveis para transferência, que será combinada com os novos jogadores.
+ * @param totalTransferencias Referência para o número total de transferências realizadas, que será atualizado com o novo total após a combinação.
+ * @return Um ponteiro para um novo array de jogadores que combina os jogadores antigos e novos, ordenados por posição e número.
+ */
 Jogador* gerarTransferencia(Jogador* novos, int numNovos, Jogador* listaAntiga, int &totalTransferencias) {
     int novoTamanho = totalTransferencias + numNovos;
     Jogador* novoVetor = new Jogador[novoTamanho];
@@ -54,6 +74,12 @@ Jogador* gerarTransferencia(Jogador* novos, int numNovos, Jogador* listaAntiga, 
     return novoVetor;
 }
 
+/**
+ * @brief Imprime a lista de jogadores disponíveis para transferência no mercado.
+ *
+ * @param listaTransf Um array de jogadores disponíveis para transferência.
+ * @param totalTransf O número total de jogadores disponíveis para transferência no array.
+ */
 void imprimirMercado(Jogador* listaTransf, int totalTransf) {
 
         cout << "\n**********************\n";
@@ -77,7 +103,14 @@ void imprimirMercado(Jogador* listaTransf, int totalTransf) {
             cout << "-----------------------------------------------------------------------------------------\n";
 }
 
-
+///////////////////////////////////////////////
+/**
+ * @brief Verifica se um jogador pode ser adicionado à equipe com base na posição e nas regras de composição da equipe.
+ *
+ * @param equipe A equipe à qual o jogador seria adicionado.
+ * @param pos O índice da posição do jogador (0 para "GR", 1 para "DEF", 2 para "MED", 3 para "AVA").
+ * @return true se o jogador puder ser adicionado à equipe, ou false se a adição violar as regras de composição da equipe.
+ */
 bool podeAdicionar(Equipa &equipe, int pos) {
     int numGRsuspensos = 0, numGRlesionados = 0;
     for (int i = 0; i < equipe.numSuspensos; i++) {
@@ -135,6 +168,13 @@ bool podeAdicionar(Equipa &equipe, int pos) {
     if (pos == 3 && totalAVAs >= 7) return false;
     return true;
 }
+/**
+ * @brief Escolhe um número de camisa disponível para um jogador com base na posição e nos jogadores já presentes na equipe, incluindo lesionados e suspensos.
+ *
+ * @param equipe A equipe para a qual o jogador está sendo adicionado.
+ * @param posIdx O índice da posição do jogador (0 para "GR", 1 para "DEF", 2 para "MED", 3 para "AVA").
+ * @return O número de camisa disponível escolhido para o jogador, ou -1 se não houver números disponíveis.
+ */
 int escolherCamisaDisponivel(Equipa &equipe, int posIdx) {
     const int* listaRef;
     int tamRef;
@@ -175,7 +215,13 @@ int escolherCamisaDisponivel(Equipa &equipe, int posIdx) {
     }
     return -1;
 }
-
+/**
+ * @brief Adiciona um jogador à lista de transferências, criando um novo array que inclui o jogador e atualizando o total de transferências.
+ *
+ * @param jogador O jogador a ser adicionado à lista de transferências.
+ * @param listaTransferencia Referência para o ponteiro da lista de transferências, que será atualizado para incluir o novo jogador.
+ * @param totalTransferencias Referência para o número total de transferências, que será incrementado após a adição do novo jogador.
+ */
 void adicionarTransferencia(Jogador jogador, Jogador* &listaTransferencia, int &totalTransferencias) {
     Jogador* novoArray = new Jogador[totalTransferencias + 1];
 
@@ -190,7 +236,12 @@ void adicionarTransferencia(Jogador jogador, Jogador* &listaTransferencia, int &
 
     totalTransferencias++;
 }
-
+/**
+ * @brief Adiciona um jogador ao plantel da equipe, criando um novo array para a posição do jogador e atualizando o número de jogadores nessa posição.
+ *
+ * @param equipe Referência para a equipe à qual o jogador será adicionado.
+ * @param jogador O jogador a ser adicionado ao plantel da equipe.
+ */
 void adicionarJogadorPlantel(Equipa &equipe, Jogador jogador) {
 
     int pos = posicao(jogador.posicao);
@@ -209,7 +260,15 @@ void adicionarJogadorPlantel(Equipa &equipe, Jogador jogador) {
 
     equipe.numJogadores[pos]++;
 }
-
+/**
+ * @brief Remove um jogador do plantel da equipe com base no número da camisa, adicionando o jogador removido à lista de transferências e atualizando o número total de transferências.
+ *
+ * @param equipe Referência para a equipe da qual o jogador será removido.
+ * @param listaTransferencia Referência para o ponteiro da lista de transferências, que será atualizado para incluir o jogador removido.
+ * @param totalTransferencias Referência para o número total de transferências, que será incrementado após a adição do jogador removido à lista de transferências.
+ * @param numCamisa O número da camisa do jogador a ser removido do plantel da equipe.
+ * @return true se o jogador foi encontrado e removido com sucesso, ou false se nenhum jogador com o número da camisa especificado foi encontrado no plantel da equipe.
+ */
 bool removerJogadorPlantel(Equipa &equipe, Jogador* &listaTransferencia, int &totalTransferencias, int numCamisa) {
     for (int i = 0; i < 4; i++) {
 
@@ -245,7 +304,14 @@ bool removerJogadorPlantel(Equipa &equipe, Jogador* &listaTransferencia, int &to
 
     return false;
 }
-
+/**
+ * @brief Remove um jogador da lista de transferências com base no índice, criando um novo array que exclui o jogador removido e atualizando o total de transferências.
+ *
+ * @param listaTransferencia Referência para o ponteiro da lista de transferências, que será atualizado para excluir o jogador removido.
+ * @param totalTransferencias Referência para o número total de transferências, que será decrementado após a remoção do jogador da lista de transferências.
+ * @param indice O índice do jogador a ser removido da lista de transferências.
+ * @return O jogador que foi removido da lista de transferências.
+ */
 Jogador removerTransferencia(Jogador* &listaTransferencia, int &totalTransferencias, int indice) {
 
     Jogador escolhido = listaTransferencia[indice];
@@ -326,6 +392,15 @@ void contratarJogador(Equipa &equipe, Jogador* &listaTransferencia, int &totalTr
     }
 }
 */
+/**
+ * @brief Contrata um jogador para a equipe, permitindo a substituição de um jogador existente se o limite de jogadores for atingido.
+ *
+ * O usuário é solicitado a escolher um jogador da lista de transferências. Se a equipe tiver espaço para o novo jogador, ele é adicionado diretamente ao plantel. Caso contrário, o usuário deve escolher um jogador existente para ser removido da equipe, e o novo jogador é adicionado em seu lugar. A função garante que as posições dos jogadores sejam respeitadas durante a substituição.
+ *
+ * @param equipe Referência para a equipe à qual o jogador será contratado.
+ * @param listaTransferencia Referência para o ponteiro da lista de transferências, que contém os jogadores disponíveis para contratação.
+ * @param totalTransferencias Referência para o número total de transferências, que será atualizado conforme os jogadores são contratados ou removidos.
+ */
 void contratarJogador(Equipa &equipe, Jogador* &listaTransferencia, int &totalTransferencias) {
     int indice;
     cout << "Escolha o ID do jogador (1 a " << totalTransferencias << "): ";
