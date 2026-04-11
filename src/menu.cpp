@@ -30,7 +30,12 @@ void menuTreino(Equipa& equipa) {
             }
             else if (opcao == 2) {
                 int semanas;
-                cout << "Semanas de treino: "; cin >> semanas;
+                cout << "Semanas de treino: ";
+                cin >> semanas;
+                if (semanas>5) {
+                    semanas = 5;
+                    cout << "5 semanas de treino preparadas (valor maximo) "; ;
+                }
                 equipa.plantel[pos][idx].diasTreino = semanas;
                 cout << "[INFO] " << equipa.plantel[pos][idx].nome << " em treino.\n";
             }
