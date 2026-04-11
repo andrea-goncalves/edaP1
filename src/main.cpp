@@ -123,16 +123,15 @@ void menu(int& jornada, Equipa& edaFC, Tatica& taticaAtual, Jogador* listaTransf
 
 bool aux=false;
     char opcao;
+    char opcao2;
     int numJ, semanas;
     string ficheiro;
 
     while (jornada <= 34) {
-        cout << "\n******************************\n";
-        cout << "* EDA FC - " << jornada << "a Jornada - " << edaFC.pontos << " pontos. *\n";
-        cout << "******************************\n";
+
         std::cout << "[s] Proxima Jornada\n";
         std::cout << "[o] Opcoes\n";
-        std::cout << "[t] Transferencias (Contratar)\n";
+        /* std::cout << "[t] Transferencias (Contratar)\n";
         std::cout << "[1] Aplicar Lesao Manual\n";
         std::cout << "[2] Reduzir Lesao Manual\n";
         std::cout << "[3] Aplicar Castigo Manual\n";
@@ -140,9 +139,8 @@ bool aux=false;
         std::cout << "[5] Ver Equipa (Plantel, Lesionados, Suspensos)\n";
         std::cout << "[6] Treino Especifico\n";
         std::cout << "[7] Escolher Convocados\n";
-        //std::cout << "[8] Alteracoes Manuais (Editar Jogadores)\n";
         std::cout << "[g] Gravar Equipa\n";
-        std::cout << "[c] Carregar Equipa\n";
+        std::cout << "[c] Carregar Equipa\n"; */
         std::cout << "----------------------------------------\n";
         std::cout << "Escolha uma opcao: ";
         std::cin >> opcao;
@@ -172,8 +170,8 @@ bool aux=false;
                     int numTitulares = taticaUsada.titulares[0] + taticaUsada.titulares[1] + taticaUsada.titulares[2] + taticaUsada.titulares[3];
                     edaFC.titulares = escolherTitulares(copiaPlantel, disponiveis, taticaUsada);
                     edaFC.suplentes = escolherSuplentes(copiaPlantel, disponiveis, taticaUsada, edaFC.numSuplentes);
-                    //imprimirTitulares(edaFC.titulares, taticaUsada);
-                     lesionar(edaFC.titulares, numTitulares);
+
+                    lesionar(edaFC.titulares, numTitulares);
                     ListaLesionados(edaFC.titulares, numTitulares, edaFC);
                     suspender(edaFC.titulares, numTitulares);
                     ListaSuspensos(edaFC.titulares, numTitulares, edaFC);
@@ -203,7 +201,9 @@ bool aux=false;
 
                     for (int i = 0; i < 4; i++) delete[] copiaPlantel[i];
                     delete[] copiaPlantel;
-
+                    cout << "\n******************************\n";
+                    cout << "* EDA FC - " << jornada << "a Jornada - " << edaFC.pontos << " pontos. *\n";
+                    cout << "******************************\n";
                     cout << "Resultado Anterior\n";
                     cout << "Resultado: EDA FC:" << golosEDAFC << " - " << eliminarAcentos(adversariosFase2[jornada - 1].nome) << ":" << golosAdversario << "\n";
                     imprimirTitulares(edaFC.titulares, taticaUsada);
@@ -266,10 +266,9 @@ bool aux=false;
 
                 }
 
-               ///////
+
                 edaFC.escolhaManual = false;
                 edaFC.numSubstituicoes = 0;
-
 
 
                 cout << "\n" << endl;
@@ -294,7 +293,7 @@ bool aux=false;
             }
             else {
 
-                cout << "\nNão se pode jogar esta jornada. Necessitas de arranjar o plantel.\n";
+                cout << "\nNao se pode jogar esta jornada. Necessitas de arranjar o plantel.\n";
                 menu(jornada, edaFC, taticaAtual, listaTransferencia, totalTransferencias, taticaUsada, golosEDAFC, golosAdversario, golosTotais, tamanho, nomeJogadores, adversariosFase2);
             }
 
@@ -303,9 +302,28 @@ bool aux=false;
         }
 
         case 'o':
+    std::cout << "\n";
+    std::cout << "Menu de Opcoes\n";
+    std::cout << "[m] Mudar Tatica \n";
+    std::cout << "[t] Transferencias (Contratar)\n";
+    std::cout << "[1] Aplicar Lesao Manual\n";
+    std::cout << "[2] Reduzir Lesao Manual\n";
+    std::cout << "[3] Aplicar Castigo Manual\n";
+    std::cout << "[4] Reduzir Castigo Manual\n";
+    std::cout << "[5] Ver Equipa (Plantel, Lesionados, Suspensos)\n";
+    std::cout << "[6] Treino Especifico\n";
+    std::cout << "[7] Escolher Convocados\n";
+    std::cout << "[g] Gravar Equipa\n";
+    std::cout << "[c] Carregar Equipa\n";
+    std::cout << "----------------------------------------\n";
+    std::cout << "Escolha uma opcao: ";
+    std::cin >> opcao2;
+    //taticaAtual = pedirTatica(taticaAtual);
+    switch (opcao2)
+    {
+        case 'm':
             taticaAtual = pedirTatica(taticaAtual);
-            break;
-
+			break;
         case 't':
             contratarJogador(edaFC, listaTransferencia, totalTransferencias);
             ordenarPlantelNumeroJogador(edaFC);
@@ -360,11 +378,7 @@ bool aux=false;
         case '7':
             escolherEquipaManual(edaFC, taticaAtual);
             break;
-        /*case '8':
 
-            menuAlteracoesManuais(edaFC);
-            break;
-        */
         case 'g':
 
             cout << "Nome do ficheiro para gravar (ex: save.txt): ";
@@ -380,6 +394,12 @@ bool aux=false;
             getline(cin, ficheiro);
             carregarEquipa(edaFC, jornada, ficheiro, listaTransferencia, totalTransferencias);
             break;
+
+        default:
+            std::cout << ">> Opcao invalida. Tente novamente.\n";
+            break;
+    }
+    break;
 
         default:
             std::cout << ">> Opcao invalida. Tente novamente.\n";

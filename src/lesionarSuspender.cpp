@@ -60,7 +60,6 @@ void lesionar(Jogador* titulares, int numTitulares) {
         int probabilidade = numAleatorio(1, 100);
         if (probabilidade <= titulares[i].probLes) {
             titulares[i].semanas_ate_retorno_lesao = numAleatorio(1, 10)+1;
-			cout << "Jogador " << titulares[i].nome << " lesionou-se por " << titulares[i].semanas_ate_retorno_lesao << " semanas.\n";
         }
     }
 }
@@ -235,7 +234,7 @@ void imprimirJogadoresSuspensos2(Jogador** suspensos, int numeroSuspensos) {
             << setw(10) << suspensos[i]->probLes<< "| "
             << setw(12) << suspensos[i]->probSus << "| "
             << setw(10) << suspensos[i]->qualidade << "| "
-            << setw(10) << suspensos[i]->semanas_ate_retorno_castigo <<  "| "
+            << setw(15) << suspensos[i]->semanas_ate_retorno_castigo <<  "| "
             << suspensos[i]->diasTreino << endl;
 
     }
@@ -289,7 +288,7 @@ void aplicarLesaoManual(Equipa& equipa, int numeroJogador, int semanas) {
                     for (int k = j; k < equipa.numJogadores[i] - 1; k++)
                         equipa.plantel[i][k] = equipa.plantel[i][k + 1];
                     equipa.numJogadores[i]--;
-                    cout << "\n Lesao aplicada a " << azarado->nome << " por " << semanas << " semanas.\n";
+                    cout << "\n Lesao aplicada a " << eliminarAcentos(azarado->nome) << " por " << semanas << " semanas.\n";
                     return;
                 } else {
                     cout << "\nA enfermaria esta cheia!\n";
@@ -301,21 +300,21 @@ void aplicarLesaoManual(Equipa& equipa, int numeroJogador, int semanas) {
     for (int i = 0; i < equipa.numLesionados; i++) {
         if (equipa.lesionados[i]->numero == numeroJogador) {
             equipa.lesionados[i]->semanas_ate_retorno_lesao += semanas;
-            cout << "\n Tempo de lesao aumentado para " << equipa.lesionados[i]->nome << ".\n";
+            cout << "\n Tempo de lesao aumentado para " << eliminarAcentos(equipa.lesionados[i]->nome) << ".\n";
             return;
         }
     }
-    cout << "\n Jogador nao encontrado ou ja se encontra suspenso.\n";
+    cout << "\n Jogador nao encontrado \n";
 }
 
 void reduzirLesaoManual(Equipa& equipa, const int numeroJogador, const int semanas) {
     for (int i = 0; i < equipa.numLesionados; i++) {
         if (equipa.lesionados[i]->numero == numeroJogador) {
             equipa.lesionados[i]->semanas_ate_retorno_lesao -= semanas;
-            cout << "\n Tempo de lesao reduzido para " << equipa.lesionados[i]->nome << ".\n";
+            cout << "\n Tempo de lesao reduzido para " << eliminarAcentos(equipa.lesionados[i]->nome) << ".\n";
             if (equipa.lesionados[i]->semanas_ate_retorno_lesao <= 0) {
                 equipa.lesionados[i]->semanas_ate_retorno_lesao = 0;
-                cout << equipa.lesionados[i]->nome << " recuperou totalmente e voltou ao plantel!\n";
+                cout << eliminarAcentos(equipa.lesionados[i]->nome) << " recuperou totalmente e voltou ao plantel!\n";
                 inserirJogadorNoPlantel(equipa, equipa.lesionados[i]);
                 delete equipa.lesionados[i];
                 for (int k = i; k < equipa.numLesionados - 1; k++)
@@ -339,7 +338,7 @@ void aplicarCastigoManual(Equipa& equipa, const int numeroJogador, const int sem
                     for (int k = j; k < equipa.numJogadores[i] - 1; k++)
                         equipa.plantel[i][k] = equipa.plantel[i][k + 1];
                     equipa.numJogadores[i]--;
-                    cout << "\n Castigo aplicado a " << indisciplinado->nome << " por " << semanas << " semanas.\n";
+                    cout << "\n Castigo aplicado a " <<  eliminarAcentos(indisciplinado->nome) << " por " << semanas << " semanas.\n";
                     return;
                 } else {
                     cout << "\n A lista de suspensos esta cheia!\n";
@@ -351,21 +350,21 @@ void aplicarCastigoManual(Equipa& equipa, const int numeroJogador, const int sem
     for (int i = 0; i < equipa.numSuspensos; i++) {
         if (equipa.suspensos[i]->numero == numeroJogador) {
             equipa.suspensos[i]->semanas_ate_retorno_castigo += semanas;
-            cout << "\n Pena aumentada para " << equipa.suspensos[i]->nome << ".\n";
+            cout << "\n Pena aumentada para " <<  eliminarAcentos(equipa.suspensos[i]->nome) << ".\n";
             return;
         }
     }
-    cout << "\n Jogador nao encontrado ou encontra-se lesionado.\n";
+    cout << "\n Jogador nao encontrado\n";
 }
 
 void reduzirCastigoManual(Equipa& equipa, const int numeroJogador, const int semanas) {
     for (int i = 0; i < equipa.numSuspensos; i++) {
         if (equipa.suspensos[i]->numero == numeroJogador) {
             equipa.suspensos[i]->semanas_ate_retorno_castigo -= semanas;
-            cout << "\n Tempo de castigo reduzido para " << equipa.suspensos[i]->nome << ".\n";
+            cout << "\n Tempo de castigo reduzido para " <<  eliminarAcentos(equipa.suspensos[i]->nome) << ".\n";
             if (equipa.suspensos[i]->semanas_ate_retorno_castigo <= 0) {
                 equipa.suspensos[i]->semanas_ate_retorno_castigo = 0;
-                cout << " O castigo de " << equipa.suspensos[i]->nome << " terminou! Voltou ao plantel.\n";
+                cout << " O castigo de " <<  eliminarAcentos(equipa.suspensos[i]->nome) << " terminou! Voltou ao plantel.\n";
                 inserirJogadorNoPlantel(equipa, equipa.suspensos[i]);
                 delete equipa.suspensos[i];
                 for (int k = i; k < equipa.numSuspensos - 1; k++)

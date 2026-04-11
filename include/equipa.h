@@ -53,9 +53,8 @@ bool limitePosicaoAtingido(Equipa& equipa, int pos);
 int contarJogadoresPosicao(Equipa& equipa, int pos);
 
 void treinar(Equipa& equipa);
-//void escolherEquipaManual(Equipa& equipa);
 Jogador* escolherSuplentesManual(Jogador** copiaPlantel, int* disponiveis, int& numSuplentes);
 Jogador* escolherTitularesManual(Jogador** copiaPlantel, int* disponiveis, Tatica& tatica);
 void escolherEquipaManual(Equipa& equipa, Tatica& taticaAtual);
-//Jogador* escolherSuplentesManual(Jogador** copiaPlantel, int* disponiveis, Tatica& tatica,Equipa& equipa, Tatica& taticaAtual);
+
 #endif //EDAP1_EQUIPA_H

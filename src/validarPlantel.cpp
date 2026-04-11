@@ -17,12 +17,12 @@ bool validarPlantelDisponible(Equipa& equipa, Tatica& taticaAtual) {
 
     if (totalDisponiveis < 13) {
         cout << "\n";
-        cout << "Não há suficientes jogadores disponíveis.\n";
-        cout << "Jogadores disponíveis: " << totalDisponiveis << " / 13 requeridos\n\n";
+        cout << "Nao ha suficientes jogadores disponiveis.\n";
+        cout << "Jogadores disponiveis: " << totalDisponiveis << " / 13 requeridos\n\n";
         cout << "  GR:  " << disponibles[0] << " (mínimo: 1)\n";
-        cout << "  DEF: " << disponibles[1] << " (mínimo: 3)\n";
-        cout << "  MED: " << disponibles[2] << " (mínimo: 2)\n";
-        cout << "  AVA: " << disponibles[3] << " (mínimo: 1)\n";
+        cout << "  DEF: " << disponibles[1] << " (minimo: 3)\n";
+        cout << "  MED: " << disponibles[2] << " (minimo: 2)\n";
+        cout << "  AVA: " << disponibles[3] << " (minimo: 1)\n";
         return false;
     }
 
@@ -38,15 +38,15 @@ bool validarPlantelDisponible(Equipa& equipa, Tatica& taticaAtual) {
     
     if (!compatibleConTactica) {
         cout << "\n";
-        cout << "Não coincidem com a tática selecionada.\n\n";
-        cout << "Tática atual: 1-" << taticaAtual.titulares[1] << "-" 
+        cout << "Nao coincidem com a tatica selecionada.\n\n";
+        cout << "Tatica atual: 1-" << taticaAtual.titulares[1] << "-"
              << taticaAtual.titulares[2] << "-" << taticaAtual.titulares[3] << "\n";
-        cout << "Jogadores necessários (convocados):\n";
+        cout << "Jogadores necessarios (convocados):\n";
         for (int i = 0; i < 4; i++) {
             cout << "  " << posiciones[i] << ": " << taticaAtual.convocados[i] 
-                 << " (disponíveis: " << disponibles[i] << ")\n";
+                 << " (disponiveis: " << disponibles[i] << ")\n";
         }
-        cout << "Alterare a tática ou compre jogadores\n";
+        cout << "Alterare a tatica ou compre jogadores\n";
         return false;
     }
 

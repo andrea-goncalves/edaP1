@@ -121,7 +121,7 @@ void menuGravarCarregar(Equipa& equipa, int& jornada, Jogador*& listaTransferenc
     } while (opcao != 0);
 }
 
-void menuAlteracoesManuais(Equipa& equipa) {
+/*void menuAlteracoesManuais(Equipa& equipa) {
     int opcao;
 
     do {
@@ -230,4 +230,4 @@ void menuPrincipal(Equipa& equipa, int& jornada) {
         }
 
     } while(opcao != 0);
-}
+}*/
