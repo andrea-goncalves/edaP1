@@ -458,252 +458,184 @@ void listarNumerosLivres(Equipa& equipa, int posicao) {
     }
     cout << endl;
 }
-/** * @brief Permite ao usuário escolher um número de jogador disponível para uma determinada posição no plantel da equipe, garantindo que o número escolhido não esteja ocupado por outro jogador.
+
+/** * @brief Permite ao usuário escolher um número de jogador para uma determinada posição no plantel da equipe, garantindo que o número escolhido não esteja ocupado por outro jogador. A função lista os números disponíveis para a posição especificada e solicita ao usuário que escolha um número, validando a escolha para garantir que seja válida.
  *
  * @param equipa Referência para a equipe cujo plantel será verificado.
- * @param posicao O índice da posição para a qual o número disponível será escolhido (0 para "GR", 1 para "DEF", 2 para "MED", 3 para "AVA").
- * @return O número de jogador escolhido pelo usuário, que deve ser um número disponível para a posição especificada.
+ * @param posicao O índice da posição para a qual o número do jogador será escolhido (0 para "GR", 1 para "DEF", 2 para "MED", 3 para "AVA").
+ * @return O número do jogador escolhido pelo usuário, que deve ser um número disponível para a posição especificada e não estar ocupado por outro jogador no plantel.
  */
 int escolherNumero(Equipa& equipa, int posicao) {
     int num;
-    do {
+    while (true) {
         listarNumerosLivres(equipa, posicao);
         cout << "Escolha o novo numero: ";
         cin >> num;
-        if(numeroOcupado(equipa, num)) cout << " Numero ocupado!\n";
-    } while(numeroOcupado(equipa, num));
-    return num;
+        if(!numeroOcupado(equipa, num)) return num;
+        cout << "[ERRO] Numero ja esta a ser usado!\n";
+    }
 }
-/** * @brief Permite ao usuário escolher um jogador do plantel da equipe para realizar uma ação, solicitando a posição atual do jogador e o índice do jogador nessa posição. A função também valida as escolhas do usuário para garantir que sejam válidas.
+
+/** * @brief Permite ao usuário escolher um jogador do plantel da equipe, solicitando a posição do jogador e o índice do jogador nessa posição. A função também valida as escolhas do usuário para garantir que a posição e o índice sejam válidos dentro do plantel da equipe.
  *
  * @param equipa Referência para a equipe cujo plantel será verificado.
- * @param pos Referência para um inteiro onde será armazenada a posição atual do jogador escolhida pelo usuário (0 para "GR", 1 para "DEF", 2 para "MED", 3 para "AVA").
+ * @param pos Referência para um inteiro onde será armazenada a posição do jogador escolhida pelo usuário (0 para "GR", 1 para "DEF", 2 para "MED", 3 para "AVA").
  * @param idx Referência para um inteiro onde será armazenado o índice do jogador escolhido pelo usuário dentro da posição especificada.
  */
 void escolherJogadorGlobal(Equipa& equipa, int& pos, int& idx) {
     imprimirPlantel(equipa);
-    cout << "\nEscolha a posicao atual do jogador (0-GR, 1-DEF, 2-MED, 3-AVA): ";
+    cout << "\nEscolha a posicao (0-GR, 1-DEF, 2-MED, 3-AVA): ";
     cin >> pos;
-    cout << "Indice do jogador nessa posicao (0 a " << equipa.numJogadores[pos] - 1 << "): ";
+
+    if(pos < 0 || pos > 3) {
+        cout << "[ERRO] Posicao inexistente!\n";
+        pos = -1; return;
+    }
+
+    cout << "Indice (0 a " << equipa.numJogadores[pos] - 1 << "): ";
     cin >> idx;
 
-    if(pos < 0 || pos > 3 || idx < 0 || idx >= equipa.numJogadores[pos]) {
-        cout << " Escolha invalida!\n";
-        pos = -1;
-        idx = -1;
+    if(idx < 0 || idx >= equipa.numJogadores[pos]) {
+        cout << "[ERRO] Indice invalido!\n";
+        pos = -1; idx = -1;
     }
 }
 /** * @brief Permite ao usuário mudar a posição de um jogador no plantel da equipe, solicitando a posição atual do jogador, o índice do jogador nessa posição e a nova posição desejada. A função também valida as escolhas do usuário e atualiza o plantel da equipe de acordo com a mudança de posição.
- *
- * @param equipa Referência para a equipe cujo plantel será atualizado.
- * @param posAtual A posição atual do jogador (0 para "GR", 1 para "DEF", 2 para "MED", 3 para "AVA").
- * @param idxJogador O índice do jogador dentro da posição atual.
- * @param novaPosicao A nova posição desejada para o jogador (0 para "GR", 1 para "DEF", 2 para "MED", 3 para "AVA").
- */
+    *
+    * @param equipa Referência para a equipe cujo plantel será atualizado.
+    * @param posAtual A posição atual do jogador a ser movido (0 para "GR", 1 para "DEF", 2 para "MED", 3 para "AVA").
+    * @param idxJogador O índice do jogador dentro da posição atual.
+    * @param novaPosicao A nova posição desejada para o jogador (0 para "GR", 1 para "DEF", 2 para "MED", 3 para "AVA").
+    */
+
 void mudarPosicao(Equipa& equipa, int posAtual, int idxJogador, int novaPosicao) {
-
-    Jogador jogador = equipa.plantel[posAtual][idxJogador];
-
-    if (limitePosicaoAtingido(equipa,novaPosicao)) {
-        cout << " Vagas da posicao cheias!\n";
+    if (limitePosicaoAtingido(equipa, novaPosicao)) {
+        cout << "[ERRO] Nao ha espaco na nova posicao!\n";
         return;
     }
+
+
+    Jogador j = equipa.plantel[posAtual][idxJogador];
+
+
     int novoNumero = escolherNumero(equipa, novaPosicao);
-    jogador.numero = novoNumero;
-    jogador.posicao = (novaPosicao == 0) ? "GR" : (novaPosicao == 1) ? "DEF" : (novaPosicao == 2) ? "MED" : "AVA";
+    j.numero = novoNumero;
+    const char* nomesPos[] = {"GR", "DEF", "MED", "AVA"};
+    j.posicao = nomesPos[novaPosicao];
+
 
     for(int i = idxJogador; i < equipa.numJogadores[posAtual] - 1; i++) {
         equipa.plantel[posAtual][i] = equipa.plantel[posAtual][i+1];
     }
     equipa.numJogadores[posAtual]--;
 
-    int tamanhoNovo = equipa.numJogadores[novaPosicao];
-    Jogador* novoArray = new Jogador[tamanhoNovo + 1];
 
-    for(int i = 0; i < tamanhoNovo; i++) {
-        novoArray[i] = equipa.plantel[novaPosicao][i];
-    }
+    int n = equipa.numJogadores[novaPosicao];
+    Jogador* novoArray = new Jogador[n + 1];
+    for(int i = 0; i < n; i++) novoArray[i] = equipa.plantel[novaPosicao][i];
 
-    novoArray[tamanhoNovo] = jogador;
+    novoArray[n] = j;
 
     delete[] equipa.plantel[novaPosicao];
     equipa.plantel[novaPosicao] = novoArray;
     equipa.numJogadores[novaPosicao]++;
 
-
     ordenarPlantelNumeroJogador(equipa);
-
-    cout << "\n Posicao alterada com sucesso! O " <<  eliminarAcentos(jogador.nome) << " e agora " << jogador.posicao << ".\n";
+    cout << "\n[INFO] " << eliminarAcentos(j.nome) << " agora e " << j.posicao << "!\n";
 }
-/** * @brief Realiza o treinamento dos jogadores no plantel da equipe, reduzindo os dias de treino restantes e aumentando a qualidade dos jogadores que estão em treinamento. A função garante que a qualidade dos jogadores não ultrapasse o valor máximo de 100.
+
+/** * @brief Realiza o treino dos jogadores da equipe, reduzindo os dias de treino restantes para cada jogador e aumentando a qualidade dos jogadores que ainda têm dias de treino disponíveis. A função também garante que a qualidade dos jogadores não ultrapasse o valor máximo permitido (100).
  *
  * @param equipa Referência para a equipe cujo plantel será treinado.
  */
 void treinar(Equipa& equipa) {
-
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < equipa.numJogadores[i]; j++) {
-
-            if (equipa.plantel[i][j].diasTreino > 0) {
-                equipa.plantel[i][j].diasTreino--;
-                equipa.plantel[i][j].qualidade += 5;
-
-                if (equipa.plantel[i][j].qualidade > 100)
-                    equipa.plantel[i][j].qualidade = 100;
+            Jogador& jog = equipa.plantel[i][j];
+            if (jog.diasTreino > 0) {
+                jog.diasTreino--;
+                jog.qualidade = (jog.qualidade + 5>100)?100:jog.qualidade + 5;
             }
         }
     }
+
 }
-/** * @brief Permite ao usuário escolher os titulares da equipe de forma manual, solicitando a escolha de jogadores disponíveis para cada posição com base na tática escolhida. A função também atualiza o número de jogadores disponíveis para cada posição após a escolha dos titulares.
+
+/** * @brief Permite ao usuário escolher manualmente os jogadores titulares e suplentes da equipe com base na tática escolhida, garantindo que haja jogadores suficientes disponíveis para cada posição. A função exibe as opções de jogadores disponíveis para cada posição e solicita ao usuário que escolha os jogadores, atualizando o plantel da equipe de acordo com as escolhas do usuário.
  *
  * @param copiaPlantel Ponteiro para o plantel copiado da equipe, contendo os jogadores disponíveis para cada posição.
  * @param disponiveis Array contendo o número de jogadores disponíveis para cada posição no plantel copiado.
- * @param tatica A tática escolhida para a equipe, contendo o número de titulares para cada posição.
- * @return Um ponteiro para um array contendo os jogadores titulares escolhidos pelo usuário.
+ * @param destino Ponteiro para um array onde os jogadores escolhidos pelo usuário serão armazenados (pode ser o array de titulares ou suplentes da equipe).
+ * @param configTatica Array contendo o número de titulares ou suplentes necessários para cada posição, de acordo com a tática escolhida.
+ * @param qtd O número total de jogadores a serem escolhidos (11 para titulares, 6 para suplentes).
  */
-Jogador* escolherTitularesManual(Jogador** copiaPlantel, int* disponiveis, Tatica& tatica) {
-    /*
-           while (true) {
-                bool valido = true;
-                for (int i = 0; i < 4; i++) {
-                    if (disponiveis[i] < tatica.titulares[i]) {
-                        cout << "\nNao existem jogadores suficientes na posicao "
-                            << i << " Altere a tatica\n";
-                        tatica = pedirTatica(tatica);
-                        valido = false;
-                        break;
-                    }
-                }
-                if (valido) break;
-            }
-     */
-
-    Jogador* titulares = new Jogador[11];
-    int idx = 0;
-
+void escolherListaManual(Jogador** copiaPlantel, int* disponiveis, Jogador* destino, int* configTatica, int qtd) {
+    int idxGeral = 0;
     for (int pos = 0; pos < 4; pos++) {
+        int necessarios = configTatica[pos];
+        if(necessarios == 0) continue;
 
-        cout << "\n=== Escolher " << tatica.titulares[pos]
-             << " jogadores para posicao " << pos << " ===\n";
-
-        for (int n = 0; n < tatica.titulares[pos]; n++) {
-
-            cout << "\nJogadores disponiveis:\n";
+        cout << "\n--- Selecao para a Posicao " << pos << " (" << necessarios << " em falta) ---\n";
+        for (int n = 0; n < necessarios; n++) {
             for (int i = 0; i < disponiveis[pos]; i++) {
-                cout << i << " - "
-                     <<  eliminarAcentos(copiaPlantel[pos][i].nome)
-                     << " (" << copiaPlantel[pos][i].numero
-                     << ", Q:" << copiaPlantel[pos][i].qualidade << ")\n";
+                cout << i << " - " << eliminarAcentos(copiaPlantel[pos][i].nome) << " (Q:" << copiaPlantel[pos][i].qualidade << ")\n";
             }
 
-            int escolha;
-            cout << "Escolhe indice: ";
-            cin >> escolha;
+            int esc;
+            cout << "Indice do escolhido: "; cin >> esc;
 
-            if (escolha < 0 || escolha >= disponiveis[pos]) {
-                cout << " Indice invalido!\n";
-                n--;
-                continue;
+            if (esc < 0 || esc >= disponiveis[pos]) {
+                cout << "[ERRO] Invalidade! Tenta outra vez.\n";
+                n--; continue;
             }
 
-            titulares[idx++] = copiaPlantel[pos][escolha];
+            destino[idxGeral++] = copiaPlantel[pos][esc];
 
-            for (int k = escolha; k < disponiveis[pos] - 1; k++) {
+            for (int k = esc; k < disponiveis[pos] - 1; k++) {
                 copiaPlantel[pos][k] = copiaPlantel[pos][k + 1];
             }
-
             disponiveis[pos]--;
         }
     }
-
-    return titulares;
 }
-/** * @brief Permite ao usuário escolher os suplentes da equipe de forma manual, solicitando a escolha de jogadores disponíveis para cada posição com base na tática escolhida e nos jogadores restantes após a escolha dos titulares. A função também atualiza o número de jogadores disponíveis para cada posição após a escolha dos suplentes.
- *
- * @param copiaPlantel Ponteiro para o plantel copiado da equipe, contendo os jogadores disponíveis para cada posição após a escolha dos titulares.
- * @param disponiveis Array contendo o número de jogadores disponíveis para cada posição no plantel copiado após a escolha dos titulares.
- * @param tatica A tática escolhida para a equipe, contendo o número de titulares e suplentes para cada posição.
- * @return Um ponteiro para um array contendo os jogadores suplentes escolhidos pelo usuário.
- */
-Jogador* escolherSuplentesManual(Jogador** copiaPlantel, int* disponiveis, Tatica& tatica) {
 
 
-        Jogador* suplentes = new Jogador[11];
-        int idx = 0;
-
-        for (int pos = 0; pos < 4; pos++) {
-
-            cout << "\n=== Escolher " << tatica.suplentes[pos]
-                 << " jogadores para posicao " << pos << " ===\n";
-
-            for (int n = 0; n < tatica.suplentes[pos]; n++) {
-
-                cout << "\nJogadores disponiveis:\n";
-                for (int i = 0; i < disponiveis[pos]; i++) {
-                    cout << i << " - "
-                         <<  eliminarAcentos(copiaPlantel[pos][i].nome)
-                         << " (" << copiaPlantel[pos][i].numero
-                         << ", Q:" << copiaPlantel[pos][i].qualidade << ")\n";
-                }
-
-                int escolha;
-                cout << "Escolhe indice: ";
-                cin >> escolha;
-
-                if (escolha < 0 || escolha >= disponiveis[pos]) {
-                    cout << " Indice invalido!\n";
-                    n--;
-                    continue;
-                }
-
-                suplentes[idx++] = copiaPlantel[pos][escolha];
-
-                for (int k = escolha; k < disponiveis[pos] - 1; k++) {
-                    copiaPlantel[pos][k] = copiaPlantel[pos][k + 1];
-                }
-
-                disponiveis[pos]--;
-            }
-        }
-
-
-    return suplentes;
-
-}
-/** * @brief Permite ao usuário escolher os titulares e suplentes da equipe de forma manual, solicitando a escolha de jogadores disponíveis para cada posição com base na tática escolhida e nos jogadores restantes após cada escolha. A função também valida a tática escolhida para garantir que haja jogadores suficientes disponíveis para cada posição e atualiza o plantel da equipe de acordo com as escolhas do usuário.
+/** * @brief Permite ao usuário escolher manualmente os jogadores titulares e suplentes da equipe com base na tática escolhida, garantindo que haja jogadores suficientes disponíveis para cada posição. A função também atualiza o plantel da equipe de acordo com as escolhas do usuário e libera a memória alocada para a cópia do plantel após a seleção.
  *
  * @param equipa Referência para a equipe cujo plantel será atualizado com as escolhas do usuário.
- * @param taticaAtual A tática atual da equipe, contendo o número de titulares e suplentes para cada posição.
+ * @param taticaAtual A tática atual da equipe, contendo o número de titulares e suplentes para cada posição, que será usada como base para a seleção manual dos jogadores.
  */
 void escolherEquipaManual(Equipa& equipa, Tatica& taticaAtual) {
+    int disponiveis[4] = {equipa.numJogadores[0], equipa.numJogadores[1], equipa.numJogadores[2], equipa.numJogadores[3]};
 
-    int disponiveis[4] = {
-        equipa.numJogadores[0],
-        equipa.numJogadores[1],
-        equipa.numJogadores[2],
-        equipa.numJogadores[3]
-    };
 
-    Jogador** copiaPlantel = copiarPlantel(equipa, disponiveis);
+    if (!validarPlantelDisponible(equipa, taticaAtual)) {
+        cout << "[ERRO] Nao tens jogadores suficientes para essa tatica!\n";
+        equipa.escolhaManual = false;
+        return;
+    }
 
-    ordenarPlantelQualidadeJogador(copiaPlantel, disponiveis);
+    Jogador** copia = copiarPlantel(equipa, disponiveis);
+    ordenarPlantelQualidadeJogador(copia, disponiveis);
+
 
     if (equipa.titulares) delete[] equipa.titulares;
     if (equipa.suplentes) delete[] equipa.suplentes;
-    if (validarPlantelDisponible(equipa, taticaAtual)) {
-        cout << "\n===== ESCOLHA MANUAL =====\n";
-        cout << "Titulares \n";
-        equipa.titulares = escolherTitularesManual(copiaPlantel, disponiveis, equipa.tatica);
-        cout << "Suplentes \n";
-        equipa.suplentes = escolherSuplentesManual(copiaPlantel, disponiveis, equipa.tatica);
-        equipa.escolhaManual = true;
-    }
-    else {
-        cout << "\n Plantel insuficiente para a tatica atual! Escolha manual impossivel.\n";
-        equipa.escolhaManual = false;
-    }
-    cout << "\n Equipa definida manualmente!\n";
 
-    for (int i = 0; i < 4; i++) delete[] copiaPlantel[i];
-    delete[] copiaPlantel;
+    equipa.titulares = new Jogador[MAX_TITULARES];
+    equipa.suplentes = new Jogador[MAX_SUPLENTES];
+
+    cout << "\n===== SELECAO DE TITULARES =====";
+    escolherListaManual(copia, disponiveis, equipa.titulares, taticaAtual.titulares, 11);
+
+    cout << "\n===== SELECAO DE SUPLENTES =====";
+    escolherListaManual(copia, disponiveis, equipa.suplentes, taticaAtual.suplentes, 11);
+
+    equipa.escolhaManual = true;
+
+
+    for (int i = 0; i < 4; i++) delete[] copia[i];
+    delete[] copia;
+
+    cout << "\n[OK] Equipa alterada\n";
 }
