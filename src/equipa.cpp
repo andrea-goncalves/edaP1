@@ -331,21 +331,26 @@ void imprimirSuplentes(Jogador* suplentes, int numSuplentes) {
     }
     cout << "-----------------------------------------------------------------------------------------\n";
 }
-
+//J-D
+// Devolve quantos jogadores há numa posição específica
 int contarJogadoresPosicao(Equipa& equipa, int pos) {
     return equipa.numJogadores[pos];
 }
-bool limitePosicaoAtingido(Equipa& equipa, int pos) {
 
-    int limites[4] = {GR_MAX, DEF_MAX, MED_MAX, AVA_MAX};
+// Verifica se já atingimos o n máximo de jogadores para aquela posição
+bool limitePosicaoAtingido(Equipa& equipa, int pos) {
+    // Array estático para não estar sempre a criar limites novos
+    static const int limites[4] = {GR_MAX, DEF_MAX, MED_MAX, AVA_MAX};
 
     if(equipa.numJogadores[pos] >= limites[pos]) {
-        cout << "Limite de jogadores nesta posicao atingido!\n";
+        cout << "[AVISO] Limite da posicao atingido!\n";
         return true;
     }
-
     return false;
 }
+
+// Procura emtodo o plantel se alguém já usa aquele número de camisola
+// foi feito desta forma caso num futuro não haja nº de camisolas definidas por posição
 bool numeroOcupado(Equipa& equipa, int numero) {
     for(int p = 0; p < 4; p++) {
         for(int i = 0; i < equipa.numJogadores[p]; i++) {
@@ -355,9 +360,12 @@ bool numeroOcupado(Equipa& equipa, int numero) {
     return false;
 }
 
+// Mostra ao utilizador que números ele pode escolher para a posição escolhida
 void listarNumerosLivres(Equipa& equipa, int posicao) {
     const int* numeros;
     int tamanho;
+
+    // Define o numero de números permitidos por posição
     switch(posicao) {
         case 0: numeros = CAMISAS_GR; tamanho = 3; break;
         case 1: numeros = CAMISAS_DEF; tamanho = 10; break;
@@ -375,213 +383,152 @@ void listarNumerosLivres(Equipa& equipa, int posicao) {
     cout << endl;
 }
 
+// Loop para garantir que o utilizador escolhe um número que não esteja a ser usado
 int escolherNumero(Equipa& equipa, int posicao) {
     int num;
-    do {
+    while (true) {
         listarNumerosLivres(equipa, posicao);
         cout << "Escolha o novo numero: ";
         cin >> num;
-        if(numeroOcupado(equipa, num)) cout << " Numero ocupado!\n";
-    } while(numeroOcupado(equipa, num));
-    return num;
+        if(!numeroOcupado(equipa, num)) return num;
+        cout << "[ERRO] Numero ja esta a ser usado!\n";
+    }
 }
 
+// Função auxiliar para selecionar um jogador de dentro do plantel
 void escolherJogadorGlobal(Equipa& equipa, int& pos, int& idx) {
     imprimirPlantel(equipa);
-    cout << "\nEscolha a posicao atual do jogador (0-GR, 1-DEF, 2-MED, 3-AVA): ";
+    cout << "\nEscolha a posicao (0-GR, 1-DEF, 2-MED, 3-AVA): ";
     cin >> pos;
-    cout << "Indice do jogador nessa posicao (0 a " << equipa.numJogadores[pos] - 1 << "): ";
+
+    if(pos < 0 || pos > 3) {
+        cout << "[ERRO] Posicao inexistente!\n";
+        pos = -1; return;
+    }
+
+    cout << "Indice (0 a " << equipa.numJogadores[pos] - 1 << "): ";
     cin >> idx;
 
-    if(pos < 0 || pos > 3 || idx < 0 || idx >= equipa.numJogadores[pos]) {
-        cout << " Escolha invalida!\n";
-        pos = -1;
-        idx = -1;
+    if(idx < 0 || idx >= equipa.numJogadores[pos]) {
+        cout << "[ERRO] Indice invalido!\n";
+        pos = -1; idx = -1;
     }
 }
 
+// Muda um jogador de posição, atualiza o número da camisola e limpa memória
 void mudarPosicao(Equipa& equipa, int posAtual, int idxJogador, int novaPosicao) {
-
-    Jogador jogador = equipa.plantel[posAtual][idxJogador];
-
-    if (limitePosicaoAtingido(equipa,novaPosicao)) {
-        cout << " Vagas da posicao cheias!\n";
+    if (limitePosicaoAtingido(equipa, novaPosicao)) {
+        cout << "[ERRO] Nao ha espaco na nova posicao!\n";
         return;
     }
-    int novoNumero = escolherNumero(equipa, novaPosicao);
-    jogador.numero = novoNumero;
-    jogador.posicao = (novaPosicao == 0) ? "GR" : (novaPosicao == 1) ? "DEF" : (novaPosicao == 2) ? "MED" : "AVA";
 
+    // Guardamos os dados do jogador antes de mexer no array original
+    Jogador j = equipa.plantel[posAtual][idxJogador];
+
+    // Atualiza dados básicos
+    int novoNumero = escolherNumero(equipa, novaPosicao);
+    j.numero = novoNumero;
+    const char* nomesPos[] = {"GR", "DEF", "MED", "AVA"};
+    j.posicao = nomesPos[novaPosicao];
+
+    // 1. Remover da posição antiga
     for(int i = idxJogador; i < equipa.numJogadores[posAtual] - 1; i++) {
         equipa.plantel[posAtual][i] = equipa.plantel[posAtual][i+1];
     }
     equipa.numJogadores[posAtual]--;
 
-    int tamanhoNovo = equipa.numJogadores[novaPosicao];
-    Jogador* novoArray = new Jogador[tamanhoNovo + 1];
+    // 2. Adicionar à nova posição
+    int n = equipa.numJogadores[novaPosicao];
+    Jogador* novoArray = new Jogador[n + 1];
+    for(int i = 0; i < n; i++) novoArray[i] = equipa.plantel[novaPosicao][i];
 
-    for(int i = 0; i < tamanhoNovo; i++) {
-        novoArray[i] = equipa.plantel[novaPosicao][i];
-    }
+    novoArray[n] = j;
 
-    novoArray[tamanhoNovo] = jogador;
-
-    delete[] equipa.plantel[novaPosicao];
+    delete[] equipa.plantel[novaPosicao]; // Liberta memória antiga para não haver leaks
     equipa.plantel[novaPosicao] = novoArray;
     equipa.numJogadores[novaPosicao]++;
 
-
     ordenarPlantelNumeroJogador(equipa);
-
-    cout << "\n Posicao alterada com sucesso! O " <<  eliminarAcentos(jogador.nome) << " e agora " << jogador.posicao << ".\n";
+    cout << "\n[INFO] " << j.nome << " agora e " << j.posicao << "!\n";
 }
 
+// Simula um dia de treino: quem tem dias pendentes melhora a qualidade
 void treinar(Equipa& equipa) {
-
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < equipa.numJogadores[i]; j++) {
-
-            if (equipa.plantel[i][j].diasTreino > 0) {
-                equipa.plantel[i][j].diasTreino--;
-                equipa.plantel[i][j].qualidade += 5;
-
-                if (equipa.plantel[i][j].qualidade > 100)
-                    equipa.plantel[i][j].qualidade = 100;
+            Jogador& jog = equipa.plantel[i][j]; // Uso de referência para o código ficar mais legivel
+            if (jog.diasTreino > 0) {
+                jog.diasTreino--;
+                jog.qualidade = (jog.qualidade + 5>100)?100:jog.qualidade + 5; // Garante que não passa de 100
             }
         }
     }
+    cout << "[INFO] Treino concluido. Os jogadores evoluiram!\n";
 }
-Jogador* escolherTitularesManual(Jogador** copiaPlantel, int* disponiveis, Tatica& tatica) {
-    /*
-           while (true) {
-                bool valido = true;
-                for (int i = 0; i < 4; i++) {
-                    if (disponiveis[i] < tatica.titulares[i]) {
-                        cout << "\nNao existem jogadores suficientes na posicao "
-                            << i << " Altere a tatica\n";
-                        tatica = pedirTatica(tatica);
-                        valido = false;
-                        break;
-                    }
-                }
-                if (valido) break;
-            }
-     */
 
-    Jogador* titulares = new Jogador[11];
-    int idx = 0;
-
+// Função genérica para o utilizador escolher jogadores (serve para Titulares e Suplentes)
+void escolherListaManual(Jogador** copiaPlantel, int* disponiveis, Jogador* destino, int* configTatica, int qtd) {
+    int idxGeral = 0;
     for (int pos = 0; pos < 4; pos++) {
+        int necessarios = configTatica[pos];
+        if(necessarios == 0) continue;
 
-        cout << "\n=== Escolher " << tatica.titulares[pos]
-             << " jogadores para posicao " << pos << " ===\n";
-
-        for (int n = 0; n < tatica.titulares[pos]; n++) {
-
-            cout << "\nJogadores disponiveis:\n";
+        cout << "\n--- Selecao para a Posicao " << pos << " (" << necessarios << " em falta) ---\n";
+        for (int n = 0; n < necessarios; n++) {
             for (int i = 0; i < disponiveis[pos]; i++) {
-                cout << i << " - "
-                     <<  eliminarAcentos(copiaPlantel[pos][i].nome)
-                     << " (" << copiaPlantel[pos][i].numero
-                     << ", Q:" << copiaPlantel[pos][i].qualidade << ")\n";
+                cout << i << " - " << copiaPlantel[pos][i].nome << " (Q:" << copiaPlantel[pos][i].qualidade << ")\n";
             }
 
-            int escolha;
-            cout << "Escolhe indice: ";
-            cin >> escolha;
+            int esc;
+            cout << "Indice do escolhido: "; cin >> esc;
 
-            if (escolha < 0 || escolha >= disponiveis[pos]) {
-                cout << " Indice invalido!\n";
-                n--;
-                continue;
+            if (esc < 0 || esc >= disponiveis[pos]) {
+                cout << "[ERRO] Invalidade! Tenta outra vez.\n";
+                n--; continue;
             }
 
-            titulares[idx++] = copiaPlantel[pos][escolha];
-
-            for (int k = escolha; k < disponiveis[pos] - 1; k++) {
+            destino[idxGeral++] = copiaPlantel[pos][esc];
+            // Remove da cópia para não escolherem o mesmo jog duas vezes
+            for (int k = esc; k < disponiveis[pos] - 1; k++) {
                 copiaPlantel[pos][k] = copiaPlantel[pos][k + 1];
             }
-
             disponiveis[pos]--;
         }
     }
-
-    return titulares;
 }
-Jogador* escolherSuplentesManual(Jogador** copiaPlantel, int* disponiveis, Tatica& tatica) {
 
-
-        Jogador* suplentes = new Jogador[11];
-        int idx = 0;
-
-        for (int pos = 0; pos < 4; pos++) {
-
-            cout << "\n=== Escolher " << tatica.suplentes[pos]
-                 << " jogadores para posicao " << pos << " ===\n";
-
-            for (int n = 0; n < tatica.suplentes[pos]; n++) {
-
-                cout << "\nJogadores disponiveis:\n";
-                for (int i = 0; i < disponiveis[pos]; i++) {
-                    cout << i << " - "
-                         <<  eliminarAcentos(copiaPlantel[pos][i].nome)
-                         << " (" << copiaPlantel[pos][i].numero
-                         << ", Q:" << copiaPlantel[pos][i].qualidade << ")\n";
-                }
-
-                int escolha;
-                cout << "Escolhe indice: ";
-                cin >> escolha;
-
-                if (escolha < 0 || escolha >= disponiveis[pos]) {
-                    cout << " Indice invalido!\n";
-                    n--;
-                    continue;
-                }
-
-                suplentes[idx++] = copiaPlantel[pos][escolha];
-
-                for (int k = escolha; k < disponiveis[pos] - 1; k++) {
-                    copiaPlantel[pos][k] = copiaPlantel[pos][k + 1];
-                }
-
-                disponiveis[pos]--;
-            }
-        }
-
-
-    return suplentes;
-
-}
+// A função principal de escolha manual que gere a memória da cópia do plantel
 void escolherEquipaManual(Equipa& equipa, Tatica& taticaAtual) {
+    int disponiveis[4] = {equipa.numJogadores[0], equipa.numJogadores[1], equipa.numJogadores[2], equipa.numJogadores[3]};
 
-    int disponiveis[4] = {
-        equipa.numJogadores[0],
-        equipa.numJogadores[1],
-        equipa.numJogadores[2],
-        equipa.numJogadores[3]
-    };
+    // Valida se há gente suficiente antes de começar a alocar coisas
+    if (!validarPlantelDisponible(equipa, taticaAtual)) {
+        cout << "[ERRO] Nao tens jogadores suficientes para essa tatica!\n";
+        equipa.escolhaManual = false;
+        return;
+    }
 
-    Jogador** copiaPlantel = copiarPlantel(equipa, disponiveis);
+    Jogador** copia = copiarPlantel(equipa, disponiveis);
+    ordenarPlantelQualidadeJogador(copia, disponiveis);
 
-    ordenarPlantelQualidadeJogador(copiaPlantel, disponiveis);
-
+    // Limpa escolhas anteriores para não vazar memória
     if (equipa.titulares) delete[] equipa.titulares;
     if (equipa.suplentes) delete[] equipa.suplentes;
-    if (validarPlantelDisponible(equipa, taticaAtual)) {
-        cout << "\n===== ESCOLHA MANUAL =====\n";
-        cout << "Titulares \n";
-        equipa.titulares = escolherTitularesManual(copiaPlantel, disponiveis, equipa.tatica);
-        cout << "Suplentes \n";
-        equipa.suplentes = escolherSuplentesManual(copiaPlantel, disponiveis, equipa.tatica);
-        equipa.escolhaManual = true;
-    }
-    else {
-        cout << "\n Plantel insuficiente para a tatica atual! Escolha manual impossivel.\n";
-        equipa.escolhaManual = false;
-    }
-    cout << "\n Equipa definida manualmente!\n";
 
-    for (int i = 0; i < 4; i++) delete[] copiaPlantel[i];
-    delete[] copiaPlantel;
+    equipa.titulares = new Jogador[MAX_TITULARES];
+    equipa.suplentes = new Jogador[MAX_SUPLENTES];
+
+    cout << "\n===== SELECAO DE TITULARES =====";
+    escolherListaManual(copia, disponiveis, equipa.titulares, taticaAtual.titulares, 11);
+
+    cout << "\n===== SELECAO DE SUPLENTES =====";
+    escolherListaManual(copia, disponiveis, equipa.suplentes, taticaAtual.suplentes, 11);
+
+    equipa.escolhaManual = true;
+
+    // Limpeza da memória temporária
+    for (int i = 0; i < 4; i++) delete[] copia[i];
+    delete[] copia;
+
+    cout << "\n[OK] Equipa alterada\n";
 }

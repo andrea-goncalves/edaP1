@@ -40,9 +40,12 @@ void menuTreino(Equipa& equipa) {
 
                 if(posAtual != -1) {
                     int semanas;
-                    cout << "Quantas semanas de treino deseja? ";
+                    cout << "Semanas de treino: ";
                     cin >> semanas;
-
+                    if (semanas>5) {
+                        semanas = 5;
+                        cout << "5 semanas de treino preparadas (valor maximo) "; ;
+                    }
                     equipa.plantel[posAtual][idxJogador].diasTreino = semanas;
 
                     cout << "[INFO] "
