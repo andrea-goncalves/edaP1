@@ -402,6 +402,35 @@ void imprimirSuplentes(Jogador* suplentes, int numSuplentes) {
 int contarJogadoresPosicao(Equipa& equipa, int pos) {
     return equipa.numJogadores[pos];
 }
+/** * @brief Calcula o número total de jogadores vinculados a uma posição, somando os jogadores ativos no plantel, os lesionados e os suspensos.
+ * * Esta função é fundamental para evitar overflows de memória, garantindo que, quando um jogador
+ * recuperar de uma lesão ou castigo, ainda exista uma vaga reservada para ele no plantel ativo
+ * sem ultrapassar as constantes máximas (ex: DEF_MAX).
+ *
+ * @param equipa Referência para a equipe a ser verificada.
+ * @param pos O índice da posição (0-GR, 1-DEF, 2-MED, 3-AVA).
+ * @return O somatório de jogadores ativos, lesionados e suspensos naquela posição.
+ */
+int contarTotalVinculados(Equipa& equipa, int pos) {
+    int totalAtivos = equipa.numJogadores[pos];
+    int totalIndisponiveis = 0;
+
+    const char* nomesPos[] = {"GR", "DEF", "MED", "AVA"};
+
+    for(int i = 0; i < equipa.numLesionados; i++) {
+        if(equipa.lesionados[i]->posicao == nomesPos[pos]) {
+            totalIndisponiveis++;
+        }
+    }
+
+    for(int i = 0; i < equipa.numSuspensos; i++) {
+        if(equipa.suspensos[i]->posicao == nomesPos[pos]) {
+            totalIndisponiveis++;
+        }
+    }
+
+    return totalAtivos + totalIndisponiveis;
+}
 /** * @brief Verifica se o limite máximo de jogadores para uma determinada posição no plantel da equipe foi atingido.
  *
  * @param equipa Referência para a equipe cujo plantel será verificado.
@@ -409,28 +438,42 @@ int contarJogadoresPosicao(Equipa& equipa, int pos) {
  * @return true se o limite de jogadores para a posição especificada foi atingido, ou false caso contrário.
  */
 bool limitePosicaoAtingido(Equipa& equipa, int pos) {
-
     static const int limites[4] = {GR_MAX, DEF_MAX, MED_MAX, AVA_MAX};
 
-    if(equipa.numJogadores[pos] >= limites[pos]) {
-        cout << "Limite da posicao atingido!\n";
+    // contagem total (ativos + lesionados + suspensos)
+    int ocupacaoTotal = contarTotalVinculados(equipa, pos);
+
+    if(ocupacaoTotal >= limites[pos]) {
+        cout << "[ERRO] Limite da posicao atingido (considerando lesionados/suspensos)!\n";
         return true;
     }
 
     return false;
 }
-/** * @brief Verifica se um número de jogador específico já está ocupado por algum jogador no plantel da equipe.
- *
- * @param equipa Referência para a equipe cujo plantel será verificado.
- * @param numero O número do jogador a ser verificado.
- * @return true se o número do jogador estiver ocupado por algum jogador no plantel, ou false caso contrário.
+/** * @brief Verifica se um número de camisola já está ocupado por algum jogador,
+ * procurando no plantel ativo e também nas listas de lesionados e suspensos.
+ * * @param equipa Referência para a equipe.
+ * @param numero O número da camisola a verificar.
+ * @return true se o número estiver em uso por qualquer jogador vinculado à equipa, false caso contrário.
  */
 bool numeroOcupado(Equipa& equipa, int numero) {
+    // 1. Procurar no plantel ativo (jogadores disponíveis para jogar)
     for(int p = 0; p < 4; p++) {
         for(int i = 0; i < equipa.numJogadores[p]; i++) {
             if(equipa.plantel[p][i].numero == numero) return true;
         }
     }
+
+    // 2. Procurar na lista de lesionados
+    for(int i = 0; i < equipa.numLesionados; i++) {
+        if(equipa.lesionados[i]->numero == numero) return true;
+    }
+
+    // 3. Procurar na lista de suspensos
+    for(int i = 0; i < equipa.numSuspensos; i++) {
+        if(equipa.suspensos[i]->numero == numero) return true;
+    }
+
     return false;
 }
 /** * @brief Lista os números de jogador disponíveis para uma determinada posição no plantel da equipe, exibindo-os para o usuário.
