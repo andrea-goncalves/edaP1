@@ -73,7 +73,7 @@ void lesionar(Jogador* titulares, int numTitulares) {
         titulares[i].semanas_ate_retorno_lesao = 0;
         int probabilidade = numAleatorio(1, 100);
         if (probabilidade <= titulares[i].probLes) {
-            titulares[i].semanas_ate_retorno_lesao = numAleatorio(1, 10)+1;
+            titulares[i].semanas_ate_retorno_lesao = numAleatorio(1, LIMITE_TEMPO_LESIONADO)+1;
         }
     }
 }
@@ -170,7 +170,7 @@ void suspender(Jogador* titulares, int numTitulares) {
         titulares[i].semanas_ate_retorno_castigo = 0;
         int probabilidade = numAleatorio(1, 100);
         if (probabilidade <= titulares[i].probSus) {
-            titulares[i].semanas_ate_retorno_castigo = numAleatorio(1, 10);
+            titulares[i].semanas_ate_retorno_castigo = numAleatorio(1, LIMITE_TEMPO_SUSPENSO);
         }
     }
 }
@@ -348,7 +348,7 @@ void aplicarLesaoManual(Equipa& equipa, int numeroJogador, int semanas) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < equipa.numJogadores[i]; j++) {
             if (equipa.plantel[i][j].numero == numeroJogador) {
-                if (equipa.numLesionados < 30) {
+                if (equipa.numLesionados < MAXIMO_JOGADORES) {
                     Jogador* azarado = new Jogador(equipa.plantel[i][j]);
                     azarado->semanas_ate_retorno_lesao = semanas;
                     inserirJogador(equipa.lesionados, equipa.numLesionados, azarado);
@@ -398,6 +398,7 @@ void reduzirLesaoManual(Equipa& equipa, const int numeroJogador, const int seman
     }
     cout << "\n Esse jogador nao esta na enfermaria.\n";
 }
+
 /** * @brief Aplica um castigo manual a um jogador específico, movendo-o para a lista de suspensos da equipe e atualizando o plantel e o número de jogadores em cada posição.
  *
  * @param equipa Referência para a equipe cujo plantel será atualizado com o castigo aplicado.
@@ -408,7 +409,7 @@ void aplicarCastigoManual(Equipa& equipa, const int numeroJogador, const int sem
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < equipa.numJogadores[i]; j++) {
             if (equipa.plantel[i][j].numero == numeroJogador) {
-                if (equipa.numSuspensos < 30) {
+                if (equipa.numSuspensos < MAXIMO_JOGADORES) {
                     Jogador* indisciplinado = new Jogador(equipa.plantel[i][j]);
                     indisciplinado->semanas_ate_retorno_castigo = semanas;
                     inserirJogador(equipa.suspensos, equipa.numSuspensos, indisciplinado);

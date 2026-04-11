@@ -25,10 +25,8 @@ constexpr int CAMPEONATO_N_EQUIPAS = 18;
 
 constexpr int MAX_GOLOS = 8;
 
-
 constexpr int MAX_TEMPO_TREINO = 5;
 constexpr int MAX_SUBSTITUICOES = 3;
-
 
 constexpr int MAX_TITULARES = 11;
 constexpr int MAX_SUPLENTES = 6;
@@ -56,6 +54,7 @@ enum Posicao {
     POSICAO_MED= 2,
     POSICAO_AVA=3,
 };
+
 
 constexpr const char* FILE_EQUIPAS = "../config/equipas.txt";
 constexpr const char* FILE_NOMES = "../config/nomes.txt";

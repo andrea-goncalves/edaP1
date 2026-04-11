@@ -33,16 +33,15 @@ Jogador gerarUmJogadorPlantel(string* nomeJogadores, int tamanho, string posicao
     Jogador novo;
 
     novo.nome = nomeAleatorio(nomeJogadores,tamanho);
-    novo.idade = numAleatorio(18, 40);
-    novo.qualidade = numAleatorio(0, 100);
+    novo.idade = numAleatorio(MIN_IDADE, MAX_IDADE);
+    novo.qualidade = numAleatorio(0, MAX_QUALIDADE);
     novo.numero = numeroCamisa;
-    novo.probSus = numAleatorio(0, 20);
-    novo.probLes = numAleatorio(0, 15);
+    novo.probSus = numAleatorio(CHANCE_DE_LESAO_MAX, CHANCE_DE_SUSPENSAO_MAX);
+    novo.probLes = numAleatorio(CHANCE_DE_LESAO_MIN, CHANCE_DE_LESAO_MAX);
     novo.posicao = posicao;
     novo.diasTreino = 0;
     novo.semanas_ate_retorno_castigo = 0;
     novo.semanas_ate_retorno_lesao = 0;
-
 
     return novo;
 }
@@ -53,7 +52,7 @@ Jogador gerarUmJogadorPlantel(string* nomeJogadores, int tamanho, string posicao
  * @return Um número inteiro aleatório entre 2 e 3, indicando a quantidade de jogadores na posição de goleiro (GR).
  */
 int numeroGR() {
-    return numAleatorio(2, 3);
+    return numAleatorio(GR_MIN, GR_MAX);
 }
 /** * @brief Gera um número aleatório para a posição de defensor (DEF) dentro de um intervalo específico.
  *
@@ -62,7 +61,7 @@ int numeroGR() {
  * @return Um número inteiro aleatório entre 7 e 10, indicando a quantidade de jogadores na posição de defensor (DEF).
  */
 int numeroDEF() {
-    return numAleatorio(7, 10);
+    return numAleatorio(DEF_MIN, DEF_MAX);
 }
 /** * @brief Gera um número aleatório para a posição de meio-campista (MED) dentro de um intervalo específico.
  *
@@ -71,7 +70,7 @@ int numeroDEF() {
  * @return Um número inteiro aleatório entre 7 e 10, indicando a quantidade de jogadores na posição de meio-campista (MED).
  */
 int numeroMED() {
-    return numAleatorio(7, 10);
+    return numAleatorio(MED_MIN, MED_MAX);
 }
 /** * @brief Gera um número aleatório para a posição de atacante (AVA) dentro de um intervalo específico.
  *
@@ -80,7 +79,7 @@ int numeroMED() {
  * @return Um número inteiro aleatório entre 4 e 7, indicando a quantidade de jogadores na posição de atacante (AVA).
  */
 int numeroAVA() {
-    return numAleatorio(4, 7);
+    return numAleatorio(AVA_MIN, AVA_MAX);
 }
 
 /** * @brief Verifica se um número de jogador já está presente em um array de jogadores, comparando o número fornecido com os números dos jogadores no array.

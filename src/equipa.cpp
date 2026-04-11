@@ -61,7 +61,7 @@ Jogador** gerarPlantel(Jogador* gr, Jogador* def, Jogador* med, Jogador* ava, in
  */
 Jogador** ordenarPlantelNumeroJogador(Equipa& equipa) {
 
-    int quantidades[4] =  { equipa.numJogadores[0], equipa.numJogadores[1], equipa.numJogadores[2], equipa.numJogadores[3] };
+    int quantidades[4] =  { equipa.numJogadores[POSICAO_GR], equipa.numJogadores[POSICAO_DEF], equipa.numJogadores[POSICAO_MED], equipa.numJogadores[POSICAO_AVA] };
     for (int i = 0; i < 4; i++) {
         int n = quantidades[i];
 
@@ -105,7 +105,7 @@ void imprimirPlantel(Equipa& equipa) {
     cout << "Nome                      | N   | Posicao | Idade | ProbLesao | ProbCastigo | Qualidade | Dias-Treino\n";
     cout << "----------------------------------------------------------------------------------------------------\n";
 
-    int quantidades[4] = { equipa.numJogadores[0], equipa.numJogadores[1], equipa.numJogadores[2], equipa.numJogadores[3] };
+    int quantidades[4] = { equipa.numJogadores[POSICAO_GR], equipa.numJogadores[POSICAO_DEF], equipa.numJogadores[POSICAO_MED], equipa.numJogadores[POSICAO_AVA] };
     for (int i = 0; i < 4; i++) {
         if (quantidades[i] > 0) {
             string posicaoAtual =equipa.plantel[i][0].posicao;
@@ -143,11 +143,11 @@ bool validarTatica(Tatica tatica) {
     for (int i = 0; i < 4; i++) {
         total += tatica.titulares[i];
     }
-    if (total < 7) {
-        cout << "A tatica deve ter minimo 7 titulares, tem " << total << "\n";
+    if (total < MAX_SUPLENTES+1) {
+        cout << "A tatica deve ter minimo 7 suplentes, tem " << total << "\n";
         return false;
     }
-    if (total>11) {
+    if (total>MAX_TITULARES) {
         cout << "A tatica deve ter no maximo 11 titulares, tem " << total << "\n";
         return false;
     }
@@ -161,8 +161,8 @@ bool validarTatica(Tatica tatica) {
 Tatica pedirTatica(Tatica taticaAtual) {
     Tatica tatica= taticaAtual;
 
-    cout << "\nTatica atual: 1-" << tatica.titulares[1] << "-"
-         << tatica.titulares[2] << "-" << tatica.titulares[3] << "\n";
+    cout << "\nTatica atual: 1-" << tatica.titulares[POSICAO_DEF] << "-"
+         << tatica.titulares[POSICAO_MED] << "-" << tatica.titulares[POSICAO_AVA] << "\n";
     cout << "Deseja alterar a tatica? (s/n): ";
     cin.ignore();
     string input;
@@ -171,12 +171,12 @@ Tatica pedirTatica(Tatica taticaAtual) {
     if (input != "s") return tatica;
 
 
-    cout << "Numero de DEF (atual: " << tatica.titulares[1] << "): ";
-    cin >> tatica.titulares[1];
-    cout << "Numero de MED (atual: " << tatica.titulares[2] << "): ";
-    cin >> tatica.titulares[2];
-    cout << "Numero de AVA (atual: " << tatica.titulares[3] << "): ";
-    cin >> tatica.titulares[3];
+    cout << "Numero de DEF (atual: " << tatica.titulares[POSICAO_DEF] << "): ";
+    cin >> tatica.titulares[POSICAO_DEF];
+    cout << "Numero de MED (atual: " << tatica.titulares[POSICAO_MED] << "): ";
+    cin >> tatica.titulares[POSICAO_MED];
+    cout << "Numero de AVA (atual: " << tatica.titulares[POSICAO_AVA] << "): ";
+    cin >> tatica.titulares[POSICAO_AVA];
     cin.ignore();
 
 
@@ -231,11 +231,10 @@ Jogador* escolherTitulares(Jogador** copiaPlantel, int* disponiveis, Tatica& tat
         if (valido) break;
     }
 
-    Jogador* titulares = new Jogador[11];
+    Jogador* titulares = new Jogador[MAX_TITULARES];
     int idx = 0;
 
-
-    int disponiveisLocais[4] = { disponiveis[0], disponiveis[1], disponiveis[2], disponiveis[3] };
+    int disponiveisLocais[4] = { disponiveis[POSICAO_GR], disponiveis[POSICAO_DEF], disponiveis[POSICAO_MED], disponiveis[POSICAO_AVA] };
 
     for (int i = 0; i < 4; i++) {
 
@@ -261,10 +260,10 @@ Jogador* escolherTitulares(Jogador** copiaPlantel, int* disponiveis, Tatica& tat
  * @return Um valor inteiro correspondente à posição do jogador, onde 0 representa goleiro (GR), 1 representa defensor (DEF), 2 representa meio-campista (MED) e 3 representa atacante (AVA). Se a posição não for reconhecida, retorna -1.
  */
 int getPos(string posicao) {
-    if (posicao == "GR") return 0;
-    if (posicao == "DEF") return 1;
-    if (posicao == "MED") return 2;
-    return 3;
+    if (posicao == "GR") return POSICAO_GR;
+    if (posicao == "DEF") return POSICAO_DEF;
+    if (posicao == "MED") return POSICAO_MED;
+    return POSICAO_AVA;
 }
 /** * @brief Permite ao usuário escolher os suplentes da equipe com base na tática escolhida e nos jogadores disponíveis, garantindo que os suplentes sejam escolhidos de acordo com as posições necessárias para a tática. A função também ordena os suplentes por posição antes de retorná-los.
  *
@@ -277,14 +276,14 @@ int getPos(string posicao) {
 Jogador* escolherSuplentes(Jogador** copiaPlantel, int* disponiveis, Tatica tatica, int& numSuplentes) {
 
 
-    int disp[4] = { disponiveis[0], disponiveis[1], disponiveis[2], disponiveis[3] };
+    int disp[4] = { disponiveis[POSICAO_GR], disponiveis[POSICAO_DEF], disponiveis[POSICAO_MED], disponiveis[POSICAO_AVA] };
 
-    Jogador* suplentes = new Jogador[6];
+    Jogador* suplentes = new Jogador[MAX_SUPLENTES];
     int idx = 0;
 
     for (int i = 0; i < 4; i++) {
         int preencher = tatica.suplentes[i];
-        for (int j = 0; j < preencher && idx < 6; j++) {
+        for (int j = 0; j < preencher && idx < MAX_SUPLENTES; j++) {
             if (disp[i] > 0) {
                 suplentes[idx++] = copiaPlantel[i][0];
                 for (int k = 1; k < disp[i]; k++) {
@@ -295,7 +294,7 @@ Jogador* escolherSuplentes(Jogador** copiaPlantel, int* disponiveis, Tatica tati
         }
     }
 
-    while (idx < 6) {
+    while (idx < MAX_SUPLENTES) {
         int pos = -1;
         for (int i = 0; i < 4; i++) {
             if (disp[i] > 0) {
@@ -443,10 +442,10 @@ void listarNumerosLivres(Equipa& equipa, int posicao) {
     const int* numeros;
     int tamanho;
     switch(posicao) {
-        case 0: numeros = CAMISAS_GR; tamanho = 3; break;
-        case 1: numeros = CAMISAS_DEF; tamanho = 10; break;
-        case 2: numeros = CAMISAS_MED; tamanho = 10; break;
-        case 3: numeros = CAMISAS_AVA; tamanho = 7; break;
+        case 0: numeros = CAMISAS_GR; tamanho = GR_MAX; break;
+        case 1: numeros = CAMISAS_DEF; tamanho = DEF_MAX; break;
+        case 2: numeros = CAMISAS_MED; tamanho = MED_MAX; break;
+        case 3: numeros = CAMISAS_AVA; tamanho = AVA_MAX; break;
         default: return;
     }
 
@@ -554,7 +553,7 @@ void treinar(Equipa& equipa) {
             Jogador& jog = equipa.plantel[i][j];
             if (jog.diasTreino > 0) {
                 jog.diasTreino--;
-                jog.qualidade = (jog.qualidade + 5>100)?100:jog.qualidade + 5;
+                jog.qualidade = (jog.qualidade + 5>MAX_QUALIDADE)?MAX_QUALIDADE:jog.qualidade + 5;
             }
         }
     }
@@ -606,7 +605,7 @@ void escolherListaManual(Jogador** copiaPlantel, int* disponiveis, Jogador* dest
  * @param taticaAtual A tática atual da equipe, contendo o número de titulares e suplentes para cada posição, que será usada como base para a seleção manual dos jogadores.
  */
 void escolherEquipaManual(Equipa& equipa, Tatica& taticaAtual) {
-    int disponiveis[4] = {equipa.numJogadores[0], equipa.numJogadores[1], equipa.numJogadores[2], equipa.numJogadores[3]};
+    int disponiveis[4] = {equipa.numJogadores[POSICAO_GR], equipa.numJogadores[POSICAO_DEF], equipa.numJogadores[POSICAO_MED], equipa.numJogadores[POSICAO_AVA]};
 
 
     if (!validarPlantelDisponible(equipa, taticaAtual)) {
@@ -626,10 +625,10 @@ void escolherEquipaManual(Equipa& equipa, Tatica& taticaAtual) {
     equipa.suplentes = new Jogador[MAX_SUPLENTES];
 
     cout << "\n===== SELECAO DE TITULARES =====";
-    escolherListaManual(copia, disponiveis, equipa.titulares, taticaAtual.titulares, 11);
+    escolherListaManual(copia, disponiveis, equipa.titulares, taticaAtual.titulares, MAX_TITULARES);
 
     cout << "\n===== SELECAO DE SUPLENTES =====";
-    escolherListaManual(copia, disponiveis, equipa.suplentes, taticaAtual.suplentes, 11);
+    escolherListaManual(copia, disponiveis, equipa.suplentes, taticaAtual.suplentes, MAX_TITULARES);
 
     equipa.escolhaManual = true;
 

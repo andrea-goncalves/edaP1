@@ -28,7 +28,6 @@ int tamArq(const string& path) {
 }
 
 /** * @brief Lê um arquivo e armazena cada linha em um array de strings.
- *
  * @param path O caminho para o arquivo.
  * @param tamanho Referência para armazenar o número de linhas lidas.
  * @return Um ponteiro para um array de strings contendo as linhas do arquivo, ou nullptr se o arquivo não puder ser aberto ou estiver vazio.

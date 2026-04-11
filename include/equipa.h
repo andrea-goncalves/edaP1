@@ -37,8 +37,6 @@ struct Equipa {
 };
 
 
-
-
 Jogador** gerarPlantel(Jogador* gr, Jogador* def, Jogador* med, Jogador* ava, int numGR, int numDEF, int numMED, int numAVA);
 void imprimirPlantel(Equipa& equipa);
 Jogador** ordenarPlantelNumeroJogador(Equipa& equipa);

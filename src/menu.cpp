@@ -2,6 +2,8 @@
 #include "../include/menu.h"
 #include <iostream>
 #include <string>
+
+#include "../include/constantes.h"
 #include "../include/equipa.h"
 #include "../include/lesionarSuspender.h"
 #include "../include/ficheiros.h"
@@ -47,7 +49,10 @@ void menuTreino(Equipa& equipa) {
                     int semanas;
                     cout << "Quantas semanas de treino deseja? ";
                     cin >> semanas;
-
+                    if (semanas>MAX_TEMPO_TREINO) {
+                        semanas = MAX_TEMPO_TREINO;
+                        cout << "foi selecionado o maximo de 5 semanas";
+                    }
                     equipa.plantel[posAtual][idxJogador].diasTreino = semanas;
 
                     cout << "[INFO] "
